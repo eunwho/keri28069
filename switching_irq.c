@@ -12,9 +12,10 @@ void MotorControlProc( )
     temp = (int)(floor(codeMotorCtrlMode+0.5));
     switch( temp )
     {
-    case 0: vf_simple_control(); break;
-    case 1: slip_comp_scalar_ctrl();break;
-    case 6: windPowerCtrl( )        ; break;
+    case 0: vf_simple_control()     ; break;
+    case 1: slip_comp_scalar_ctrl() ; break;
+    case 3: servoSpeedCtrl()        ; break;
+    case 4: servoPosiCtrl()         ; break;
     }
 }
 
@@ -53,6 +54,7 @@ interrupt void MainPWM(void)
         EPwm3Regs.CMPA.half.CMPA = MAX_PWM_CNT;
             Im_Power = 0;  Re_Power = 0; // P_total = 0;
          break;
+/*
     case STATE_INIT_RUN:
         VoltageEstimation();
         MotorControlProc( );
@@ -62,6 +64,8 @@ interrupt void MainPWM(void)
         EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT>>1;
         EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT>>1;
         break;
+*/
+    case STATE_INIT_RUN:
     case STATE_RUN:
     case STATE_GO_STOP:
     case STATE_WAIT_BREAK_OFF:

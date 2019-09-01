@@ -12,20 +12,15 @@
 #define CODE_accel_time1				2
 #define CODE_decel_time1				3
 #define CODE_MotorCtrMode               4
-#define CODE_speed1						5
-#define CODE_speed2						6
+#define CODE_start_ref                  5
+#define CODE_speed1                     6
 #define CODE_set_vdc                    7
 #define CODE_protect_off                8
 #define CODE_pwm_freq                   9
 
 #define CODE_rate_power			        10
-#define CODE_rate_current               11
-#define CODE_rate_rpm                   12
-#define CODE_rate_effiency              13
-#define CODE_rate_hz				    14
-#define CODE_rate_volt                  15
-#define CODE_motor_pole					16
-#define CODE_presSensRef                17
+#define CODE_rate_rpm                   11
+#define CODE_rate_volt                  12
 
 #define CODE_IaOffset                   20
 #define CODE_IbOffset                   21
@@ -51,9 +46,12 @@
 #define CODE_VF_Slip_Comp_FilterPole    47
 #define CODE_VF_Rs                      48
 
-
-#define CODE_wattHour                   50
-#define CODE_kWattHour                  51
+#define CODE_kpPosi                     50
+#define CODE_kpSpeed                    51
+#define CODE_kiSpeed                    52
+#define CODE_kpIdq                      53
+#define CODE_kiIdq                      54
+#define CODE_encoderPulse               55
 
 #define CODE_scopeLoopCount             60
 

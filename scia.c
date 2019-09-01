@@ -2,11 +2,16 @@
 #include	<extern.h>
 // include <scia,h>
 
+#define INV_RPM_SCALE   0.005     // 1.0 / 200.0 ;
+#define INV_I_SCALE     0.5         //  = 1.0 / 2.0 ;
+#define INV_P_SCALE     0.001      // 1/1000
+
+
 #define CPU_FREQ    90E6
 #define LSPCLK_FREQ CPU_FREQ/4
 #define SCI_FREQ    115200
 //#define SCI_FREQ    38400
-//#define SCI_FREQ    230400
+// #define SCI_FREQ    230400
 #define SCI_PRD     (LSPCLK_FREQ/(SCI_FREQ*8))-1
 
 #define UARTA_BAUD_RATE          SCI_PRD     // 115200
@@ -57,13 +62,6 @@ void scia_fifo_init()
 	IER |= M_INT9;		// M == 0x0100 scia irq
 }
 
-#define INV_RPM_SCALE   0.005     // 1.0 / 200.0 ;
-#define INV_VDC_SCALE   0.02     // 1.0 / 50.0 ;
-#define INV_I_SCALE     0.5         //  = 1.0 / 2.0 ;
-// #define INV_P_SCALE     0.001      // 1/1000
-#define INV_P_SCALE     0.0025      // 1/400
-#define INV_WH_SCALE     0.005      // 1/200
-
 void sciaMonitor()     // need_edit
 {
     UNION16 unionRpm,unionIrms,unionPower, unionRePower,unionImPower;
@@ -112,18 +110,11 @@ void sciaMonitor()     // need_edit
     strncpy( str,"9:4:900:0.000e+0:",17); load_scia_tx_mail_box(str);
     load_scia_tx_mail_box(MonitorMsg);
 
-    //    unionRpm.INTEGER    = (int)( rpm * INV_RPM_SCALE * 204.8) + 2048;
-    //    unionIrms.INTEGER   = (int)( Is_mag_rms * INV_I_SCALE * 204.8) + 2048;
-    //   unionRePower.INTEGER  = (int)( Re_Power * INV_P_SCALE * 204.8) + 2048;
-    //   unionImPower.INTEGER  = (int)( Im_Power * INV_P_SCALE * 204.8) + 2048;
-
-    unionRpm.INTEGER    = (int)( Vdc * INV_VDC_SCALE * 204.8) + 2048;
-    unionIrms.INTEGER   = (int)( Is_abc[as] * INV_I_SCALE * 204.8) + 2048;
+    unionRpm.INTEGER    = (int)( rpm * INV_RPM_SCALE * 204.8) + 2048;
+    unionIrms.INTEGER   = (int)( Is_mag_rms * INV_I_SCALE * 204.8) + 2048;
     unionPower.INTEGER  = (int)( P_total * INV_P_SCALE * 204.8) + 2048;
-    //unionRePower.INTEGER  = (int)( 111.0 * INV_P_SCALE * 204.8) + 2048;
-    //unionImPower.INTEGER  = (int)( 222.0 * INV_P_SCALE * 204.8) + 2048;
-    unionRePower.INTEGER  = (int)( wattHour * INV_WH_SCALE * 204.8) + 2048;
-    unionImPower.INTEGER  = (int)( kWattHour * INV_WH_SCALE * 204.8) + 2048;
+    unionRePower.INTEGER  = (int)( Re_Power * INV_P_SCALE * 204.8) + 2048;
+    unionImPower.INTEGER  = (int)( Im_Power * INV_P_SCALE * 204.8) + 2048;
 
     i = 0;
     str[ i*3 + 0] = (( unionRpm.byte.MSB     ) & 0x0f) | 0x40  ;
@@ -222,8 +213,10 @@ void loadSciaTxBufAdc(int channel )
     int i,j;
     char str[40]={0};
 
+
     scia_tx_start_addr =0;
     scia_tx_end_addr =0;
+    delay_msecs(10);           // 157msec
 
     sendAdcDataFlag = 1;    // data update blocking
 
@@ -234,16 +227,18 @@ void loadSciaTxBufAdc(int channel )
         str[4] = 0;
         load_scia_tx_mail_box(str);
 
-        for( i = 0 ; i < 600 ; i++){
+        for( i = 0 ; i < SCOPE_MAX_NUMBER ; i++){
             //scopeData[j][i].INTEGER = 1000 * ( j + 1);
             str[0] = (( scopeData[j][i].byte.MSB     ) & 0x0f) | 0x40 ;
             str[1] = (( scopeData[j][i].byte.LSB >> 4) & 0x0f) | 0x40;
             str[2] = (( scopeData[j][i].byte.LSB     ) & 0x0f) | 0x40;
             str[3] = 0;
             load_scia_tx_mail_box(str);
+            // for ( k = 0 ; k < 3000 ; k ++ ) Nop();
+            //delay_msecs(1);           // 157msec
         }
         strncpy(str,"ch0\r\n",5);
-        str[2] += (j+1);
+         str[2] += (j+1);
         str[5] = 0;
         load_scia_tx_mail_box(str);
         delay_msecs(200);           // 157msec
@@ -311,11 +306,11 @@ interrupt void sciaRxFifoIsr(void)
 // write data format  "9:6:123:1.234e-3"
 void scia_cmd_proc( int * sci_cmd, double * sci_ref)
 {
-	double data,dbtemp;
+    static unsigned long sciChkCount,sciOffTimeMsec;
+
+    double data,dbtemp;
     int addr,check,temp;
     char str[30]={0};
-    static unsigned long sciChkCount=0;
-    unsigned long sciOffTimeMsec;
 
     TRIP_INFO * TripData;
 
@@ -326,14 +321,16 @@ void scia_cmd_proc( int * sci_cmd, double * sci_ref)
 	* sci_ref = 0.0;
 
 	if( scia_rx_msg_flag == 0) {
-        sciOffTimeMsec = ulGetTime_mSec( sciChkCount);
-        if(sciOffTimeMsec > 10000 ) {
-            scia_fifo_init();
+
+	    sciOffTimeMsec = ulGetTime_mSec( sciChkCount);
+	    if(sciOffTimeMsec > 2000 ) {
+	        scia_fifo_init();
 	        sciChkCount = ulGetNow_mSec( );
 	    }
 	    return;
 	}
 
+	sciChkCount = ulGetNow_mSec( );
 	scia_rx_msg_flag = 0;
 
     strncpy( scia_rx_msg_box,msg_box,16);
@@ -376,7 +373,7 @@ void scia_cmd_proc( int * sci_cmd, double * sci_ref)
             else if( data == 90 ){
                    * sci_cmd = CMD_NULL;  * sci_ref = 0.0;
                    load_scia_tx_mail_box("EEPROM init Start");
-                   check = init_eprom_data();      // 0이 아니면 address value
+                   check = init_eprom_data();      // 0�씠 �븘�땲硫� address value
                    if( check != 0) load_scia_tx_mail_box("EEPROM init Fail");
                    else        load_scia_tx_mail_box("EEPROM init OK \r\n");
             }
@@ -516,19 +513,27 @@ void scia_cmd_proc( int * sci_cmd, double * sci_ref)
              return;
          }
          else if (addr == 909 ){
-                 temp = (int) Vdc;
-              snprintf( str,20,"Vdc = %4d : ",temp); load_scia_tx_mail_box(str);
-              snprintf( str,20,"P_total = %4d : ",(int)(P_total)); load_scia_tx_mail_box(str);
-              snprintf( str,20,"wH  = %4d : ", wattHour ); load_scia_tx_mail_box(str);
-              snprintf( str,20,"kWH = %4d : ", kWattHour ); load_scia_tx_mail_box(str);
+                 temp = (int) rpm;
+/*
+                 snprintf( str,20,"Rpm = %4d : ",temp); load_scia_tx_mail_box(str);
+              snprintf( str,20,"Irms = %1e : ",Is_mag_rms); load_scia_tx_mail_box(str);
+              snprintf( str,20,"P_total = %1e : ",P_total); load_scia_tx_mail_box(str);
+              snprintf( str,20,"refer_out = %1e : ",reference_out); load_scia_tx_mail_box(str);
+              load_scia_tx_mail_box(" \r\n");
+              delay_msecs(10);
+*/
+              snprintf( str,20,"Rpm = %4d : ",temp); load_scia_tx_mail_box(str);
+              snprintf( str,30,"Irms = %.3e : ",Is_mag_rms); load_scia_tx_mail_box(str);
+              snprintf( str,30,"P_total = %.1e : ",P_total); load_scia_tx_mail_box(str);
+              snprintf( str,30,"refer_out = %.1e : ",reference_out); load_scia_tx_mail_box(str);
               load_scia_tx_mail_box(" \r\n");
               delay_msecs(10);
               return;
           }
-         else if (addr == 910 ){
-              snprintf( str,20,"Iin= %4d : ",adc_result[0]); load_scia_tx_mail_box(str);
-              snprintf( str,20,"Ib = %4d : ",adc_result[1]); load_scia_tx_mail_box(str);
-              snprintf( str,20,"Vdc= %4d : ",adc_result[2]); load_scia_tx_mail_box(str);
+         else if (addr == 910 ){ // read adc
+              snprintf( str,20,"Ia = %4d : ",adcIa); load_scia_tx_mail_box(str);
+              snprintf( str,20,"Ib = %4d : ",adcIb); load_scia_tx_mail_box(str);
+              snprintf( str,20,"Vdc= %4d : ",adcVdc); load_scia_tx_mail_box(str);
               snprintf( str,20,"Tmp= %4d : ",adc_result[3]); load_scia_tx_mail_box(str);
               snprintf( str,20,"Sen= %4d : ",adc_result[4]); load_scia_tx_mail_box(str);
               snprintf( str,20,"Cmd= %4d : ",adc_result[5]); load_scia_tx_mail_box(str);
@@ -544,7 +549,7 @@ void scia_cmd_proc( int * sci_cmd, double * sci_ref)
              return;
          }
          snprintf( str,10,"CODE=%4d:",addr); load_scia_tx_mail_box(str);
-         snprintf( str,20,"Data=%.3e:",code_inform.code_value);
+         snprintf( str,40,"Data=%.3e:",code_inform.code_value);
          load_scia_tx_mail_box(str);
          load_scia_tx_mail_box(code_inform.disp);
          load_scia_tx_mail_box("\r\n");delay_msecs(10);

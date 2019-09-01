@@ -3,14 +3,16 @@
 
 #define max_I_ratio     1.5
 
+
 void commonVariableInit()
 {
     double x1,x2,y1,y2;
 
-    //-- 2019.08.09 windPower
-    wattHour = (int)(code_wattHour);
-    kWattHour = (int)(code_kWattHour);
-    // --- end
+    codeMotorPole = 2.0;
+    // codeRateHz = codeMotorPole * codeRateRpm/120.0;
+    codeRateHz = 50.0;
+    codeRateEffiency = 0.91;
+    codeRateCurrent = 1.3;
 
     setScopePoint();
 

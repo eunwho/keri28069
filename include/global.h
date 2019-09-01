@@ -1,10 +1,83 @@
 #ifndef		__GLOBAL_VARIABLES_
 #define		__GLOBAL_VARIABLES_
 
-// for windPower
-double windEnergy;
-int wattHour;
-int kWattHour;
+// pmsmCtrl.c
+Uint16 encoderMaxCount;
+
+double inv_encoderMaxCount;
+double inv_QepTime;
+int32 POSCNT_old;
+
+double POS_REF;
+double POS_REAL;
+double POS_REAL_delay1;
+double POS_ERR;
+double POS_REF_OFFSET;
+double SPEED_REF;
+double SPEED_REAL;
+double SPEED_ERR;
+
+double MAX_SPEED;
+
+
+double uspeed_kp;
+double speed_err_ki;
+double speed_err_ki_delay1;
+double speed_anti_windup;
+double uspeed_ki;
+double uspeed_ki_delay1;
+double uspeed_IP;
+double torque_real;
+
+double ud_kp;
+double ud_ki;
+double ud_ki_delay1;
+double ud_IP;
+double Id_err;
+double Id_err_delay1;
+double Id_real;
+double Id_ref;
+double Id_err_ki;
+double Id_err_ki_delay1;
+double d_current_anti_windup;
+
+double uq_kp;
+double uq_ki;
+double uq_ki_delay1;
+double uq_IP;
+double Iq_err;
+double Iq_err_delay1;
+double Iq_ref;
+double Iq_err_ki;
+double Iq_err_ki_delay1;
+double q_current_anti_windup;
+double Vq_real;
+
+double Torque_MAX;
+double ACC_MAX;             //  = 4.2;
+
+Uint16 enc_flag=1;
+
+double POS_REF_OLD;
+double POS_REF_NEW;
+double POS_INIT;
+double prof_t1;
+double prof_t2;
+double prof_t3;
+double profile_gen_time;        //  =1000000000.0;
+int profile_FLAG;
+int SIGN_FLAG;
+int cal_FLAG ;
+double Dist_New;
+double Dist_min;
+double init_t1;
+double init_t2;
+double SPEED_M;
+
+double SPD_REF_PLC;
+
+Uint16 POS_INIT_FLAG;
+
 
 // testing
 int lpfadcIa;
@@ -19,7 +92,7 @@ double dAdcTemp;
 double dAdcSens;
 double dAdcCmd;
 
-double * scopePoint[30];
+double * scopePoint[50];
 
 // control and flag
 CODE_INFO code_inform = {0,0,0,0,0,0,{0}};
@@ -373,8 +446,8 @@ double   codeMotorDirection;     // 1
 double   codeAccelTime1;         // 2
 double   codeDecelTime1;         // 3
 double   codeMotorCtrlMode;      // 4
-double   codeSpeed1;             // 5
-double   codeSpeed2;             // 6
+double   code_start_ref;         // 5
+double   codeSpeed1;             // 6
 double   codeSetVdc;             // 7
 double   codeProtectOff;         // 8
 double   codePwmFreq;            // 9
@@ -413,9 +486,12 @@ double VF_IR_Comp_FilterPole;   // 46
 double VF_Slip_Comp_FilterPole; // 47
 double VF_Rs;                   // 48
 
-double  code_wattHour;              //50
-double  code_kWattHour;             //51
-
+double code_kpPosi;
+double code_kpSpeed;
+double code_kiSpeed;
+double code_kpIdq;
+double code_kiIdq;
+double code_encoderPulse;
 
 double codeScopeLoopCount;
 

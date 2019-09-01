@@ -54,7 +54,6 @@ int CheckOverCurrent( )
 	return 	0; 
 }
 
-#define OVER_V_LEVEL        380.0
 int CheckOverVolt( )
 {
 	static int OverVoltCount = 0;
@@ -116,12 +115,15 @@ int CheckOverHeat( )
 int trip_check()
 {
 	int TripCode;
+
 	TripCode = 0;
-	if( ( TripCode = CheckOverCurrent()) != 0 ) return TripCode ;	//
-	if( ( TripCode = CheckOverVolt()   ) != 0 ) return TripCode ;
-//	if( ( TripCode = CheckUndeVolt()   ) != 0 ) return TripCode ;	//
-	if( ( TripCode = CheckOverHeat()   ) != 0 ) return TripCode ;
-	if( ( TripCode = CheckIGBTFault()  ) != 0 ) return TripCode ;
+	if( codeProtectOff < 0.5 ){
+	    if( ( TripCode = CheckOverCurrent()) != 0 ) return TripCode ;	//
+	    if( ( TripCode = CheckOverVolt()   ) != 0 ) return TripCode ;
+	    if( ( TripCode = CheckUndeVolt()   ) != 0 ) return TripCode ;	//
+	    if( ( TripCode = CheckOverHeat()   ) != 0 ) return TripCode ;
+	    if( ( TripCode = CheckIGBTFault()  ) != 0 ) return TripCode ;
+	}
 	return TripCode;
 }
 

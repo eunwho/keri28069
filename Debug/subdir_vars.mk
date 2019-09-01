@@ -29,9 +29,11 @@ C_SRCS += \
 ../code_proc.c \
 ../common_module.c \
 ../digital_inout.c \
+../eQep.c \
 ../f28069GpioSetup.c \
 ../low_pass_filter.c \
 ../main.c \
+../pmsmCtrl.c \
 ../scia.c \
 ../scopePoint.c \
 ../serial_com.c \
@@ -39,8 +41,7 @@ C_SRCS += \
 ../switching_irq.c \
 ../trip_proc.c \
 ../udd_timer_irq.c \
-../vf_contol.c \
-../windPower.c 
+../vf_contol.c 
 
 C_DEPS += \
 ./F2806x_Adc.d \
@@ -59,9 +60,11 @@ C_DEPS += \
 ./code_proc.d \
 ./common_module.d \
 ./digital_inout.d \
+./eQep.d \
 ./f28069GpioSetup.d \
 ./low_pass_filter.d \
 ./main.d \
+./pmsmCtrl.d \
 ./scia.d \
 ./scopePoint.d \
 ./serial_com.d \
@@ -69,8 +72,7 @@ C_DEPS += \
 ./switching_irq.d \
 ./trip_proc.d \
 ./udd_timer_irq.d \
-./vf_contol.d \
-./windPower.d 
+./vf_contol.d 
 
 OBJS += \
 ./F2806x_Adc.obj \
@@ -92,9 +94,11 @@ OBJS += \
 ./code_proc.obj \
 ./common_module.obj \
 ./digital_inout.obj \
+./eQep.obj \
 ./f28069GpioSetup.obj \
 ./low_pass_filter.obj \
 ./main.obj \
+./pmsmCtrl.obj \
 ./scia.obj \
 ./scopePoint.obj \
 ./serial_com.obj \
@@ -102,8 +106,7 @@ OBJS += \
 ./switching_irq.obj \
 ./trip_proc.obj \
 ./udd_timer_irq.obj \
-./vf_contol.obj \
-./windPower.obj 
+./vf_contol.obj 
 
 ASM_DEPS += \
 ./F2806x_CSMPasswords.d \
@@ -130,9 +133,11 @@ OBJS__QUOTED += \
 "code_proc.obj" \
 "common_module.obj" \
 "digital_inout.obj" \
+"eQep.obj" \
 "f28069GpioSetup.obj" \
 "low_pass_filter.obj" \
 "main.obj" \
+"pmsmCtrl.obj" \
 "scia.obj" \
 "scopePoint.obj" \
 "serial_com.obj" \
@@ -140,8 +145,7 @@ OBJS__QUOTED += \
 "switching_irq.obj" \
 "trip_proc.obj" \
 "udd_timer_irq.obj" \
-"vf_contol.obj" \
-"windPower.obj" 
+"vf_contol.obj" 
 
 C_DEPS__QUOTED += \
 "F2806x_Adc.d" \
@@ -160,9 +164,11 @@ C_DEPS__QUOTED += \
 "code_proc.d" \
 "common_module.d" \
 "digital_inout.d" \
+"eQep.d" \
 "f28069GpioSetup.d" \
 "low_pass_filter.d" \
 "main.d" \
+"pmsmCtrl.d" \
 "scia.d" \
 "scopePoint.d" \
 "serial_com.d" \
@@ -170,8 +176,7 @@ C_DEPS__QUOTED += \
 "switching_irq.d" \
 "trip_proc.d" \
 "udd_timer_irq.d" \
-"vf_contol.d" \
-"windPower.d" 
+"vf_contol.d" 
 
 ASM_DEPS__QUOTED += \
 "F2806x_CSMPasswords.d" \
@@ -195,9 +200,11 @@ C_SRCS__QUOTED += \
 "../code_proc.c" \
 "../common_module.c" \
 "../digital_inout.c" \
+"../eQep.c" \
 "../f28069GpioSetup.c" \
 "../low_pass_filter.c" \
 "../main.c" \
+"../pmsmCtrl.c" \
 "../scia.c" \
 "../scopePoint.c" \
 "../serial_com.c" \
@@ -205,8 +212,7 @@ C_SRCS__QUOTED += \
 "../switching_irq.c" \
 "../trip_proc.c" \
 "../udd_timer_irq.c" \
-"../vf_contol.c" \
-"../windPower.c" 
+"../vf_contol.c" 
 
 ASM_SRCS__QUOTED += \
 "/home/eunwho/ti/C2000Ware_2_00_00_02_Software/device_support/f2806x/common/source/F2806x_CSMPasswords.asm" \

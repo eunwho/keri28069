@@ -4,6 +4,7 @@
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_PROGRAM./home/eunwho/workspace_v9/servo/targetConfigs/TMS320F28069.ccxml.Texas Instruments XDS100v2 USB Debug Probe/C28xx" value="${build_artifact:servo}"/>
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_PROJECT./home/eunwho/workspace_v9/servo/targetConfigs/TMS320F28069.ccxml.Texas Instruments XDS100v2 USB Debug Probe/C28xx" value="servo"/>
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_TARGET_CONFIG" value="${target_config_active_default:servo}"/>
+<stringAttribute key="com.ti.ccstudio.debug.debugModel.MRU_PROGRAM./home/eunwho/workspace_v9/servo/targetConfigs/TMS320F28069.ccxml.Texas Instruments XDS100v2 USB Debug Probe/C28xx" value="/home/eunwho/workspace_v9/servo/Debug/servo.out"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
 <listEntry value="/servo"/>
 </listAttribute>

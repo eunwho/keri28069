@@ -1,10 +1,93 @@
 #ifndef     __VARIABLES_
 #define     __VARIABLES_
 
-// for windPower
-extern double windEnergy;
-extern int wattHour;
-extern int kWattHour;
+// pmsmCtrl.c
+
+extern Uint16 encoderMaxCount;
+extern double inv_encoderMaxCount;
+extern double inv_QepTime;
+extern int32 POSCNT_old;
+
+extern double KP_POSITION;
+extern double KP_SPEED;
+extern double KI_SPEED;
+extern double KP_CURRENT_Q;
+extern double KI_CURRENT_Q;
+extern double KP_CURRENT_D;
+extern double KI_CURRENT_D;
+
+extern double POS_REF;
+extern double POS_REAL;
+extern double POS_REAL_delay1;
+extern double POS_ERR;
+extern double POS_REF_OFFSET;
+extern double SPEED_REF;
+extern double SPEED_REAL;
+extern double SPEED_ERR;
+
+extern double MAX_SPEED;
+
+extern double uspeed_kp;
+extern double speed_err_ki;
+extern double speed_err_ki_delay1;
+extern double speed_anti_windup;
+extern double uspeed_ki;
+extern double uspeed_ki_delay1;
+extern double uspeed_IP;
+extern double torque_real;
+
+extern double ud_kp;
+extern double ud_ki;
+extern double ud_ki_delay1;
+extern double ud_IP;
+extern double Id_err;
+extern double Id_err_delay1;
+extern double Id_real;
+extern double Id_ref;
+extern double Id_err_ki;
+extern double Id_err_ki_delay1;
+extern double d_current_anti_windup;
+
+// extern double Vs_MAX = 310.0; //'300.0/sqrt(3)*0.95
+// extern double Vq_MAX = 290.0;//156.7641541; //'sqrt(Vs_MAX^2-Vd_MAX^2)
+extern double uq_kp;
+extern double uq_ki;
+extern double uq_ki_delay1;
+extern double uq_IP;
+extern double Iq_err;
+extern double Iq_err_delay1;
+extern double Iq_ref;
+extern double Iq_err_ki;
+extern double Iq_err_ki_delay1;
+extern double q_current_anti_windup;
+extern double Vq_real;
+
+extern double Torque_MAX;
+extern double ACC_MAX;
+
+extern Uint16 enc_flag;
+
+extern double POS_REF_OLD;
+extern double POS_REF_NEW;
+extern double POS_INIT;
+extern double prof_t1;
+extern double prof_t2;
+extern double prof_t3;
+extern double profile_gen_time;
+extern int profile_FLAG;
+extern int SIGN_FLAG;
+extern int cal_FLAG;
+extern double Dist_New;
+extern double Dist_min;
+extern double init_t1;
+extern double init_t2;
+extern double SPEED_M;
+
+extern double SPD_REF_PLC;
+
+extern Uint16 POS_INIT_FLAG;
+
+
 
 // testing
 extern int lpfadcIa;
@@ -19,7 +102,7 @@ extern double dAdcTemp;
 extern double dAdcSens;
 extern double dAdcCmd;
 
-extern double * scopePoint[30];
+extern double * scopePoint[50];
 
 // control and flag
 extern CODE_INFO code_inform;
@@ -368,8 +451,8 @@ extern double   codeMotorDirection;     // 1
 extern double   codeAccelTime1;         // 2
 extern double   codeDecelTime1;         // 3
 extern double   codeMotorCtrlMode;      // 4
-extern double   codeSpeed1;             // 5
-extern double   codeSpeed2;             // 6
+extern double   code_start_ref;         // 5
+extern double   codeSpeed1;             // 6
 extern double   codeSetVdc;             // 7
 extern double   codeProtectOff;         // 8
 extern double   codePwmFreq;            // 9
@@ -408,9 +491,12 @@ extern double VF_IR_Comp_FilterPole;   // 46
 extern double VF_Slip_Comp_FilterPole; // 47
 extern double VF_Rs;                   // 48
 
-
-extern double  code_wattHour;              //50
-extern double  code_kWattHour;             //51
+extern double code_kpPosi;
+extern double code_kpSpeed;
+extern double code_kiSpeed;
+extern double code_kpIdq;
+extern double code_kiIdq;
+extern double code_encoderPulse;
 
 extern double codeScopeLoopCount;
 

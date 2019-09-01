@@ -1,6 +1,17 @@
 #ifndef		__FUNCTION_MODULE_DEFINITION_
 #define		__FUNCTION_MODULE_DEFINITION_
 
+// eQep.c
+void Init_EQep(void);
+interrupt void eqep1_isr(void);
+
+// pmsmCtrl.c
+extern void servoCtrlInit(void);
+extern int servoParaVerification(void);
+extern void pos_ref_gen(void);                  // Speed Reference generation
+extern void servoSpeedCtrl();
+extern int servoSpeedLoop( void );
+
 // analog.c
 extern void ADC_SOC_CNF( );
 extern void analog_input_proc( double * analog_referenc);

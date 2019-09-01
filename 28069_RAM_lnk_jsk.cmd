@@ -60,11 +60,7 @@ PAGE 1 :
    BOOT_RSVD   : origin = 0x000002, length = 0x00004E     /* Part of M0, BOOT rom will use this for stack */
    RAMM1       : origin = 0x000400, length = 0x000400     /* on-chip RAM block M1 */
    RAML4       : origin = 0x00A000, length = 0x002000     /* on-chip RAM block L4 */
-   RAML5_L7       : origin = 0x00C000, length = 0x006000     /* on-chip RAM block L4 */
-/*   RAML5       : origin = 0x00C000, length = 0x002000     /* on-chip RAM block L5 */
-/*   RAML6       : origin = 0x00E000, length = 0x002000     /* on-chip RAM block L6 */
-/*   RAML7       : origin = 0x010000, length = 0x002000     /* on-chip RAM block L7 */
-   RAML8       : origin = 0x012000, length = 0x002000     /* on-chip RAM block L8 */
+   RAML5_L8    : origin = 0x00C000, length = 0x008000     /* on-chip RAM block L4 */
    USB_RAM     : origin = 0x040000, length = 0x000800     /* USB RAM		  */
 }
 
@@ -77,7 +73,7 @@ SECTIONS
    codestart        : > BEGIN,     PAGE = 0
    ramfuncs         : > RAMM0,     PAGE = 0
 /*   .text            : > RAML0_L3,  PAGE = 0   */
-   .text            : > RAML5_L7,  PAGE = 1
+   .text            : > RAML5_L8,  PAGE = 1
    .cinit           : > RAMM0,     PAGE = 0
    .pinit           : > RAMM0,     PAGE = 0
    .switch          : > RAML0_L3,  PAGE = 0
@@ -91,46 +87,7 @@ SECTIONS
 
    IQmath           : > RAML0_L3,  PAGE = 0
    IQmathTables     : > IQTABLES,  PAGE = 0, TYPE = NOLOAD
-   
-   /* Allocate FPU math areas: */
    FPUmathTables    : > FPUTABLES, PAGE = 0, TYPE = NOLOAD
- /*
-   DMARAML5	       : > RAML5,      PAGE = 1
-   DMARAML6	       : > RAML6,      PAGE = 1
-   DMARAML7	       : > RAML7,      PAGE = 1
-   DMARAML8	       : > RAML8,      PAGE = 1   
-*/
-  /* Uncomment the section below if calling the IQNexp() or IQexp()
-      functions from the IQMath.lib library in order to utilize the
-      relevant IQ Math table in Boot ROM (This saves space and Boot ROM
-      is 1 wait-state). If this section is not uncommented, IQmathTables2
-      will be loaded into other memory (SARAM, Flash, etc.) and will take
-      up space, but 0 wait-state is possible.
-   */
-   /*
-   IQmathTables2    : > IQTABLES2, PAGE = 0, TYPE = NOLOAD
-   {
-
-              IQmath.lib<IQNexpTable.obj> (IQmathTablesRam)
-
-   }
-   */
-   /* Uncomment the section below if calling the IQNasin() or IQasin()
-      functions from the IQMath.lib library in order to utilize the
-      relevant IQ Math table in Boot ROM (This saves space and Boot ROM
-      is 1 wait-state). If this section is not uncommented, IQmathTables2
-      will be loaded into other memory (SARAM, Flash, etc.) and will take
-      up space, but 0 wait-state is possible.
-   */
-   /*
-   IQmathTables3    : > IQTABLES3, PAGE = 0, TYPE = NOLOAD
-   {
-
-              IQmath.lib<IQNasinTable.obj> (IQmathTablesRam)
-
-   }
-   */
-
 }
 
 /*

@@ -45,7 +45,10 @@ int vf_loop_control(double cmd_ref)
 		    } else if( gfRunTime < 0.2 ){
 				Freq_ref=0.0;	rpm_ref=0.0; reference_out = 0.0;
 			} else{
-				strncpy(MonitorMsg,"RUN",20); gMachineState = STATE_RUN; reference_out = MIN_REF;
+				strncpy(MonitorMsg,"RUN",20);
+				gMachineState = STATE_RUN;
+				reference_out = code_start_ref;
+				reference_in = code_start_ref;
 			}
 			break;
 		case STATE_RUN:
@@ -67,8 +70,9 @@ int vf_loop_control(double cmd_ref)
 			if( command == CMD_START ) {
 				strncpy(MonitorMsg,"RUN",20); gMachineState = STATE_RUN;
 				// reference_in = reference_out; 
-			} else if ((fabs(reference_out) <= MIN_REF )){
-                strncpy(MonitorMsg,"READY",20);	gMachineState = STATE_READY; reference_out = Freq_out = 0.0; LoopCtrl = 0;
+			} else if ((fabs(reference_out) <= code_start_ref )){
+                strncpy(MonitorMsg,"READY",20);	gMachineState = STATE_READY;
+                rpm = reference_out = Freq_out = 0.0; LoopCtrl = 0;
 			} else {
 				reference_in = 0.0;
 				ramp_proc(reference_in, &reference_out);
@@ -81,8 +85,10 @@ int vf_loop_control(double cmd_ref)
 
 void vf_simple_control()
 {
+    // codeRateRpm;
     Freq_out = codeRateHz * reference_out;
-    // rpm_Coeff = 60.0 * inv_P_pair / PI_2;
+    rpm_Coeff = 60.0 * inv_P_pair / PI_2;
+    // we = ( PI_2 * codeRateRpm / 60.0 ) * reference_out;
     we = PI_2 * Freq_out;
     rpm = rpm_Coeff * we;   //  rpm = rpm_Coeff * wr
 

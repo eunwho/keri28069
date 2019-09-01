@@ -103,14 +103,6 @@ void main( void )
     ADC_SOC_CNF();
     strncpy(MonitorMsg,"POWER_ON",20);
     gPWMTripCode = 0;		//
-/*
-    for( ; ; )
-    {
-        strncpy(gStr1,"Hello from Vector Inverter !\r\n",40);
-        load_sci_tx_mail_box(gStr1);
-        delay_msecs(1000);
-    }
-*/
 
     if( load_code2ram() != 0 ) tripProc();
 
@@ -173,7 +165,7 @@ void main( void )
             {
             case 0: trip_code = vf_loop_control(ref_in0)        ; break;
             case 1: trip_code = vf_loop_control(ref_in0)        ; break;        //
-            case 6: trip_code = windPowerLoop(ref_in0)          ; break;    // wind power generator inverter
+            case 7: trip_code = servoSpeedLoop( )               ; break;
             }
             if( trip_code !=0 ) tripProc();
         }

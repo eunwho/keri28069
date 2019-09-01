@@ -102,20 +102,23 @@ void analog_cmd_proc(double * ana_ref)
 void get_command( int * command, double * ref )
 {
 	int digital_cmd,sci_cmd;
-	double digital_reference,sci_ref;
+	double digital_ref,sci_ref;
 
-	digital_input_proc( & digital_cmd, & digital_reference);
 	serial_com_proc( & sci_cmd, & sci_ref );
-	analog_cmd_proc( & analog_ref);
+	//  analog_cmd_proc( & analog_ref);
+	digital_input_proc(&digital_cmd, &digital_ref);
 
 	* command = digital_cmd;
-/*
-    if( digital_cmd == CMD_START ){
-        //if( analog_ref < 0.01 )   * command = CMD_STOP;
-        //else                   * ref = analog_ref;
-    }
-*/
-    if( sci_cmd != CMD_NULL ) * command = sci_cmd;
+	* ref = code_start_ref;
+
+	if( digital_cmd == CMD_START){
+	    * command = sci_cmd;
+	    * ref = sci_ref;
+	} else {
+	    * command = CMD_STOP;
+	    * ref = 0.0;
+	}
+	Nop();
 }
 
 //---------------------------------

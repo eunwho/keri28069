@@ -29,17 +29,17 @@ int get_code_information(int address,int cmd , CODE_INFO *  codes)
         set_code_default(0,9,0,codeMotorCtrlMode,0,codes);
         break;
 
-    case CODE_speed1:
-		strncpy(codes->disp, "speed1 (p.u)",20);
-		if( cmd == CMD_WRITE_RAM ) codeSpeed1 = codes->code_value;
-		set_code_default(0.0,0.9,0.25,codeSpeed1,0,codes);
-		break;
+    case CODE_start_ref:
+        strncpy(codes->disp, "start ref (p.u)",20);
+        if( cmd == CMD_WRITE_RAM ) code_start_ref = codes->code_value;
+        set_code_default(0.0, 1.0, 0.05, code_start_ref,0,codes);
+        break;
 
-	case CODE_speed2:		
-		strncpy(codes->disp, "speed2 (p.u)",20);
-		if( cmd == CMD_WRITE_RAM ) codeSpeed2 = codes->code_value;
-		set_code_default(0.0,1.2,0.25,codeSpeed2,0,codes);
-		break;
+    case CODE_speed1:
+        strncpy(codes->disp, "speed1 (p.u)",20);
+        if( cmd == CMD_WRITE_RAM ) codeSpeed1 = codes->code_value;
+        set_code_default(0.0,0.9,0.25,codeSpeed1,0,codes);
+        break;
 
     case CODE_set_vdc:
         strncpy(codes->disp, "set Vdc 300.0",20);
@@ -65,46 +65,16 @@ int get_code_information(int address,int cmd , CODE_INFO *  codes)
         set_code_default(100,2.0e+6,400,codeRatePower,0,codes);
         break;
 
-    case CODE_rate_current:
-        strncpy(codes->disp, "Rate Current(A)",20);
-        if( cmd == CMD_WRITE_RAM ) codeRateCurrent = codes->code_value;
-        set_code_default(1.0,2000.0,2.3,codeRateCurrent,0,codes);
-        break;
-
     case CODE_rate_rpm:
         strncpy(codes->disp, "Rate RPM",20);
         if( cmd == CMD_WRITE_RAM ) codeRateRpm = codes->code_value;
         set_code_default(500,8000.0,1690.0,codeRateRpm,0,codes);
         break;
 
-    case CODE_rate_effiency:
-        strncpy(codes->disp, "Motor Effiency",20);
-        if( cmd == CMD_WRITE_RAM ) codeRateEffiency = codes->code_value;
-        set_code_default(0.2,0.99,0.65,codeRateEffiency,0,codes);
-        break;
-
-    case CODE_rate_hz:
-        strncpy(codes->disp, "Rate hz",20);
-        if( cmd == CMD_WRITE_RAM ) codeRateHz = codes->code_value;
-        set_code_default(30.0,120.0,60.0,codeRateHz,0,codes);
-        break;
-
     case CODE_rate_volt:
         strncpy(codes->disp, "Rate Volt (Vrms)",20);
         if( cmd == CMD_WRITE_RAM ) codeRateVolt = codes->code_value;
         set_code_default(100.0,500.0,220.0,codeRateVolt,0,codes);
-        break;
-
-    case CODE_motor_pole:
-        strncpy(codes->disp, "Motor Pole ",20);
-        if( cmd == CMD_WRITE_RAM ) codeMotorPole = codes->code_value;
-        set_code_default(2,20,4,codeMotorPole,0,codes);
-        break;
-
-    case CODE_presSensRef:
-        strncpy(codes->disp, "pres sens low ref",20);
-        if( cmd == CMD_WRITE_RAM ) codePresSensRef = codes->code_value;
-        set_code_default(0.2,0.9,0.5,codePresSensRef,0,codes);
         break;
 
     case CODE_IaOffset:
@@ -215,16 +185,41 @@ int get_code_information(int address,int cmd , CODE_INFO *  codes)
         set_code_default(0.0,50.0,0.0, VF_Rs ,0,codes);
         break;
 
-    case CODE_wattHour:
-        strncpy(codes->disp, "save wattHour",20);
-        if( cmd == CMD_WRITE_RAM ) code_wattHour = codes->code_value;
-        set_code_default(0.0, 999, 0.0,code_wattHour,0,codes);
+//---
+    case CODE_kpPosi:
+        strncpy(codes->disp, "code_kpPosi",20);
+        if( cmd == CMD_WRITE_RAM ) code_kpPosi = codes->code_value;
+        set_code_default(0.1, 50.0, 3.5, code_kpPosi ,0,codes);
         break;
 
-    case CODE_kWattHour:
-        strncpy(codes->disp, "save kWattHour",20);
-        if( cmd == CMD_WRITE_RAM ) code_kWattHour = codes->code_value;
-        set_code_default(0.0, 999, 0.0,code_kWattHour,0,codes);
+    case CODE_kpSpeed:
+        strncpy(codes->disp, "code_kpSpeed",20);
+        if( cmd == CMD_WRITE_RAM ) code_kpSpeed = codes->code_value;
+        set_code_default(50.0,1000.0, 200.0, code_kpSpeed ,0,codes);
+        break;
+
+    case CODE_kiSpeed:
+        strncpy(codes->disp, "code_kiSpeed",20);
+        if( cmd == CMD_WRITE_RAM ) code_kiSpeed = codes->code_value;
+        set_code_default(100.0, 5000.0, 2600.0, code_kiSpeed ,0,codes);
+        break;
+
+    case CODE_kpIdq:
+        strncpy(codes->disp, "code_kpIdq",20);
+        if( cmd == CMD_WRITE_RAM ) code_kpIdq = codes->code_value;
+        set_code_default(0.1, 20.0, 4.5, code_kpIdq ,0,codes);
+        break;
+
+    case CODE_kiIdq:
+        strncpy(codes->disp, "code_kiIdq",20);
+        if( cmd == CMD_WRITE_RAM ) code_kiIdq = codes->code_value;
+        set_code_default(10.0,1500.0, 150.0, code_kiIdq ,0,codes);
+        break;
+
+    case CODE_encoderPulse:
+        strncpy(codes->disp, "code_encoderPulse",20);
+        if( cmd == CMD_WRITE_RAM ) code_encoderPulse = codes->code_value;
+        set_code_default(50.0, 8000.0, 1024.0, code_encoderPulse ,0,codes);
         break;
 
 //--- 100 scope channel setting

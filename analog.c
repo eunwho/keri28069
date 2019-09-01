@@ -86,17 +86,17 @@ interrupt void adcIsr(void)
     lpf2nd( lpfIbIn, lpfIbOut, lpfIrmsK);
     Is_abc[bs] = lpfIbOut[0];
 
-//    Is_abc[cs]= -(Is_abc[as]+Is_abc[bs]);
-//    Is_dq[ds] = Is_abc[as];
-//    Is_dq[qs] = 0.577350 * Is_abc[as] + 1.15470 * Is_abc[bs];
-//    Is_mag = sqrt( Is_abc[as] *Is_abc[as] + Is_abc[bs] *Is_abc[bs]);           // 전류크기
+    Is_abc[cs]= -(Is_abc[as]+Is_abc[bs]);
 
-    Is_mag_rms = Is_abc[as];
+    Is_dq[ds] = Is_abc[as];
+    Is_dq[qs] = 0.577350 * Is_abc[as] + 1.15470 * Is_abc[bs];
+    Is_mag = sqrt( Is_abc[as] *Is_abc[as] + Is_abc[bs] *Is_abc[bs]);           // 전류크기
+
+    Is_mag_rms = Is_mag;
 
     LPF1(Ts,1.0,fabs(Is_abc[as]),&LPF_Ia);                          // debug
 
-    P_total = Vdc * Is_abc[as];
-    windEnergy += P_total * Ts;
+    // P_total = ROOT3 * Vdc * Is_abc[as];
 
     fTemp = adc_result[4] * 0.000244 ;
     LPF1(Ts,0.01, fTemp, &exSensRef);            // external sensor
