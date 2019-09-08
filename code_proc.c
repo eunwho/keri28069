@@ -232,7 +232,7 @@ int get_code_information(int address,int cmd , CODE_INFO *  codes)
     case CODE_scopePointCh1:
         strncpy(codes->disp, "scope Point Ch1",20);
         if( cmd == CMD_WRITE_RAM ) codeScopePointCh1 = codes->code_value;
-        set_code_default(0.0,30.0,0.0,codeScopePointCh1,0,codes);
+        set_code_default(0.0,50.0,0.0,codeScopePointCh1,0,codes);
         break;
     case CODE_scopeScaleCh1:
         strncpy(codes->disp, "scope Scale Ch1",20);
@@ -248,7 +248,7 @@ int get_code_information(int address,int cmd , CODE_INFO *  codes)
     case CODE_scopePointCh2:
         strncpy(codes->disp, "scope Point Ch2",20);
         if( cmd == CMD_WRITE_RAM ) codeScopePointCh2 = codes->code_value;
-        set_code_default(0.0,30.0,1.0,codeScopePointCh2,0,codes);
+        set_code_default(0.0,50.0,1.0,codeScopePointCh2,0,codes);
         break;
     case CODE_scopeScaleCh2:
         strncpy(codes->disp, "scope Scale Ch2",20);
@@ -264,7 +264,7 @@ int get_code_information(int address,int cmd , CODE_INFO *  codes)
     case CODE_scopePointCh3:
         strncpy(codes->disp, "scope Point Ch3",20);
         if( cmd == CMD_WRITE_RAM ) codeScopePointCh3 = codes->code_value;
-        set_code_default(0.0,30.0,2.0,codeScopePointCh3,0,codes);
+        set_code_default(0.0,50.0,2.0,codeScopePointCh3,0,codes);
         break;
     case CODE_scopeScaleCh3:
         strncpy(codes->disp, "scope Scale Ch3",20);
@@ -280,7 +280,7 @@ int get_code_information(int address,int cmd , CODE_INFO *  codes)
     case CODE_scopePointCh4:
         strncpy(codes->disp, "scope Point Ch4",20);
         if( cmd == CMD_WRITE_RAM ) codeScopePointCh4 = codes->code_value;
-        set_code_default(0.0,30.0,3.0,codeScopePointCh4,0,codes);
+        set_code_default(0.0,50.0,3.0,codeScopePointCh4,0,codes);
         break;
     case CODE_scopeScaleCh4:
         strncpy(codes->disp, "scope Scale Ch4",20);

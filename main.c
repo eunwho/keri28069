@@ -75,6 +75,8 @@ void main( void )
 		PieVectTable.ADCINT1	= &adcIsr;
 		PieVectTable.SCIRXINTA = &sciaRxFifoIsr;
 		PieVectTable.SCITXINTA = &sciaTxFifoIsr;
+	    PieVectTable.EQEP1_INT = &eqep1_isr;
+
   	EDIS;    // This is needed to disable write to EALLOW protected registers
 
   	InitAdc();
@@ -88,12 +90,14 @@ void main( void )
 	PieCtrlRegs.PIEIER1.bit.INTx7 = 1;	// Timer0 irq
     PieCtrlRegs.PIEIER1.bit.INTx1 = 1; // Enable INT 1.1 in the PIE ADCINT1
     PieCtrlRegs.PIEIER3.bit.INTx1 = 1;   //
+    PieCtrlRegs.PIEIER5.bit.INTx1 = 1;  // Enable EQEQ1 INTn in the PIE:
     PieCtrlRegs.PIECTRL.bit.ENPIE = 1;   // Enable the PIE block
 
     IER |= M_INT1;		// Enable CPU INT1 which is connected to CPU-Timer 0:
+    IER |= M_INT3;
+    IER |= M_INT5;
 	IER |= M_INT8;		// scic irq 
 	IER |= M_INT9;		//CAN, SCI_A
-    IER |= M_INT3;
 
     EINT;   // Enable Global interrupt INTM
 	ERTM;	// Enable Global realtime interrupt DBGM
@@ -143,6 +147,7 @@ void main( void )
 	strncpy(gStr1,"READY \r\n",20);
 	load_sci_tx_mail_box(gStr1); delay_msecs(20);
 
+	Init_EQep( );
 
 	GATE_DRIVER_ENABLE;
 
