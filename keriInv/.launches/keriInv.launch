@@ -4,7 +4,7 @@
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_PROGRAM./home/eunwho/keriInv/keriInv/targetConfigs/TMS320F28069.ccxml.Texas Instruments XDS100v2 USB Debug Probe/C28xx" value="${build_artifact:keriInv}"/>
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_PROJECT./home/eunwho/keriInv/keriInv/targetConfigs/TMS320F28069.ccxml.Texas Instruments XDS100v2 USB Debug Probe/C28xx" value="keriInv"/>
 <stringAttribute key="com.ti.ccstudio.debug.debugModel.ATTR_TARGET_CONFIG" value="${target_config_active_default:keriInv}"/>
-<stringAttribute key="com.ti.ccstudio.debug.debugModel.MRU_PROGRAM./home/eunwho/keriInv/keriInv/targetConfigs/TMS320F28069.ccxml.Texas Instruments XDS100v2 USB Debug Probe/C28xx" value="/home/eunwho/keriInv/keriInv/Debug/servo.out"/>
+<stringAttribute key="com.ti.ccstudio.debug.debugModel.MRU_PROGRAM./home/eunwho/keriInv/keriInv/targetConfigs/TMS320F28069.ccxml.Texas Instruments XDS100v2 USB Debug Probe/C28xx" value="/home/eunwho/keriInv/keriInv/Debug/inv_069.out"/>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
 <listEntry value="/keriInv"/>
 </listAttribute>

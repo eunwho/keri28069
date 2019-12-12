@@ -1,164 +1,160 @@
-// Company 	: Eunwho Power Electonics  
 // FILE		: switching_irq.c
-// Project 	: back2back inverter
-// PCB		: regen_dsp_110513 & regen_sen_110513
-// rev data : 2013.0111  cheoung soon gil
+// Company  : Eunwho Power Electonics
+// date		: 2018.0608	by soonkil jung
 
 #include        <header.h>
 #include        <extern.h>
 
-#define MAX_PHASE   0.5
-double phase_ratio=0.0;
+
+#define testAngle       0.0052359867            // 3.141592 / 600
+
+void MotorControlProc( )
+{
+    int temp;
+
+    temp = (int)(floor(codeMotorCtrlMode+0.5));
+    switch( temp )
+    {
+    case 0: vf_simple_control(); break;
+    case 1: slip_comp_scalar_ctrl();break;
+    case 3: SL_SpeedCntl_SFRF( );   break;
+    case 4: SL_TorqueCntl_SFRF( );  break;
+    case 5:
+        switch(AutoTuningFlag)
+        {
+        case 0: Vs_dq_ref[ds] = 0.0; Vs_dq_ref[qs] = 0.0; break;
+        case ID_AT_LEQ_REQ: estim_ReqLeq_pwm ( );   break;
+        case ID_AT_RS:  estim_Rs_pwm( );            break;
+        case ID_AT_LS:  estim_Ls_pwm( );            break;
+        default:    Vs_dq_ref[ds] = 0.0; Vs_dq_ref[qs] = 0.0; break;
+        }
+        break;
+    }
+}
 
 interrupt void MainPWM(void)
 {
-//	unsigned int temp;
+    static int sampleScopeCount = 0;
+    static int pwmOn = 0;
+    static int startCount = 0;
 
-	static int invt_PWM_Port_Set_flag = 0;
+    PERIOD_PWM_IRQ_SET;     // channel 1
+ //  IGBT Trip check and EMG_INPUT
 
-//	MAIN_CHARGE_ON;
+/*
+    VoltageEstimation();
+    MotorControlProc( );
+    SpaceVectorModulation(Vs_dq_ref);
 
-	if ( EX_TRIP_INPUT == 0 ){
-	    gPWMTripCode = TRIP_EXT_A;
-		trip_recording( TRIP_EXT_A, TRIP_EXT_A ,"TRIP EXT A");
-        epwmFullBridgeDisable(); // converter PWM gate OFF
-        goto _PWM_OUT_END;
-	}
+    goto _PWM_TRIP;
+*/
 
-	if(gPWMTripCode == 0){ 
-		gPWMTripCode = tripCheck();		// debug_soonkil
-		if(gPWMTripCode != 0 ){
-			epwmFullBridgeDisable(); // converter PWM gate OFF
-			goto _PWM_OUT_END;
-		}
-	} else {
-		epwmFullBridgeDisable(); // converter PWM gate OFF
-		goto _PWM_OUT_END;
-	}
-
-	switch(gMachineState)
-	{
-		case STATE_POWER_ON:
-		case STATE_TRIP:					
-			EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT;
-			EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT;
-			invt_PWM_Port_Set_flag = 0;
-			EPwm2Regs.TBPHS.half.TBPHS = 0;
-			epwmFullBridgeDisable(); //inverter  PWM gate OFF
-			break;
-
-		case STATE_READY:
-            epwmFullBridgeDisable(); //inverter  PWM gate OFF
-			EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT;
-			EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT;
-			invt_PWM_Port_Set_flag = 0;
-            epwmFullBridgeDisable(); //inverter  PWM gate OFF
-			EPwm2Regs.TBPHS.half.TBPHS = 0;
-			break;
-
-		case STATE_INIT_RUN:
-			EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT>>1;
-			EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT>>1;
-
-			if( invt_PWM_Port_Set_flag == 0 ){
-				epwmFullBridgeEnable();
-				EPwm2Regs.TBPHS.half.TBPHS = (Uint16)(MAX_PWM_CNT * codePwmPhaseInit * 0.5)  ;
-				invt_PWM_Port_Set_flag = 1;
-			}
-			else{
-				EPwm2Regs.TBPHS.half.TBPHS = (Uint16)( MAX_PWM_CNT * codePwmPhaseInit * 0.5 );
-			}
-			break;
-
-		case STATE_RUN:
-			EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT>>1;
-			EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT>>1;
-
-			if( ctrlMode == 3 ){
-				ctrlError =  reference_out -  Iout * 0.001; // 1000 Amp Max�� �����
-				// ctrlIntegral = preIntegral + ( Ts * code_Ki * ctrlError);
-				ctrlIntegral = preIntegral + ( Ts * 50.0 * ctrlError);
-//            ctrlIntegral = (ctrlIntegral > code_integLimit) ? code_integLimit : ( ctrlIntegral < -code_integLimit) ? -code_integLimit : ctrlIntegral;
-//             ctrlIntegral = (ctrlIntegral > 1.0 ) ? 1.0 : ( ctrlIntegral < -1.0) ? -1.0 : ctrlIntegral;
-	          ctrlIntegral = (ctrlIntegral > 1.0 ) ? 1.0 : ( ctrlIntegral < -1.0) ? -1.0 : ctrlIntegral;
-				phaseShiftRatio = (ctrlError * 0.2) + ctrlIntegral;
-				// Vout = VoutScale * reference_out  + VoutOffset ;  
-				if     ( phaseShiftRatio < 0.0 ) 	phaseShiftRatio = 0.0;
-				else if( phaseShiftRatio > MAX_PHASE ) 	phaseShiftRatio = MAX_PHASE;
-				preIntegral = ctrlIntegral;
-				EPwm2Regs.TBPHS.half.TBPHS = (Uint16)( MAX_PWM_CNT * phaseShiftRatio * 0.5 );
-			} else if( code_ctrl_mode == 8 ){ // mode8LoopCtrl mode
-				EPwm2Regs.TBPHS.half.TBPHS = (Uint16)( MAX_PWM_CNT * reference_out * 0.5 );
-			} else if( code_ctrl_mode == 2 ){ // mode2LoopCtrl mode
-				EPwm2Regs.TBPHS.half.TBPHS =(Uint16)( MAX_PWM_CNT * code_testPwmPhase * 0.5 );
-			} else if( code_ctrl_mode == 9 ){
-                if( codeSetPulseNumber <  1.0 ){
-                    EPwm2Regs.TBPHS.half.TBPHS = (Uint16)( MAX_PWM_CNT * code_testPwmPhase * 0.5 );
-                } else if ( test_pulse_count < codeSetPulseNumber ){
-                    EPwm2Regs.TBPHS.half.TBPHS = (Uint16)( MAX_PWM_CNT * code_testPwmPhase * 0.5 );
-                    test_pulse_count++;
-               } else {
-                    EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT >> 1;
-                    EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT >> 1;
-                    gMachineState = STATE_READY;
-                    epwmFullBridgeDisable();
-               }
-            }
-			else{
-				EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT >> 1;
-				EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT >> 1;
-				EPwm2Regs.TBPHS.half.TBPHS = 0;
-			}
-			break;
-
-		case STATE_GO_STOP:
-			if ( reference_out < 0.10){
-				reference_out = 0.0;
-				EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT >> 1;
-				EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT >> 1 ;
-				EPwm2Regs.TBPHS.half.TBPHS = 0 ;
-				invt_PWM_Port_Set_flag = 0;
-				epwmFullBridgeDisable();
-				gMachineState = STATE_READY;
-			}
-			else{ // mode2LoopCtrl mode
-				EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT>>1;
-				EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT>>1;
-				EPwm2Regs.TBPHS.half.TBPHS = (Uint16)( MAX_PWM_CNT * reference_out * 0.5 );
-			}
-			break;
-
- 		default: 
-			EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT;
-			EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT;
-			EPwm2Regs.TBPHS.half.TBPHS = 0;
-			invt_PWM_Port_Set_flag = 0;
-			epwmFullBridgeDisable(); // converter PWM gate OFF
-			break;
-	}
-
-#if USE_GRAPH
-	if(graphCount<( GRAPH_NUMBER - 1)){
-        y1_data[graphCount] = adc_result[2];
-        y2_data[graphCount] = adc_result[3];
-        // y1_data[graphCount] = adcIout;
-        // y2_data[graphCount] = adcVdc;
-        graphCount ++;
+    if(gPWMTripCode == 0 ){
+        if( FAULT_GATE_DRIVER == 1){
+            trip_recording( ERR_PWM, 0.0,"Trip GateDriver");
+            gPWMTripCode = ERR_PWM;
+        } else if( EMG_STOP == 1){
+            trip_recording( ERR_EXT_TRIP, 0.0,"Trip EXT");
+            gPWMTripCode = ERR_EXT_TRIP;
+        }
     }
-    else graphCount = 0;
-#endif
 
-_PWM_OUT_END:
+    if ( gMachineState != STATE_POWER_ON)  gPWMTripCode = tripCheckPWM();
 
-//--- digital out
-    digitalOutProc();
+    if(gPWMTripCode){
+        PWM_SIGNAL_OFF;
+        EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT;
+        EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT;
+        EPwm3Regs.CMPA.half.CMPA = MAX_PWM_CNT;
+        // PWM_OFF( );
+        ePwmPortOff( );
+        goto _PWM_TRIP;
+    }
 
-	EPwm1Regs.ETCLR.bit.INT = 1;	
-	PieCtrlRegs.PIEACK.all = PIEACK_GROUP3;
+    switch(gMachineState)
+    {
 
-//	MAIN_CHARGE_OFF;
-	return;
+    case STATE_TRIP:
+        ePwmPortOff( );
+        startCount = 0;
+        pwmOn =0;
+        break;
+    case STATE_READY:
+    case STATE_POWER_ON:
+        startCount =0;
+        pwmOn = 0;
+       PWM_SIGNAL_OFF;
+       EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT ;
+       EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT;
+       EPwm3Regs.CMPA.half.CMPA = MAX_PWM_CNT ;
+         break;
+    case STATE_INIT_RUN:
+        if( startCount < 30){
+            PWM_SIGNAL_OFF;
+            startCount ++;
+            pwmOn = 0;
+            break;
+        } else {
+            if( pwmOn == 0  ){
+                pwmOn = 1;
+                ePwmEnable();
+                EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT>>1 ;
+                EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT>>1;
+                EPwm3Regs.CMPA.half.CMPA = MAX_PWM_CNT >>1;
+                PWM_SIGNAL_ON;
+            }
+        }
+    case STATE_RUN:
+    case STATE_GO_STOP:
+    case STATE_WAIT_BREAK_OFF:
+        PWM_SIGNAL_ON;
+        if(gPWMTripCode !=0){
+            gTripSaveFlag = 1; // for Trip History Save to EEPROM in Out irq
+            EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT>>1;
+            EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT>>1;
+            EPwm3Regs.CMPA.half.CMPA = MAX_PWM_CNT>>1;
+        } else{
+            VoltageEstimation();
+            MotorControlProc( );
+            SpaceVectorModulation(Vs_dq_ref);
+
+            EPwm1Regs.CMPA.half.CMPA = DutyCount[u];
+            EPwm2Regs.CMPA.half.CMPA = DutyCount[v];
+            EPwm3Regs.CMPA.half.CMPA = DutyCount[w];
+        }
+        break;
+    default:
+        PWM_SIGNAL_OFF;
+        EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT;
+        EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT;
+        EPwm3Regs.CMPA.half.CMPA = MAX_PWM_CNT;
+        break;
+    }
+
+_PWM_TRIP:
+
+    if( sendAdcDataFlag == 0 )
+    {
+        if( sampleScopeCount < scopeLoopCount )
+        {
+            sampleScopeCount ++;
+        }
+        else
+        {
+            sampleScopeCount = 0;
+            scopeData[0][scopeCount].INTEGER = (int)( ( * scopePoint[scopePointCh1]-codeScopeOffsetCh1) * invCodeScopeScaleCh1 * 204.8 + 2048);
+            scopeData[1][scopeCount].INTEGER = (int)( ( * scopePoint[scopePointCh2]-codeScopeOffsetCh2) * invCodeScopeScaleCh2 * 204.8 + 2048);
+            scopeData[2][scopeCount].INTEGER = (int)( ( * scopePoint[scopePointCh3]-codeScopeOffsetCh3) * invCodeScopeScaleCh3 * 204.8 + 2048);
+            scopeData[3][scopeCount].INTEGER = (int)( ( * scopePoint[scopePointCh4]-codeScopeOffsetCh4) * invCodeScopeScaleCh4 * 204.8 + 2048);
+            if ( scopeCount < ( SCOPE_MAX_NUMBER-1 )) scopeCount ++;
+            else scopeCount = 0 ;
+        }
+    }
+
+    EPwm1Regs.ETCLR.bit.INT = 1;
+    PieCtrlRegs.PIEACK.all = PIEACK_GROUP3;
+    PERIOD_PWM_IRQ_CLEAR;     // channel 1
 }
-// end of switching_irq.c 
 
+ // end of switching_irq.c 
 

@@ -3,32 +3,56 @@
 
 #define   RPM2WRM            (2.*PI/60.) 
 #define   WRM2RPM            (60./(2.*PI)) 
-#define SWITCHING_FREQ      10000
+#define SWITCHING_FREQ      8000
 #define ADC_CONST         0.00048828125   // 1/2048
 //#define DUAL_PWM_INTERRUPT      (0)          //   PWM Top & Bottom Interrupt
 
 //*******************************************
 // Program Control 
 //*******************************************
-#define FLASH_RUN               1
-#define MAIN_POWER_OFF			0			// Vdc == 300.0
-#define CONVERTER_ON			0
-#define USE_UART_A              1
-#define TEST_ADC_CENTER			1
 
-#define USE_GRAPH               0
-#define GRAPH_NUMBER			300
+#define GATE_ACTIVE_LOW         1       // IRS2336D
+#define TEST_ADC_CENTER			1
+#define SCOPE_MAX_NUMBER        400
+
+//*******************************************
 
 #define TYPE_INTEGER			0
 #define TYPE_FLOAT				1
 
 #define EEPROM_RW_DELAY			10	
-
-#define DEAD_TIME_COUNT			137			// 90Mhz
+//#define DEAD_TIME_COUNT         137         //  3usec 90Mhz
+#define DEAD_TIME_COUNT         183         // 90Mhz
 
 #define TRIP_BACKUP_ADDR		3000		
 #define EPROM_ADDR_TRIP_POINT	4010
 #define EPROM_ADDR_CHECKSUM		4020
+
+// back2back 2011-1013
+
+typedef struct {
+	float out;
+	float feed;
+}LPF_VARS;
+
+typedef struct {
+	float out;
+	float out1;
+	float out2;
+	float in1;
+	float in2;
+}DF_VARS;
+
+
+//--- end
+
+typedef struct
+{
+	signed   byte0	:8;	/* LSB */
+	unsigned byte1	:8;
+	unsigned byte2	:8;	/* sign + MSB */
+	signed   byte3	:8;	/* exponent */
+} ROM_DATA;
 
 typedef union
 {
@@ -46,6 +70,52 @@ typedef union
 		unsigned byte3	:8;	/* exponent */
 	} byte;
 } UNION32;
+
+typedef union
+{
+    int   INTEGER;          /* float word : 32bit */
+    struct
+    {
+        unsigned LSB  :8; /* LSB */
+        unsigned MSB  :8;
+    } byte;
+} UNION16;
+
+//#define INV_RPM_SCALE   0.005     // 1.0 / 200.0 ;
+#define INV_RPM_SCALE   0.001     // 1.0 / 1000.0 ;
+#define INV_I_SCALE     0.02         //  = 1.0 / 100;
+#define INV_P_SCALE     0.001      // 1/1000
+#define INV_REF_SCALE   2      //
+#define INV_V_SCALE     0.01      // 1/100
+
+#define SCIA_RX_BUF_MAX     30
+#define SCIA_TX_BUF_MAX     2000
+
+#define SCIB_RX_BUF_MAX     30
+#define SCIB_TX_BUF_MAX     2000
+
+//--- button_proc.c
+#define BUTTON_ROOT				0
+#define	BUTTON_SELECT_FUNCTION	1
+#define	BUTTON_CHANGE_DATA		2
+#define BUTTON_TRIP				3
+
+#define XINT_INPUT			0x0050
+#define DO_CP				0x0070
+
+#define BTN_NULL			0
+#define BTN_SAVE			1
+#define BTN_RUN				2
+#define BTN_STOP			3
+#define BTN_SET				4
+#define BTN_ESC				5
+#define BTN_RIGHT			6
+#define BTN_UP				7
+#define BTN_DOWN			8
+#define BTN_RESET			9
+
+// - gMachineState
+#define	SWITCHING_TIME		4e-4
 
 #define	STATE_POWER_ON			0
 #define	STATE_READY				1
@@ -65,10 +135,6 @@ typedef union
 #define I2C_EEPROM_LOW_ADDR   	0x30
 
 //-- uart 
-
-#define SCIA_RX_BUF_MAX     30
-#define SCIA_TX_BUF_MAX     80
-
 #define CMD_NULL			  	0
 #define CMD_START				0x0041	//'A'
 #define CMD_STOP				0x0042	//'B'
@@ -85,6 +151,33 @@ typedef union
 #define CMD_MONITOR				0x004D	//'M'
 #define CMD_SAVE				0x004D	//'Q'
 
+//#define SCIB_RX_BUF_MAX			1
+#define CMD_BTN_SAVE			0x0051	//'Q'
+
+#define CTRL_SCALAR				0
+#define CTRL_VECTOR				3
+#define CTRL_TORQ				4
+#define CTRL_PARA_ESTIM			5
+#define CTRL_TEST				6
+#define CTRL_HYD_UNIT			7
+
+// auto tuning 
+#define ID_AT_LEQ_REQ			1
+#define ID_AT_RS				2
+#define ID_AT_LS				3
+#define ID_AT_JM				4
+
 // TripProc.c
+
+#define ADDR_TRIP_VIEW_CODE		'1'
+
+#define ADDR_TRIP_VIEW_MSG		'2'
+#define ADDR_TRIP_VIEW_TIME		'3'
+#define ADDR_TRIP_VIEW_DATA		'4'
+
+#define ADDR_TRIP_VIEW_I		'5'
+#define ADDR_TRIP_VIEW_VDC		'6'
+#define ADDR_TRIP_VIEW_HZ		'7'
+
 #endif
 

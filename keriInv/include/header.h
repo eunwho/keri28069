@@ -4,16 +4,23 @@
 #include "F2806x_Device.h"     // DSP2833x Headerfile Include File
 #include "F2806x_Examples.h"   // DSP2833x Examples Include File
 
-#include "aaa_driver.h"         // 2011.10.12
+#include "aaa_driver.h"		    // 2011.10.12
 #include "code_proc.h"          // 2009.08.15
 #include "const.h"
-
+#include "digital_inout.h"
+#include "eQep.h"                   // 2019.08.20
 #include "fault.h"
+
+#include "singlePhaseSci.h"		// 2017.08.11   // f28069 inverter for single phase ACIM
+
+//#include "IQmathLib.h"
+
 #include "module.h"
 
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "digital_inout.h"
+
+
 #endif

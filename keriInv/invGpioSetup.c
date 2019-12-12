@@ -227,10 +227,10 @@ void InitGpio(void)
     GpioCtrlRegs.GPBDIR.bit.GPIO34   = 0; // input
 
 //--- gpio39~58 open output reserved
-//    GpioCtrlRegs.GPBPUD.bit.GPIO39 = 0;  // pullup
-//    GpioDataRegs.GPBCLEAR.bit.GPIO39= 1; // output clear
-//    GpioCtrlRegs.GPBMUX1.bit.GPIO39 = 0; // GPIO34 = GPIO34
-//    GpioCtrlRegs.GPBDIR.bit.GPIO39 = 1;  // GPIO34 = input
+    GpioCtrlRegs.GPBPUD.bit.GPIO39 = 0;  // pullup
+    GpioDataRegs.GPBCLEAR.bit.GPIO39= 1; // output clear
+    GpioCtrlRegs.GPBMUX1.bit.GPIO39 = 0; // GPIO34 = GPIO34
+    GpioCtrlRegs.GPBDIR.bit.GPIO39 = 1;  // GPIO34 = input
 
 //--- 40 EX_IO_40 input
 //    GpioDataRegs.GPBCLEAR.bit.GPIO40 = 1; // output low
@@ -307,17 +307,17 @@ void InitGpio(void)
     GpioCtrlRegs.GPBMUX2.bit.GPIO56  = 0; //
     GpioCtrlRegs.GPBDIR.bit.GPIO56   = 0; // input
 
-//--- 57 EX_IO_57 input
+//--- 57 LED_RED
     GpioCtrlRegs.GPBPUD.bit.GPIO57   = 0; // pullup
-    GpioCtrlRegs.GPBQSEL2.bit.GPIO57 = 3; // Asynch input
+//    GpioCtrlRegs.GPBQSEL2.bit.GPIO57 = 3; // Asynch input
     GpioCtrlRegs.GPBMUX2.bit.GPIO57  = 0; //
-    GpioCtrlRegs.GPBDIR.bit.GPIO57   = 0; // input
+    GpioCtrlRegs.GPBDIR.bit.GPIO57   = 1; // input
 
-//--- 58 EX_IO_58 input
+//--- 58 LED_GREEN
     GpioCtrlRegs.GPBPUD.bit.GPIO58   = 0; // pullup
-    GpioCtrlRegs.GPBQSEL2.bit.GPIO58 = 3; // Asynch input
+//    GpioCtrlRegs.GPBQSEL2.bit.GPIO58 = 3; // Asynch input
     GpioCtrlRegs.GPBMUX2.bit.GPIO58  = 0; //
-    GpioCtrlRegs.GPBDIR.bit.GPIO58   = 0; // input
+    GpioCtrlRegs.GPBDIR.bit.GPIO58   = 1; // input
     EDIS;
 }
 
