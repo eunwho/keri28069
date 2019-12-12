@@ -15,34 +15,27 @@
 #define TRIP_OUT_OFF            (GpioDataRegs.GPACLEAR.bit.GPIO8 = 1)
 #define TRIP_OUT_ON             (GpioDataRegs.GPASET.bit.GPIO8 = 1)
 
-//
-#define PWM_SIGNAL_OFF          (GpioDataRegs.GPBCLEAR.bit.GPIO39 = 1)
-#define PWM_SIGNAL_ON           (GpioDataRegs.GPBSET.bit.GPIO39 = 1)
-
-// old version
-#define RUN_OUT_ON          Nop()       // Run out relay
-#define RUN_OUT_OFF          Nop()       // Run out relay
-#define GATE_DRIVER_SET   Nop()   //
-#define GATE_DRIVER_CLEAR   Nop()   //
-
-// v0.0
-#define EMG_STOP                             (GpioDataRegs.GPADAT.bit.GPIO10)    // IG2 J1-34 PIN
-#define RUN_INPUT                             (GpioDataRegs.GPADAT.bit.GPIO11)    // IG2 J1-34 PIN
-//#define EMG_STOP                             (GpioDataRegs.GPBDAT.bit.GPIO53)    // emg stop J1-24 PIN
-
-// 2019.12.02 inv_069
-// trip input
-
-#define RUN_STOP_CLEAR              (GpioDataRegs.GPACLEAR.bit.GPIO11   = 1)
-#define RUN_STOP_SET                (GpioDataRegs.GPASET.bit.GPIO11     = 1)
-
-#define FAULT_GATE_DRIVER           (GpioDataRegs.GPADAT.bit.GPIO9)    // active high gateDriverFault
-#define FAULT_UNDER_VOLT_DRIVER     (GpioDataRegs.GPBDAT.bit.GPIO43)    // active high under volt gate driver
-#define FAULT_NTC_TEMP              (GpioDataRegs.GPBDAT.bit.GPIO44)    // fault over temperature
-
+//--- digital out
+#define GATE_EN_HIGH            (GpioDataRegs.GPACLEAR.bit.GPIO11 = 1)
+#define GATE_EN_LOW             (GpioDataRegs.GPASET.bit.GPIO11 = 1)
 
 #define BACKUP_DISABLE              (GpioDataRegs.GPASET.bit.GPIO17= 1)
 #define BACKUP_ENABLE               (GpioDataRegs.GPACLEAR.bit.GPIO17= 1)
+
+//--- digital input
+#define START_INPUT             ( GpioDataRegs.GPADAT.bit.GPIO12 ) // INPUT1
+#define EX_TRIP_INPUT           ( GpioDataRegs.GPADAT.bit.GPIO13 ) // INPUT2
+#define EMG_STOP                EX_TRIP_INPUT
+
+//--- pwm trip input
+#define TRIP_UH                 ( GpioDataRegs.GPADAT.bit.GPIO18 )
+#define TRIP_UL                 ( GpioDataRegs.GPADAT.bit.GPIO19 )
+#define TRIP_VH                 ( GpioDataRegs.GPADAT.bit.GPIO26 )
+#define TRIP_VL                 ( GpioDataRegs.GPADAT.bit.GPIO27 )
+#define TRIP_WH                 ( GpioDataRegs.GPADAT.bit.GPIO30 )
+#define TRIP_WL                 ( GpioDataRegs.GPADAT.bit.GPIO31 )
+#define TRIP_DB                 ( GpioDataRegs.GPBDAT.bit.GPIO34 )
+
 
 // pilot led
 #define LED_GREEN_RUN_SET           Nop()

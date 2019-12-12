@@ -75,6 +75,8 @@ extern int hyd_unit_loop_proc();
 extern void hyd_unit_proc(int state, double * ref_out);
 
 // I2C_eeprom.c
+extern void I2CA_Init(void);
+
 /*
 extern int check_code_data(int address, UNION32 u32data );
 extern void write_code_2_eeprom(int address,UNION32 data);

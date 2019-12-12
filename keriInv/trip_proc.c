@@ -160,8 +160,6 @@ void tripProc()
     double dbtemp;
     char str[30]={0};
 
-    RUN_STOP_CLEAR;
-
     // PWM_OFF();
     ePwmPortOff();
     gMachineState = STATE_TRIP;
@@ -193,13 +191,13 @@ void tripProc()
     snprintf( str,13," \tDATA=%4d\n",temp);
     load_scia_tx_mail_box(str); delay_msecs(20);
 
-	while( RUN_INPUT == 0 ){
+	while( START_INPUT == 0 ){
         get_command( & cmd, & ref_in0);
 //        monitor_proc();
 	    Nop();
 	}
 	delay_msecs(100);
-	while( RUN_INPUT){
+	while( START_INPUT){
         get_command( & cmd, & ref_in0);
 //        monitor_proc();
         if(cmd == CMD_READ_ALL ){
@@ -207,7 +205,7 @@ void tripProc()
         }
         Nop();
 	}
-	while( RUN_INPUT==0){
+	while( START_INPUT==0){
         get_command( & cmd, & ref_in0);
 //        monitor_proc();
         if(cmd == CMD_READ_ALL ){

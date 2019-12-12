@@ -27,7 +27,7 @@ void input_ext_fault_a_proc()
 
 void digital_input_proc(int * cmd, double * ref )
 {
-	if( RUN_INPUT == 0 ){
+	if( START_INPUT == 0 ){
 	 	* cmd = CMD_START; //FWD LOW
 		* ref = code_start_ref;
 	}

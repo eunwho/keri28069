@@ -50,12 +50,21 @@ interrupt void MainPWM(void)
 */
 
     if(gPWMTripCode == 0 ){
-        if( FAULT_GATE_DRIVER == 1){
-            trip_recording( ERR_PWM, 0.0,"Trip GateDriver");
-            gPWMTripCode = ERR_PWM;
-        } else if( EMG_STOP == 1){
-            trip_recording( ERR_EXT_TRIP, 0.0,"Trip EXT");
-            gPWMTripCode = ERR_EXT_TRIP;
+        //--- check pwm error
+        if( TRIP_UH == 0){
+            trip_recording( ERR_IGBT_UH, 0.0,"Trip UH"); gPWMTripCode = ERR_IGBT_UH;
+        } else if( TRIP_UL == 0){
+            trip_recording( ERR_IGBT_UL, 0.0,"Trip UL"); gPWMTripCode = ERR_IGBT_UL;
+        } else if( TRIP_VH == 0){
+            trip_recording( ERR_IGBT_VH, 0.0,"Trip VH"); gPWMTripCode = ERR_IGBT_VH;
+        } else if( TRIP_VL == 0){
+            trip_recording( ERR_IGBT_VL, 0.0,"Trip VL"); gPWMTripCode = ERR_IGBT_VL;
+        } else if( TRIP_WH == 0){
+            trip_recording( ERR_IGBT_WH, 0.0,"Trip WH"); gPWMTripCode = ERR_IGBT_WH;
+        } else if( TRIP_WL == 0){
+            trip_recording( ERR_IGBT_WL, 0.0,"Trip WL"); gPWMTripCode = ERR_IGBT_WL;
+        } else if( TRIP_DB == 0){
+            trip_recording( ERR_IGBT_DB, 0.0,"Trip DB"); gPWMTripCode = ERR_IGBT_DB;
         }
     }
 
@@ -82,14 +91,12 @@ interrupt void MainPWM(void)
     case STATE_POWER_ON:
         startCount =0;
         pwmOn = 0;
-       PWM_SIGNAL_OFF;
        EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT ;
        EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT;
        EPwm3Regs.CMPA.half.CMPA = MAX_PWM_CNT ;
          break;
     case STATE_INIT_RUN:
         if( startCount < 30){
-            PWM_SIGNAL_OFF;
             startCount ++;
             pwmOn = 0;
             break;
@@ -100,13 +107,11 @@ interrupt void MainPWM(void)
                 EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT>>1 ;
                 EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT>>1;
                 EPwm3Regs.CMPA.half.CMPA = MAX_PWM_CNT >>1;
-                PWM_SIGNAL_ON;
             }
         }
     case STATE_RUN:
     case STATE_GO_STOP:
     case STATE_WAIT_BREAK_OFF:
-        PWM_SIGNAL_ON;
         if(gPWMTripCode !=0){
             gTripSaveFlag = 1; // for Trip History Save to EEPROM in Out irq
             EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT>>1;
@@ -123,7 +128,6 @@ interrupt void MainPWM(void)
         }
         break;
     default:
-        PWM_SIGNAL_OFF;
         EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT;
         EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT;
         EPwm3Regs.CMPA.half.CMPA = MAX_PWM_CNT;

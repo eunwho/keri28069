@@ -115,7 +115,10 @@ void main( void )
 	ERTM;	// Enable Global realtime interrupt DBGM
 
     InitWatchDog();
-/* test sci
+
+
+
+    /* test sci
 
     while(1){
         strncpy(gStr1,"hellow world! \r\n",20);
@@ -127,7 +130,7 @@ void main( void )
     strncpy(MonitorMsg,"POWER_ON",20);
     gPWMTripCode = 0;		//
 
-    // init_eprom_data();
+    GATE_EN_LOW;   delay_msecs(10);     GATE_EN_HIGH;
 
     if( load_code2ram() != 0 ) tripProc();
 
@@ -179,7 +182,6 @@ void main( void )
         if(cmd == CMD_START)    // if( cmd == CMD_START )
         {
             trip_code = 0;
-            PWM_SIGNAL_ON;
             switch( (int)(floor(codeMotorCtrlMode+0.5)) ) // Control Method
             {
             case 0: trip_code = vf_loop_control(ref_in0)        ; break;
@@ -330,16 +332,9 @@ __interrupt void
 xint1_isr(void)
 {
 
-    PWM_SIGNAL_OFF;
-   // PWM_OFF();
    ePwmPortOff( );
    gPWMTripCode = ERR_PWM;
     trip_recording( ERR_PWM, Is_abc[as],"Trip GateDriver");
-
-//GpioDataRegs.GPBSET.bit.GPIO34 = 1;
-    //
-    // Acknowledge this interrupt to get more from group 1
-    //
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
 }
 
