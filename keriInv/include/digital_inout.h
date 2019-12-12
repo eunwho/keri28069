@@ -1,23 +1,29 @@
 // FILE:	digital_inout.h
-// Project:	songuo electric vehicle by Soonkil Jung
-// Date     :
+// Project:	inv28069 by Soonkil Jung
+// Date     : 2019.12.12
 
 #ifndef		__DIGITAL_INOUT_H_
 #define		__DIGITAL_INOUT_H_
 
-#define PWM_SIGNAL_OFF            (GpioDataRegs.GPBCLEAR.bit.GPIO39 = 1)
-#define PWM_SIGNAL_ON             (GpioDataRegs.GPBSET.bit.GPIO39 = 1)
+//--- 3 relay out
+#define INIT_CHARGE_OFF         (GpioDataRegs.GPACLEAR.bit.GPIO9 = 1)
+#define INIT_CHARGE_ON          (GpioDataRegs.GPASET.bit.GPIO9 = 1)
+
+#define MAIN_CHARGE_OFF         (GpioDataRegs.GPACLEAR.bit.GPIO10 = 1)
+#define MAIN_CHARGE_ON          (GpioDataRegs.GPASET.bit.GPIO10 = 1)
+
+#define TRIP_OUT_OFF            (GpioDataRegs.GPACLEAR.bit.GPIO8 = 1)
+#define TRIP_OUT_ON             (GpioDataRegs.GPASET.bit.GPIO8 = 1)
+
+//
+#define PWM_SIGNAL_OFF          (GpioDataRegs.GPBCLEAR.bit.GPIO39 = 1)
+#define PWM_SIGNAL_ON           (GpioDataRegs.GPBSET.bit.GPIO39 = 1)
 
 // old version
 #define RUN_OUT_ON          Nop()       // Run out relay
 #define RUN_OUT_OFF          Nop()       // Run out relay
 #define GATE_DRIVER_SET   Nop()   //
 #define GATE_DRIVER_CLEAR   Nop()   //
-#define MAIN_CHARGE_ON      Nop()  //
-#define MAIN_CHARGE_OFF      Nop()  //
-#define TRIP_OUT_ON      Nop()  //
-#define TRIP_OUT_OFF      Nop()  //
-
 
 // v0.0
 #define EMG_STOP                             (GpioDataRegs.GPADAT.bit.GPIO10)    // IG2 J1-34 PIN

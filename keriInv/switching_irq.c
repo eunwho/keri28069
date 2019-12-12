@@ -62,7 +62,6 @@ interrupt void MainPWM(void)
     if ( gMachineState != STATE_POWER_ON)  gPWMTripCode = tripCheckPWM();
 
     if(gPWMTripCode){
-        PWM_SIGNAL_OFF;
         EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT;
         EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT;
         EPwm3Regs.CMPA.half.CMPA = MAX_PWM_CNT;

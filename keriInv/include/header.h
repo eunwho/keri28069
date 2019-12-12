@@ -8,11 +8,9 @@
 #include "code_proc.h"          // 2009.08.15
 #include "const.h"
 #include "digital_inout.h"
-#include "eQep.h"                   // 2019.08.20
 #include "fault.h"
 
-#include "singlePhaseSci.h"		// 2017.08.11   // f28069 inverter for single phase ACIM
-
+#include "sci28069.h"		// 2019.12.12   
 //#include "IQmathLib.h"
 
 #include "module.h"
