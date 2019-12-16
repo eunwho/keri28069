@@ -49,32 +49,17 @@ interrupt void MainPWM(void)
     goto _PWM_TRIP;
 */
 
+    if(gPWMTripCode == 0 ) gPWMTripCode = CheckIGBTFault();
     if(gPWMTripCode == 0 ){
-        //--- check pwm error
-        if( TRIP_UH == 0){
-            trip_recording( ERR_IGBT_UH, 0.0,"Trip UH"); gPWMTripCode = ERR_IGBT_UH;
-        } else if( TRIP_UL == 0){
-            trip_recording( ERR_IGBT_UL, 0.0,"Trip UL"); gPWMTripCode = ERR_IGBT_UL;
-        } else if( TRIP_VH == 0){
-            trip_recording( ERR_IGBT_VH, 0.0,"Trip VH"); gPWMTripCode = ERR_IGBT_VH;
-        } else if( TRIP_VL == 0){
-            trip_recording( ERR_IGBT_VL, 0.0,"Trip VL"); gPWMTripCode = ERR_IGBT_VL;
-        } else if( TRIP_WH == 0){
-            trip_recording( ERR_IGBT_WH, 0.0,"Trip WH"); gPWMTripCode = ERR_IGBT_WH;
-        } else if( TRIP_WL == 0){
-            trip_recording( ERR_IGBT_WL, 0.0,"Trip WL"); gPWMTripCode = ERR_IGBT_WL;
-        } else if( TRIP_DB == 0){
-            trip_recording( ERR_IGBT_DB, 0.0,"Trip DB"); gPWMTripCode = ERR_IGBT_DB;
+        if (( gMachineState != STATE_POWER_ON) & ( codeProtectOff > 0.5 )) {
+                gPWMTripCode = CheckOverCurrent();
         }
     }
-
-    if ( gMachineState != STATE_POWER_ON)  gPWMTripCode = tripCheckPWM();
 
     if(gPWMTripCode){
         EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT;
         EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT;
         EPwm3Regs.CMPA.half.CMPA = MAX_PWM_CNT;
-        // PWM_OFF( );
         ePwmPortOff( );
         goto _PWM_TRIP;
     }
@@ -89,6 +74,7 @@ interrupt void MainPWM(void)
         break;
     case STATE_READY:
     case STATE_POWER_ON:
+        ePwmPortOff( );
         startCount =0;
         pwmOn = 0;
        EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT ;
@@ -99,7 +85,6 @@ interrupt void MainPWM(void)
         if( startCount < 30){
             startCount ++;
             pwmOn = 0;
-            break;
         } else {
             if( pwmOn == 0  ){
                 pwmOn = 1;
@@ -109,6 +94,7 @@ interrupt void MainPWM(void)
                 EPwm3Regs.CMPA.half.CMPA = MAX_PWM_CNT >>1;
             }
         }
+        break;
     case STATE_RUN:
     case STATE_GO_STOP:
     case STATE_WAIT_BREAK_OFF:

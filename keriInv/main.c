@@ -13,10 +13,10 @@
 #pragma CODE_SECTION(SpaceVectorModulation, "ramfuncs");
 #pragma CODE_SECTION(VoltageEstimation, "ramfuncs");
 #pragma CODE_SECTION(MotorControlProc, "ramfuncs");
-#pragma CODE_SECTION( tripCheckPWM, "ramfuncs");
-#pragma CODE_SECTION( trip_recording, "ramfuncs");
+#pragma CODE_SECTION( CheckIGBTFault, "ramfuncs");
+#pragma CODE_SECTION( CheckOverCurrent, "ramfuncs");
 
-//#pragma CODE_SECTION(CheckIGBTFault, "ramfuncs");
+//#pragma CODE_SECTION( trip_recording, "ramfuncs");
 //#pragma CODE_SECTION(Adc_Isr, "ramfuncs");
 //#pragma CODE_SECTION(AD2LPF, "ramfuncs");
 
@@ -48,9 +48,11 @@ void main( void )
 
 	gfRunTime = 0.0; 
 	protect_reg.all = gDeChargeFlag = 0;
+    INIT_CHARGE_OFF; MAIN_CHARGE_OFF; TRIP_OUT_OFF;
 	init_charge_flag = 0;
 
 	gMachineState = STATE_POWER_ON; 
+
 	DINT;
 
 	memcpy(&RamfuncsRunStart, &RamfuncsLoadStart, (Uint32)&RamfuncsLoadSize);
@@ -115,21 +117,22 @@ void main( void )
 	ERTM;	// Enable Global realtime interrupt DBGM
 
     InitWatchDog();
-
-
-
-    /* test sci
-
+/*
     while(1){
-        strncpy(gStr1,"hellow world! \r\n",20);
-        load_sci_tx_mail_box(gStr1);
-        delay_msecs(1000);
+        ( START_INPUT ) ?  INIT_CHARGE_OFF : INIT_CHARGE_ON;
+        ( EX_TRIP_INPUT ) ? MAIN_CHARGE_OFF : MAIN_CHARGE_ON;
+        ( EX_DIO_INPUT1 ) ? TRIP_OUT_OFF : TRIP_OUT_ON;
+        if( EX_DIO_INPUT1 ){
+            ( EX_DIO_INPUT2 ) ? TRIP_OUT_OFF : TRIP_OUT_ON;
+        }
+        delay_msecs(100);
     }
 */
     ADC_SOC_CNF();
     strncpy(MonitorMsg,"POWER_ON",20);
     gPWMTripCode = 0;		//
 
+    //--- gate driver reset
     GATE_EN_LOW;   delay_msecs(10);     GATE_EN_HIGH;
 
     if( load_code2ram() != 0 ) tripProc();
@@ -148,10 +151,10 @@ void main( void )
 	IER |= M_INT3;      // debug for PWM
 
 	gfRunTime = 0.0; 
-    delay_msecs(500);
+    INIT_CHARGE_ON;
+    init_charge_flag = 1;
 
-	init_charge_flag = 1;	
-	while( gfRunTime < 5.0){
+    while( gfRunTime < 5.0){
 		get_command( & cmd, & ref_in0);
 		monitor_proc();
 		Nop();
@@ -167,6 +170,8 @@ void main( void )
 	strncpy(MonitorMsg,"READY",20);delay_msecs(20);
 	strncpy(gStr1,"READY \r\n",20);
 	load_sci_tx_mail_box(gStr1); delay_msecs(20);
+
+	INIT_CHARGE_OFF; MAIN_CHARGE_ON;
 
 	for( ; ; )
     {

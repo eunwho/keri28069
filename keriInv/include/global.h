@@ -486,25 +486,25 @@ double AT_Time_Ls;
 //===========================================
 //--- motor and related parameter setting
 //===========================================
-double codeRatePower;          // 1
-double codeRateVolt;           // 2
-double codeRateCurrent;        // 3
-double codeRateEffiency;       // 4
-double codeRateRpm;            // 5
-double codeRateHz;             // 6
-double codeMotorPole;          // 7
-double codeMotorCtrlMode;      // 8
+double codeRatePower;          // 101
+double codeRateVolt;           // 102
+double codeRateCurrent;        // 103
+double codeRateEffiency;       // 104
+double codeRateRpm;            // 105
+double codeRateHz;             // 106
+double codeMotorPole;          // 107
+double codeMotorCtrlMode;      // 108
 
-double codeIaOffset;         // 11
-double codeIbOffset;         // 12
-double codeIUSpan;           // 13
-double codeIVSpan;           // 14
-double codeISensorValue;     // 15
-double codeIOver;            // 16
-double codeKpIsTemp;         // 17
-double codeKiIsTemp;         // 18
-double codeKpIsCoeff;        // 19
-double codeKiIsCoeff;        // 20
+double codeIaOffset;         // 111
+double codeIbOffset;         // 112
+double codeIUSpan;           // 113
+double codeIVSpan;           // 114
+double codeISensorValue;     // 115
+double codeIOver;            // 116
+double codeKpIsTemp;         // 117
+double codeKiIsTemp;         // 118
+double codeKpIsCoeff;        // 119
+double codeKiIsCoeff;        // 120
 
 double Rs;                 // 21
 double Rr;                 // 22

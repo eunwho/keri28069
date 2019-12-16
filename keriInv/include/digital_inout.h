@@ -25,6 +25,9 @@
 //--- digital input
 #define START_INPUT             ( GpioDataRegs.GPADAT.bit.GPIO12 ) // INPUT1
 #define EX_TRIP_INPUT           ( GpioDataRegs.GPADAT.bit.GPIO13 ) // INPUT2
+#define EX_DIO_INPUT1           ( GpioDataRegs.GPADAT.bit.GPIO14 ) // INPUT3
+#define EX_DIO_INPUT2           ( GpioDataRegs.GPADAT.bit.GPIO15 ) // INPUT4
+
 #define EMG_STOP                EX_TRIP_INPUT
 
 //--- pwm trip input

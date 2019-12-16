@@ -91,11 +91,24 @@ int CheckUndeVolt( )
 
 int CheckIGBTFault( )
 {
-	if( FAULT_GATE_DRIVER == 1){
-        trip_recording( ERR_PWM, 0.0,"Trip GateDriver");
-	    return ERR_PWM;
+    int tripCode =0;
+
+    if( TRIP_UH == 0){
+        trip_recording( ERR_IGBT_UH, 0.0,"Trip UH"); tripCode = ERR_IGBT_UH;
+    } else if( TRIP_UL == 0){
+        trip_recording( ERR_IGBT_UL, 0.0,"Trip UL"); tripCode = ERR_IGBT_UL;
+    } else if( TRIP_VH == 0){
+        trip_recording( ERR_IGBT_VH, 0.0,"Trip VH"); tripCode = ERR_IGBT_VH;
+    } else if( TRIP_VL == 0){
+        trip_recording( ERR_IGBT_VL, 0.0,"Trip VL"); tripCode = ERR_IGBT_VL;
+    } else if( TRIP_WH == 0){
+        trip_recording( ERR_IGBT_WH, 0.0,"Trip WH"); tripCode = ERR_IGBT_WH;
+    } else if( TRIP_WL == 0){
+        trip_recording( ERR_IGBT_WL, 0.0,"Trip WL"); tripCode = ERR_IGBT_WL;
+    } else if( TRIP_DB == 0){
+        trip_recording( ERR_IGBT_DB, 0.0,"Trip DB"); tripCode = ERR_IGBT_DB;
 	}
-	return 0;
+	return tripCode;
 }
 
 int CheckOverHeat( )
@@ -130,10 +143,10 @@ int trip_check()
     if ( codeProtectOff > 0.5 ) return 0;
 
     TripCode = 0;
-    if( ( TripCode = CheckOverCurrent()) != 0 ) return TripCode ;   //
     if( ( TripCode = CheckOverVolt()   ) != 0 ) return TripCode ;
     if( ( TripCode = CheckUndeVolt()   ) != 0 ) return TripCode ;   //
 
+//    if( ( TripCode = CheckOverCurrent()) != 0 ) return TripCode ;   //
 //  if( ( TripCode = CheckOverHeat()   != 0 ) return TripCode ;
 //  if( ( TripCode = CheckIGBTFault()  ) != 0 ) return TripCode ;
 
@@ -214,6 +227,9 @@ void tripProc()
 	    Nop();
 	}
 
+	gPWMTripCode = 0;
+
+// 	InitEPwm_ACIM_Inverter();   // debug
 	gMachineState = STATE_POWER_ON; Nop();
     asm (" .ref _c_int00");     // Branch to start of boot.asm in RTS library
     asm (" LB _c_int00");       // Branch to start of boot.asm in RTS library

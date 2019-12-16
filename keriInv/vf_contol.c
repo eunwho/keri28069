@@ -74,6 +74,7 @@ int vf_loop_control(double cmd_ref)
                 strncpy(MonitorMsg,"READY",20);
                 gMachineState = STATE_READY;
                 reference_out = Freq_out = 0.0;
+                ePwmPortOff( );
                 commonVariableInit( );
                 LoopCtrl = 0;
 			} else {

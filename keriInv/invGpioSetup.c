@@ -1,7 +1,5 @@
-//###########################################################################
-// FILE:	Example_2806xGpioSetup.c
-// TITLE:	GPIO Setup Example
-//###########################################################################
+// FILE:	invGpioSetup.c
+// DATE:	2019.12.13 by Soonkil Jung DongHo Power Electronics
 #include    <header.h>
 #include    <extern.h>
 
@@ -12,16 +10,25 @@ void ePwmPortOff()
     GpioCtrlRegs.GPAMUX1.bit.GPIO1  = 0;  // GPIO1 = PWM1B
     GpioCtrlRegs.GPAMUX1.bit.GPIO2  = 0;  // GPIO2 = PWM2A
     GpioCtrlRegs.GPAMUX1.bit.GPIO3  = 0;  // GPIO3 = PWM2B
+    GpioCtrlRegs.GPAMUX1.bit.GPIO4  = 0;  // GPIO4 = PWM3A
+    GpioCtrlRegs.GPAMUX1.bit.GPIO5  = 0;  // GPIO5 = PWM3B
+    GpioCtrlRegs.GPAMUX1.bit.GPIO6  = 0;  // GPIO6 = PWM4A
 
     GpioCtrlRegs.GPADIR.bit.GPIO0   = 1;  // GPIO0 = Output
     GpioCtrlRegs.GPADIR.bit.GPIO1   = 1;  // GPIO1 = Output
     GpioCtrlRegs.GPADIR.bit.GPIO2   = 1;  // GPIO2 = Output
     GpioCtrlRegs.GPADIR.bit.GPIO3   = 1;  // GPIO3 = Output
+    GpioCtrlRegs.GPADIR.bit.GPIO4   = 1;  // GPIO4 = Output
+    GpioCtrlRegs.GPADIR.bit.GPIO5   = 1;  // GPIO5 = Output
+    GpioCtrlRegs.GPADIR.bit.GPIO6   = 1;  // GPIO6 = Output
 
-    GpioDataRegs.GPACLEAR.bit.GPIO0 = 1;  // Set Output
-    GpioDataRegs.GPACLEAR.bit.GPIO1 = 1;  // Set Output
-    GpioDataRegs.GPACLEAR.bit.GPIO2 = 1;  // Set Output
-    GpioDataRegs.GPACLEAR.bit.GPIO3 = 1;  // Set Output
+    GpioDataRegs.GPACLEAR.bit.GPIO0 = 1;  // Clear Output
+    GpioDataRegs.GPACLEAR.bit.GPIO1 = 1;  // Clear Output
+    GpioDataRegs.GPACLEAR.bit.GPIO2 = 1;  // Clear Output
+    GpioDataRegs.GPACLEAR.bit.GPIO3 = 1;  // Clear Output
+    GpioDataRegs.GPACLEAR.bit.GPIO4 = 1;  // Clear Output
+    GpioDataRegs.GPACLEAR.bit.GPIO5 = 1;  // Clear Output
+    GpioDataRegs.GPACLEAR.bit.GPIO6 = 1;  // Clear Output
     EDIS;
 }
 
@@ -32,6 +39,9 @@ void ePwmEnable()
     GpioCtrlRegs.GPAMUX1.bit.GPIO1  = 1;            // GPIO1    = PWM1B
     GpioCtrlRegs.GPAMUX1.bit.GPIO2  = 1;            // GPIO2    = PWM2A
     GpioCtrlRegs.GPAMUX1.bit.GPIO3  = 1;            // GPIO3    = PWM2B
+    GpioCtrlRegs.GPAMUX1.bit.GPIO4  = 1;            // GPIO2    = PWM3A
+    GpioCtrlRegs.GPAMUX1.bit.GPIO5  = 1;            // GPIO3    = PWM3B
+    GpioCtrlRegs.GPAMUX1.bit.GPIO6  = 1;            // GPIO2    = PWM4A
     EDIS;
 }
 
