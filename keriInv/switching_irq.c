@@ -56,6 +56,13 @@ interrupt void MainPWM(void)
         }
     }
 
+    if(gPWMTripCode == 0 ){
+        if ( EX_DIO_INPUT2 ){
+            gPWMTripCode = ERR_EXT_TRIP;
+            trip_recording( ERR_EXT_TRIP, 0.0,"ERR EXT TRIP");
+        }
+    }
+
     if(gPWMTripCode){
         EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT;
         EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT;
