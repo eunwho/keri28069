@@ -106,9 +106,14 @@ void sciaMonitor()     // need_edit
     load_scia_tx_mail_box(MonitorMsg);
 
     unionRpm.INTEGER    = (int)( rpm * INV_RPM_SCALE * 204.8) + 2048;
-    unionIrms.INTEGER   = (int)( Is_mag_rms * INV_I_SCALE * 204.8) + 2048;
+
+    temp   = (int)( Is_mag_rms * INV_I_SCALE * 204.8) + 2048;
+    if( temp < 0 ) temp = 0; if( temp > 4095 ) temp = 4095;
+    unionIrms.INTEGER   = temp;
+
     //unionPower.INTEGER  = (int)( P_total * INV_P_SCALE * 204.8) + 2048;
     unionPower.INTEGER  = (int)( 0.0 * INV_P_SCALE * 204.8) + 2048;
+
     unionRePower.INTEGER  = (int)( reference_out * INV_REF_SCALE * 204.8) + 2048;
     unionImPower.INTEGER  = (int)( Vdc * INV_V_SCALE * 204.8) + 2048;
 

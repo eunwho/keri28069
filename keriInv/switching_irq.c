@@ -89,16 +89,20 @@ interrupt void MainPWM(void)
        EPwm3Regs.CMPA.half.CMPA = MAX_PWM_CNT ;
          break;
     case STATE_INIT_RUN:
-        if( startCount < 30){
+        if( startCount < 10){
             startCount ++;
             pwmOn = 0;
+            EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT ;
+            EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT;
+            EPwm3Regs.CMPA.half.CMPA = MAX_PWM_CNT ;
         } else {
             if( pwmOn == 0  ){
                 pwmOn = 1;
                 ePwmEnable();
-                EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT>>1 ;
-                EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT>>1;
-                EPwm3Regs.CMPA.half.CMPA = MAX_PWM_CNT >>1;
+                EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT >> 1 ;
+                EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT >> 1;
+                EPwm3Regs.CMPA.half.CMPA = MAX_PWM_CNT >> 1;
+                gMachineState = STATE_RUN;
             }
         }
         break;

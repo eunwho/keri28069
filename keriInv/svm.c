@@ -71,6 +71,9 @@ void SpaceVectorModulation( double * Vs_dqIn )
     DutyCount[u]= (Uint16)( MAX_PWM_CNT * ( 1 - DutyRatio[u] ));
     DutyCount[v] =(Uint16)( MAX_PWM_CNT * ( 1 - DutyRatio[v] ));
     DutyCount[w] =(Uint16)( MAX_PWM_CNT * ( 1 - DutyRatio[w] ));
+    //DutyCount[u]= (Uint16)( MAX_PWM_CNT * DutyRatio[u] );
+    //DutyCount[v] =(Uint16)( MAX_PWM_CNT * DutyRatio[v] );
+    //DutyCount[w] =(Uint16)( MAX_PWM_CNT * DutyRatio[w] );
 
 }
 

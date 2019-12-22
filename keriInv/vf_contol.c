@@ -39,6 +39,7 @@ int vf_loop_control(double cmd_ref)
 
 		switch( gMachineState )
 		{
+/*
 		case STATE_INIT_RUN:
 			if( command == CMD_STOP){
                 strncpy(MonitorMsg,"READY",20); gMachineState = STATE_READY; LoopCtrl= 0;
@@ -51,6 +52,7 @@ int vf_loop_control(double cmd_ref)
 				    reference_in = code_start_ref;
 			}
 			break;
+*/
 		case STATE_RUN:
 			if( command == CMD_NULL ){
 			    ramp_proc(reference_in, & reference_out);

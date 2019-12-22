@@ -1,3 +1,4 @@
+// project name : inverter for Electric Vehicle by soonkil jung 2019.12.20
 #ifndef		__COMMON_CONSTANTS_
 #define		__COMMON_CONSTANTS_
 
@@ -75,8 +76,10 @@
 //
 #define Is_Max_Coeff            2.0
 #define over_volt_set           380.0         // check
-#define UNDER_VOLT_LEVEL        200.0         // check
-#define OVER_V_LEVEL        420.0
+//#define UNDER_VOLT_LEVEL        200.0         // check
+// #define OVER_V_LEVEL        420.0
+#define UNDER_VOLT_LEVEL        400.0         // check
+#define OVER_V_LEVEL        720.0
 
 
 // Control Constant

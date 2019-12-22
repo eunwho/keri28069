@@ -154,7 +154,7 @@ void main( void )
     INIT_CHARGE_ON;
     init_charge_flag = 1;
 
-    while( gfRunTime < 5.0){
+    while( gfRunTime < 10.0){
 		get_command( & cmd, & ref_in0);
 		monitor_proc();
 		Nop();

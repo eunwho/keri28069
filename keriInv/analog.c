@@ -119,15 +119,15 @@ interrupt void adcIsr(void)
 //    lpfIaIn[0] = -codeISensorValue * ( (double)adcCurrentA - codeIaOffset) * I_RATIO *codeIUSpan;
     lpfIaIn[0] = -codeISensorValue * ( (double)adcCurrentA - codeIaOffset) * I_RATIO *codeIUSpan * 1.5; // 2019.12.17 by SKJ
     lpf2nd( lpfIaIn, lpfIaOut, lpfIrmsK);
-//    Is_abc[as] = lpfIaOut[0];
-    Is_abc[as] = lpfIaIn[0];
+    Is_abc[as] = lpfIaOut[0];
+//    Is_abc[as] = lpfIaIn[0];
 
 
 //    lpfIbIn[0] = -codeISensorValue * ( (double)adcCurrentB - codeIbOffset) * I_RATIO * codeIVSpan;
     lpfIbIn[0] = -codeISensorValue * ( (double)adcCurrentB - codeIbOffset) * I_RATIO * codeIVSpan * 1.5; // 2019.12.17 by SKJ
     lpf2nd( lpfIbIn, lpfIbOut, lpfIrmsK);
-    //    Is_abc[bs] = lpfIbOut[0];
-    Is_abc[bs] = lpfIbIn[0];
+    Is_abc[bs] = lpfIbOut[0];
+//    Is_abc[bs] = lpfIbIn[0];
 
     Is_abc[cs]= -(Is_abc[as]+Is_abc[bs]);
     Is_dq[ds] = Is_abc[as];

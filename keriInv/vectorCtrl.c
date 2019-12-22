@@ -30,7 +30,7 @@ int vectorCtrlLoop()
 	gfRunTime = 0.0; 
 	LoopCtrl = 1;		
 
-	gMachineState = STATE_RUN;
+    gMachineState = STATE_INIT_RUN;
 	
 	while(LoopCtrl == 1)
 	{
@@ -46,7 +46,7 @@ int vectorCtrlLoop()
 
 		switch( gMachineState )
 		{
-		case STATE_RUN:
+        case STATE_RUN:
             strncpy(MonitorMsg," RUN ",20);
 			if		 (  iCommand == CMD_NULL ) 			ramp_proc( reference_in, &reference_out);
 			else if(( iCommand == CMD_SPEED_UP   ) && (reference_in <  3.0  )) reference_in += 0.1;

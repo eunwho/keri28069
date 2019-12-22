@@ -436,7 +436,8 @@ int estim_Rs_loop()
 
 	gfRunTime=0.0;
 	LoopCtrl = 1;
-	gMachineState = STATE_RUN;
+
+	gMachineState = STATE_INIT_RUN;
 
 	while(LoopCtrl == 1)
 	{
@@ -515,9 +516,9 @@ int estim_Ls_loop()
 	load_sci_tx_mail_box( "AT LS loop Start \r\n") ;
 	delay_msecs(10);
 
-	gMachineState = STATE_RUN;
-
 	LoopCtrl = 1;
+
+	gMachineState = STATE_INIT_RUN;
 
 	while(LoopCtrl == 1)
 	{
@@ -534,7 +535,7 @@ int estim_Ls_loop()
 			load_sci_tx_mail_box( "LS Stop End \r\n") ;
 		}
 
-		if( gfRunTime >= TuningTime ){
+        if( gfRunTime >= TuningTime ){
 			LoopCtrl = 0;
 			iTripCode = 0;
 			gMachineState = STATE_READY;
@@ -645,9 +646,6 @@ int parameter_estimation( )
 
 	iTripCode = estim_req_leq_loop( );
 	if ( iTripCode != AT_SUCCESS ) return iTripCode; 
-
-//	gMachineState = STATE_READY;
-//	return 0;
 
 	iTripCode = estim_Rs_loop();
 	if ( iTripCode != AT_SUCCESS ) return iTripCode; 
