@@ -416,7 +416,7 @@ int getCodeOperation(int address,int cmd , CODE_INFO *  codes)
     case CODE_AT_Ls_Vs_RAMP:
         strncpy(codes->disp, "AT_Ls_Vs_RAMP",20);
         if( cmd == CMD_WRITE_RAM ) AT_Ls_Vs_RAMP = codes->code_value;
-        set_code_default(0.5,10.0,5.0,AT_Ls_Vs_RAMP,0,codes);
+        set_code_default(0.01,10.0,5.0,AT_Ls_Vs_RAMP,0,codes);
         break;
 
     case CODE_AT_Freq_Ls:

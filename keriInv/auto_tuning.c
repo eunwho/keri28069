@@ -109,31 +109,24 @@ void estim_Ls_pwm()
 	Us_dq[qs]=-Vs_dq[ds]*SinDeltaTheta + Vs_dq[qs]*CosDeltaTheta;
 	Vs_dq[ds]=Us_dq[ds];  Vs_dq[qs]=Us_dq[qs];
 	
-	Vs_max=Vs_rat;	
-	if (gfRunTime < 0.2 )	// debug
-	{
+	//  Vs_max=Vs_rat * 0.5;
+	Vs_max=Vs_rat * 0.2;        // 2019.12.23
+	if (gfRunTime < 0.2 ) {
 		Freq_ref = Freq_set = Freq_out=0.0;
-		we = 0.0;
-		theta=0.0;
-        SinTheta=0.0;
+		we = 0.0; theta=0.0; SinTheta=0.0;
 		CosTheta=1.0;
-		Vs_ref=Rs*Is_rat;
-	}
-	else 
-	{
+		Vs_ref=Rs*Is_rat*0.2;
+	} else {
 		IncFreq=(Ts/AT_Ls_Vs_RAMP)*AT_Freq_Ls;
 		if ( gfRunTime < (ExcitationTime+AT_Ls_Vs_RAMP+AT_Time_Ls))
 				Freq_ref=AT_Freq_Ls;
 		else	Freq_ref=0.0;
 			
-		if (Freq_set>(Freq_ref+IncFreq))	
-			Freq_set-=IncFreq;
-		else if (Freq_set<(Freq_ref-IncFreq))	
-			Freq_set+=IncFreq;
+		if (Freq_set>(Freq_ref+IncFreq)) Freq_set-=IncFreq;
+		else if (Freq_set<(Freq_ref-IncFreq)) Freq_set+=IncFreq;
 	
 		if (Freq_set>=0.0) 	sgn_freq = 1.0;
 		else				sgn_freq =-1.0;
-				
 
 		Slip=fabs(Freq_slip * inv_motor_rate_hz);
 		
@@ -154,16 +147,14 @@ void estim_Ls_pwm()
 		if (theta>PI)				theta-=PI_2;
 		else if (theta<-PI)		theta+=PI_2;	
 
-		SinTheta=sin(theta);		CosTheta=cos(theta);
-		
-		Vs_max=0.57735*Vdc;
+		SinTheta=sin(theta); CosTheta=cos(theta); Vs_max=0.57735*Vdc;
 
 		Es_m = Base_Flux_Coeff*fabs(Freq_out)*inv_motor_rate_hz*Vs_rat;
 		if (Es_m>Vs_max)	Es_m=Vs_max;
 	
 		Is_DQ[DS]= CosTheta*Is_dq[ds] + SinTheta*Is_dq[qs];
 		Is_DQ[QS]=-SinTheta*Is_dq[ds] + CosTheta*Is_dq[qs];
-		Det_emf=(Es_m*Es_m)-(Rs*Is_DQ[QS])*(Rs*Is_DQ[QS]);  //sqrt占쏙옙占쏙옙 占쏙옙占쏙옙占쏙옙占쏙옙占쏙옙占쏙옙
+		Det_emf=(Es_m*Es_m)-(Rs*Is_DQ[QS])*(Rs*Is_DQ[QS]);
 		if ( (Det_emf>0.0)&&(fabs(Freq_out)>VF_Freq_TrqBoost) )
 				LPF1(Ts,VF_IR_Comp_FilterPole,Rs*Is_DQ[DS]+sqrt(Det_emf)-Es_m,&Vs_IR_comp);		
 		else	LPF1(Ts,VF_IR_Comp_FilterPole,VF_Vs_Coeff_TrqBoost*Vs_rat,&Vs_IR_comp);	
@@ -191,29 +182,20 @@ void estim_Ls_pwm()
 	LPF1(Ts,100.0,Vs_dq[qs]*Is_dq[ds] - Vs_dq[ds]*Is_dq[qs],&Im_Power);				// 占쏙옙효占쏙옙占쏙옙
 	LPF1(Ts,100.0,(Vs_dq[ds]*Is_dq[ds] + Vs_dq[qs]*Is_dq[qs]) - Rs*(Is_mag*Is_mag),&Re_Power);	// 占쏙옙효占쏙옙占쏙옙
 
-	if ( (gfRunTime>ExcitationTime) && (Is_mag>(0.1*Is_rat)) && (Is_mag<(0.9*Is_rat)) )
-	{
-		if (gfRunTime<(ExcitationTime+AT_Ls_Vs_RAMP*AT_Freq_Ls*inv_motor_rate_hz+AT_Time_Ls-0.1))
-		{
-			if (Ls>(5.0*Leq))
-			{
+	if ( (gfRunTime>ExcitationTime) && (Is_mag>(0.1*Is_rat)) && (Is_mag<(0.9*Is_rat)) )	{
+		if (gfRunTime<(ExcitationTime+AT_Ls_Vs_RAMP*AT_Freq_Ls*inv_motor_rate_hz+AT_Time_Ls-0.1)) {
+			if (Ls>(5.0*Leq)) {
 				Lr=Ls;							// 회占쏙옙占쏙옙 占싸댐옙占싹쏙옙占쏙옙 占쏙옙占쏙옙占쏙옙 占싸댐옙占싹쏙옙占쏙옙 占쏙옙占쏙옙 占쏙옙占쏙옙占실뤄옙 占쏙옙占쏙옙占쏙옙 占쏙옙占쏙옙占쏙옙 占쏙옙占쏙옙 占십는댐옙.
 				Rr=(Req-Rs)*(Lr*Lr)/((Lr-0.5*Leq)*(Lr-0.5*Leq));			// Rr ~ (Req-Rs)*(Lr/Lm)^2
 				sigma_Ls=Leq-(Rr*Rr)*(Lr-0.5*Leq)*(Lr-0.5*Leq)/(Lr*Lr*Lr)/(PI_2*AT_Freq_Leq_Req*PI_2*AT_Freq_Leq_Req);
 				sigma=sigma_Ls/Ls;
-			}
-			else
-			{
-				sigma=0.1;
-				sigma_Ls=Leq;
+			} else {
+				sigma=0.1; 	sigma_Ls=Leq;
 			}	
 			Ls_in=2.0*(Re_Power*Re_Power+Im_Power*Im_Power)/( Im_Power+sqrt(fabs(Im_Power*Im_Power - (4*sigma/sigma*sigma) * (Re_Power*Re_Power+Im_Power*Im_Power))) )/(we*Is_mag*Is_mag) - sigma_Ls;
-			if (Ls_in>30.0*Leq)	
-				Ls_in=30.0*Leq;
-			else if (Ls_in<3.0*Leq)
-				Ls_in=3.0*Leq;
-			if (gfRunTime<(AT_Ls_Vs_RAMP+AT_Time_Ls+ExcitationTime-1.0))
-					LPF1(Ts,(0.05*we),Ls_in,&Ls);
+			if (Ls_in>30.0*Leq)	    Ls_in=30.0*Leq;
+			else if (Ls_in<3.0*Leq) Ls_in=3.0*Leq;
+			if (gfRunTime<(AT_Ls_Vs_RAMP+AT_Time_Ls+ExcitationTime-1.0)) LPF1(Ts,(0.05*we),Ls_in,&Ls);
 			else	LPF1(Ts,(0.01*we),Ls_in,&Ls);	
 		}
 	}
@@ -542,7 +524,7 @@ int estim_Ls_loop()
 			load_sci_tx_mail_box( "LS Time End \r\n") ;
 		}
 
-		if ( gfRunTime >  AT_Ls_DMB_OpenTime )		// RUN_OUT_ON;
+		// if ( gfRunTime >  AT_Ls_DMB_OpenTime )		// RUN_OUT_ON;
 
 		if( ulGetTime_mSec(Ls_count_msec) > 500 ){
 			Ls_count_msec = ulGetNow_mSec( );
@@ -657,7 +639,11 @@ int parameter_estimation( )
 	iTripCode = estim_Ls_loop();
 	if ( iTripCode != AT_SUCCESS ) return iTripCode; 
 
-	snprintf(gStr1,30,"Ls=%10.1e --> \r\n", Ls);
+    gMachineState = STATE_READY;
+    ePwmPortOff( );
+    commonVariableInit( );
+
+    snprintf(gStr1,30,"Ls=%10.1e --> \r\n", Ls);
 	load_sci_tx_mail_box( gStr1) ;
 	delay_msecs(10);
 	load_sci_tx_mail_box( "Success find Ls \r\n");
@@ -686,54 +672,7 @@ int parameter_estimation( )
     snprintf(str,25,"\n Jm=%10.3e",Jm);load_sci_tx_mail_box(str);delay_msecs(10);
     load_sci_tx_mail_box("\n======================== \r\n");
 
-    load_sci_tx_mail_box(" send save command for saving motor parameter !!!\r\n ");
-
-	iTripCode = 0;
-	LoopCtrl = 1;
-	while(LoopCtrl == 1)		
-	{
-		if(gPWMTripCode != 0) {
-			LoopCtrl = 0; iTripCode = gPWMTripCode;
-			return iTripCode;
-		}
-        get_command( & cmd, & ref0);
-        switch(cmd)
-        {
-        case CMD_STOP:
-            LoopCtrl = 0;
-            break;
-
-        case CMD_SAVE:
-
-            u32data.dword = Rs; write_code_2_eeprom(CODE_Rs,u32data);
-            u32data.dword = Rr; write_code_2_eeprom(CODE_Rr,u32data);
-            u32data.dword = Ls; write_code_2_eeprom(CODE_Ls,u32data);
-            u32data.dword = Lr; write_code_2_eeprom(CODE_Lr,u32data);
-            u32data.dword = Lm; write_code_2_eeprom(CODE_Lm,u32data);
-            u32data.dword = Jm; write_code_2_eeprom(CODE_Jm,u32data);
-
-            if( iTripCode = SaveDataProc(CODE_Rs, Rs) ) return iTripCode ;
-            if( iTripCode = SaveDataProc(CODE_Rr, Rr) ) return iTripCode ;
-            if( iTripCode = SaveDataProc(CODE_Ls, Ls) ) return iTripCode ;
-            if( iTripCode = SaveDataProc(CODE_Lr, Lr) ) return iTripCode ;
-            if( iTripCode = SaveDataProc(CODE_Lm, Lm) ) return iTripCode ;
-
-            load_sci_tx_mail_box("\n**************************** r\n");delay_msecs(10);
-            load_sci_tx_mail_box("AT Result Save \r\n");delay_msecs(10);
-            snprintf(str,25,"\n Rs=%10.3e",Rs);load_sci_tx_mail_box(str);delay_msecs(10);
-            snprintf(str,25,"\n Rr=%10.3e",Rr);load_sci_tx_mail_box(str);delay_msecs(10);
-            snprintf(str,25,"\n Ls=%10.3e",Ls);load_sci_tx_mail_box(str);delay_msecs(10);
-            snprintf(str,25,"\n Lr=%10.3e",Lr);load_sci_tx_mail_box(str);delay_msecs(10);
-            snprintf(str,25,"\n Lm=%10.3e",Lm);load_sci_tx_mail_box(str);delay_msecs(10);
-            snprintf(str,25,"\n Jm=%10.3e",Jm);load_sci_tx_mail_box(str);delay_msecs(10);
-            load_sci_tx_mail_box("\n**************************** \r\n");
-            LoopCtrl = 0;
-            break;
-        default:
-            break;
-        }
-	}
-	return iTripCode;	// debug 2008.07.26 
+	return 0;	// debug 2008.07.26
 }
 
 // end of auto_tuning.c

@@ -12,6 +12,8 @@ int vf_loop_control(double cmd_ref)
 
 	commonVariableInit();
 	trip_code = HardwareParameterVerification();
+
+	reference_out =0.0; Is_mag_rms =0.0, rpm =0.0;
 	reference_in = cmd_ref;
 
 	if( trip_code !=0 ) return trip_code;
@@ -22,7 +24,7 @@ int vf_loop_control(double cmd_ref)
 	IER |= M_INT3;      // debug for PWM
 
 	gRunFlag =1;
-	strncpy(MonitorMsg,"INIT_RUN",20);
+    strncpy(MonitorMsg," RUN ",20);
 	gfRunTime = 0.0; 
 	LoopCtrl = 1;		
 	gMachineState = STATE_INIT_RUN;
@@ -54,10 +56,12 @@ int vf_loop_control(double cmd_ref)
 			break;
 */
 		case STATE_RUN:
+            strncpy(MonitorMsg," RUN ",20);
 			if( command == CMD_NULL ){
 			    ramp_proc(reference_in, & reference_out);
 			} else if( command == CMD_STOP ) {
-				strncpy(MonitorMsg,"GO_STOP",20); gMachineState = STATE_GO_STOP; reference_in = 0.0;
+				// strncpy(MonitorMsg,"GO_STOP",20);
+				gMachineState = STATE_GO_STOP; reference_in = 0.0;
 			} else if( command == CMD_SPEED_UP ){
 				reference_in += 0.05;
 				if( reference_in > 3.0 ) reference_in = 3.0;
@@ -70,7 +74,7 @@ int vf_loop_control(double cmd_ref)
 			break;
 		case STATE_GO_STOP:
 			if( command == CMD_START ) {
-				strncpy(MonitorMsg,"RUN",20); gMachineState = STATE_RUN;
+				strncpy(MonitorMsg," RUN ",20); gMachineState = STATE_RUN;
 				// reference_in = reference_out; 
 			} else if ((fabs(reference_out) <= code_start_ref )){
                 strncpy(MonitorMsg,"READY",20);
@@ -92,7 +96,6 @@ int vf_loop_control(double cmd_ref)
 void vf_simple_control()
 {
     Freq_out = codeRateHz * reference_out;
-    // rpm_Coeff = 60.0 * inv_P_pair / PI_2;
     we = PI_2 * Freq_out;
     rpm = rpm_Coeff * we;   //  rpm = rpm_Coeff * wr
 
@@ -103,7 +106,6 @@ void vf_simple_control()
 
     SinTheta = sin(theta);
     CosTheta = cos(theta);
-
 
     if( reference_out > 1.0 ){
         Vs_ref = fabs( Vs_rat / reference_out );// debug 2019.1002
@@ -118,13 +120,6 @@ void vf_simple_control()
     Is_DQ[QS] = -SinTheta * Is_dq[ds] + CosTheta * Is_dq[qs];
     Vs_DQ[DS] =  CosTheta * Vs_dq[ds] + SinTheta * Vs_dq[qs];
     Vs_DQ[QS] = -SinTheta * Vs_dq[ds] + CosTheta * Vs_dq[qs];
-
-/*
-    Is_DQ[DS] =  CosTheta * 1.0;
-    Is_DQ[QS] = SinTheta * 1.0;
-    Vs_DQ[DS] =  CosTheta * 300.0;
-    Vs_DQ[QS] =  SinTheta * 300.0;
-*/
 }
 
 

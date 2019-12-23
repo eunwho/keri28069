@@ -105,17 +105,24 @@ void sciaMonitor()     // need_edit
     strncpy( str,"9:4:900:0.000e+0:",17); load_scia_tx_mail_box(str);
     load_scia_tx_mail_box(MonitorMsg);
 
-    unionRpm.INTEGER    = (int)( rpm * INV_RPM_SCALE * 204.8) + 2048;
+    fTemp = ( rpm < -6000.0 ) ? -6000.0 : rpm;
+    fTemp = ( fTemp > 6000.0 ) ? 6000.0 : fTemp;
+    unionRpm.INTEGER    = (int)( fTemp * INV_RPM_SCALE * 204.8) + 2048;
 
-    temp   = (int)( Is_mag_rms * INV_I_SCALE * 204.8) + 2048;
-    if( temp < 0 ) temp = 0; if( temp > 4095 ) temp = 4095;
-    unionIrms.INTEGER   = temp;
+    fTemp = ( rpm < 0.0 ) ? 0.0 : Is_mag_rms;
+    fTemp = ( fTemp > 500.0 ) ? 500.0 : fTemp;
+    unionIrms.INTEGER    = (int)( fTemp * INV_I_SCALE * 204.8) + 2048;
 
     //unionPower.INTEGER  = (int)( P_total * INV_P_SCALE * 204.8) + 2048;
     unionPower.INTEGER  = (int)( 0.0 * INV_P_SCALE * 204.8) + 2048;
 
-    unionRePower.INTEGER  = (int)( reference_out * INV_REF_SCALE * 204.8) + 2048;
-    unionImPower.INTEGER  = (int)( Vdc * INV_V_SCALE * 204.8) + 2048;
+    fTemp = ( reference_out < -3.0 ) ? -3.0 : reference_out;
+    fTemp = ( fTemp > 3.0 ) ? 3.0 : fTemp;
+    unionRePower.INTEGER  = (int)( fTemp * INV_REF_SCALE * 204.8) + 2048;
+
+    fTemp = ( Vdc < 0.0 ) ? 0.0 : Vdc;
+    fTemp = ( fTemp > 800.0 ) ? 800.0 : fTemp;
+    unionImPower.INTEGER  = (int)( fTemp * INV_V_SCALE * 204.8) + 2048;
 
     i = 0;
     str[ i*3 + 0] = (( unionRpm.byte.MSB     ) & 0x0f) | 0x40  ;
@@ -416,12 +423,22 @@ void scia_cmd_proc( int * sci_cmd, double * sci_ref)
              check = (int)data;
              switch( check ){
              case 5 : // Reset;
+/*
                  gMachineState = STATE_POWER_ON;
                  gPWMTripCode = 0;
                  delay_msecs(50);
                  Nop();
                  asm (" .ref _c_int00"); // ;Branch to start of boot.asm in RTS library
                  asm (" LB _c_int00"); // ;Branch to start of boot.asm in RTS library
+ */
+                 DINT;
+                 EALLOW;
+                 EmuKey = 0x55aa;
+                 EmuBMode = 0x000B;
+                 SysCtrlRegs.SCSR = 0x00;
+                 SysCtrlRegs.WDCR = 0x20;
+                 EDIS;
+                 while(1);
                  break;
              default:
                  break;
