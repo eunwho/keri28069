@@ -73,8 +73,9 @@ void ADC_SOC_CNF( )
     EDIS;
 }
 
-#define I_RATIO   0.00061      // 두번 확인, 이값이 맞는것 같음
+//#define I_RATIO   0.00061      // 두번 확인, 이값이 맞는것 같음
 //#define I_RATIO   0.00122      // 두번 확인했음  이 값을 틀린것 같음.
+#define I_RATIO   0.0004575      // 두번 확인, 이값이 맞는것 같음
 
 interrupt void adcIsr(void)
 {
@@ -116,18 +117,14 @@ interrupt void adcIsr(void)
     lpf2nd( lpfVdcIn, lpfVdcOut, lpfVdcK);
     Vdc = (codeSetVdc > 0.5 ) ? 300.0 : lpfVdcOut[0];
 
-//    lpfIaIn[0] = -codeISensorValue * ( (double)adcCurrentA - codeIaOffset) * I_RATIO *codeIUSpan;
-    lpfIaIn[0] = -codeISensorValue * ( (double)adcCurrentA - codeIaOffset) * I_RATIO *codeIUSpan * 1.5; // 2019.12.17 by SKJ
-    lpf2nd( lpfIaIn, lpfIaOut, lpfIrmsK);
-    Is_abc[as] = lpfIaOut[0];
-//    Is_abc[as] = lpfIaIn[0];
-
-
-//    lpfIbIn[0] = -codeISensorValue * ( (double)adcCurrentB - codeIbOffset) * I_RATIO * codeIVSpan;
-    lpfIbIn[0] = -codeISensorValue * ( (double)adcCurrentB - codeIbOffset) * I_RATIO * codeIVSpan * 1.5; // 2019.12.17 by SKJ
-    lpf2nd( lpfIbIn, lpfIbOut, lpfIrmsK);
-    Is_abc[bs] = lpfIbOut[0];
-//    Is_abc[bs] = lpfIbIn[0];
+    lpfIaIn[0] = -codeISensorValue * ( (double)adcCurrentA - codeIaOffset) * I_RATIO *codeIUSpan; // 2019.12.24 by SKJ
+    //lpf2nd( lpfIaIn, lpfIaOut, lpfIrmsK);
+//    Is_abc[as] = lpfIaOut[0];
+    Is_abc[as] = lpfIaIn[0];
+    lpfIbIn[0] = -codeISensorValue * ( (double)adcCurrentB - codeIbOffset) * I_RATIO * codeIVSpan; //
+    //lpf2nd( lpfIbIn, lpfIbOut, lpfIrmsK);
+    //Is_abc[bs] = lpfIbOut[0];
+    Is_abc[bs] = lpfIbIn[0];
 
     Is_abc[cs]= -(Is_abc[as]+Is_abc[bs]);
     Is_dq[ds] = Is_abc[as];

@@ -65,11 +65,12 @@ void sciaMonitor()     // need_edit
     char str[50] ={0};
 
     switch(gMachineState){
+        for ( i = 0 ; i < 10 ;i++ ) MonitorMsg[i]=0;
         case STATE_POWER_ON:    strncpy(MonitorMsg,"[POWON]",7); break;
         case STATE_READY:       strncpy(MonitorMsg,"[READY]",7); break;
         case STATE_RUN:         strncpy(MonitorMsg,"[RUN  ]",7); break;
         case STATE_INIT_RUN:    strncpy(MonitorMsg,"[INIT ]",7); break;
-        case STATE_GO_STOP:     strncpy(MonitorMsg,"[GST  ]",7); break;
+        case STATE_GO_STOP:     strncpy(MonitorMsg,"[GSTOP]",7); break;
         case STATE_TRIP:
             strncpy(MonitorMsg,"[TRIP ]",7);
             break;
@@ -423,22 +424,16 @@ void scia_cmd_proc( int * sci_cmd, double * sci_ref)
              check = (int)data;
              switch( check ){
              case 5 : // Reset;
-/*
-                 gMachineState = STATE_POWER_ON;
-                 gPWMTripCode = 0;
-                 delay_msecs(50);
-                 Nop();
-                 asm (" .ref _c_int00"); // ;Branch to start of boot.asm in RTS library
-                 asm (" LB _c_int00"); // ;Branch to start of boot.asm in RTS library
- */
-                 DINT;
-                 EALLOW;
-                 EmuKey = 0x55aa;
-                 EmuBMode = 0x000B;
-                 SysCtrlRegs.SCSR = 0x00;
-                 SysCtrlRegs.WDCR = 0x20;
-                 EDIS;
-                 while(1);
+                if( ( gMachineState == STATE_READY)|| ( gMachineState == STATE_TRIP)){
+                     DINT;
+                     EALLOW;
+                     EmuKey = 0x55aa;
+                     EmuBMode = 0x000B;
+                     SysCtrlRegs.SCSR = 0x00;
+                     SysCtrlRegs.WDCR = 0x20;
+                     EDIS;
+                     while(1);
+                }
                  break;
              default:
                  break;
@@ -526,6 +521,9 @@ void scia_cmd_proc( int * sci_cmd, double * sci_ref)
                  break;
              case 3:
                  * sci_cmd = CMD_SPEED_DOWN;
+                 break;
+             case 4:
+                 * sci_cmd = CMD_SPEED_UP1;
                  break;
              default:
                  * sci_cmd = CMD_NULL;

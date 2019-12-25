@@ -51,7 +51,7 @@ void main( void )
     INIT_CHARGE_OFF; MAIN_CHARGE_OFF; TRIP_OUT_OFF;
 	init_charge_flag = 0;
 
-	gMachineState = STATE_POWER_ON; 
+	// gMachineState = STATE_POWER_ON;
 
 	DINT;
 
@@ -128,6 +128,7 @@ void main( void )
         delay_msecs(100);
     }
 */
+    gMachineState = STATE_POWER_ON;
     ADC_SOC_CNF();
     strncpy(MonitorMsg,"POWER_ON",20);
     gPWMTripCode = 0;		//

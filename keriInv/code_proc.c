@@ -567,19 +567,19 @@ int getCodeMotorRef(int address,int cmd , CODE_INFO *  codes)
     case CODE_Ls:
         strncpy(codes->disp, "Motor State Ls",20);
         if( cmd == CMD_WRITE_RAM ) Ls = codes->code_value;
-        set_code_default(0.002,1.0,0.252, Ls,0,codes);
+        set_code_default(0.0001,1.0,0.252, Ls,0,codes);
         break;
 
     case CODE_Lr:
         strncpy(codes->disp, "Motor State Lr",20);
         if( cmd == CMD_WRITE_RAM ) Lr = codes->code_value;
-        set_code_default(0.002,1.0,0.252, Lr,0,codes);
+        set_code_default(0.0001,1.0,0.252, Lr,0,codes);
         break;
 
     case CODE_Lm:
         strncpy(codes->disp, "Motor Mutual Lm",20);
         if( cmd == CMD_WRITE_RAM ) Lm = codes->code_value;
-        set_code_default(0.002,1.0,0.232, Lm,0,codes);
+        set_code_default(0.0001,1.0,0.232, Lm,0,codes);
         break;
 
     case CODE_Jm:

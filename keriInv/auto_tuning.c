@@ -109,13 +109,15 @@ void estim_Ls_pwm()
 	Us_dq[qs]=-Vs_dq[ds]*SinDeltaTheta + Vs_dq[qs]*CosDeltaTheta;
 	Vs_dq[ds]=Us_dq[ds];  Vs_dq[qs]=Us_dq[qs];
 	
-	//  Vs_max=Vs_rat * 0.5;
-	Vs_max=Vs_rat * 0.2;        // 2019.12.23
-	if (gfRunTime < 0.2 ) {
+    Vs_max=Vs_rat;        // 2019.12.23
+	// Vs_max=Vs_rat * 0.2;
+	if (gfRunTime < 0.2) {
 		Freq_ref = Freq_set = Freq_out=0.0;
 		we = 0.0; theta=0.0; SinTheta=0.0;
 		CosTheta=1.0;
-		Vs_ref=Rs*Is_rat*0.2;
+        Vs_ref=Rs*Is_rat;
+        // Vs_ref=Rs*Is_rat*0.2;
+        // Vs_ref=Rs*Is_rat*0.1;
 	} else {
 		IncFreq=(Ts/AT_Ls_Vs_RAMP)*AT_Freq_Ls;
 		if ( gfRunTime < (ExcitationTime+AT_Ls_Vs_RAMP+AT_Time_Ls))

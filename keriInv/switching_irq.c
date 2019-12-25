@@ -51,9 +51,9 @@ interrupt void MainPWM(void)
 
     if(gPWMTripCode == 0 ) gPWMTripCode = CheckIGBTFault();
     if(gPWMTripCode == 0 ){
-        if (( gMachineState != STATE_POWER_ON) & ( codeProtectOff > 0.5 )) {
-                gPWMTripCode = CheckOverCurrent();
-        }
+//        if (( gMachineState != STATE_POWER_ON) && ( codeProtectOff > 0.5 )) {
+        gPWMTripCode = CheckOverCurrent();
+//        }
     }
 
     if(gPWMTripCode == 0 ){

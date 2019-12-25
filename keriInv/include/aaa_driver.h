@@ -150,6 +150,7 @@ typedef union
 #define CMD_WRITE_CHECK			0x004C	//'L'
 #define CMD_MONITOR				0x004D	//'M'
 #define CMD_SAVE				0x004D	//'Q'
+#define CMD_SPEED_UP1           0x004E  //'P'
 
 //#define SCIB_RX_BUF_MAX			1
 #define CMD_BTN_SAVE			0x0051	//'Q'

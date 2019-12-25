@@ -24,19 +24,19 @@ void trip_recording(int trip_code,double trip_data,char * st)
 // #define OVER_I_LIMIT    300.0
 int CheckOverCurrent( )
 {
-	if( adcCurrentA > 3500){
+	if( adcCurrentA > 4000){
         trip_recording( ERR_OVER_CURRENT_U_PHASE, (double)(adcCurrentA),"I adc over U ph");
 		return ERR_OVER_CURRENT_U_PHASE;
 	}
-	if( adcCurrentA < 500){
+	if( adcCurrentA < 100){
         trip_recording( ERR_OVER_CURRENT_U_PHASE, (double)(adcCurrentA),"I adc under U ph");
 		return ERR_OVER_CURRENT_U_PHASE;
 	}
-	if( adcCurrentB > 3500){
+	if( adcCurrentB > 4000){
         trip_recording( ERR_OVER_CURRENT_V_PHASE, (double)(adcCurrentB),"I adc over V ph");
 		return ERR_OVER_CURRENT_V_PHASE;
 	}
-    if( adcCurrentB < 500 ){
+    if( adcCurrentB < 100 ){
         trip_recording( ERR_OVER_CURRENT_V_PHASE, (double)(adcCurrentB),"I adc under V ph");
         return ERR_OVER_CURRENT_V_PHASE;
     }

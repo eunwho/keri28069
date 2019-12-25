@@ -49,11 +49,10 @@ int vectorCtrlLoop()
         case STATE_RUN:
             strncpy(MonitorMsg," RUN ",20);
 			if		 (  iCommand == CMD_NULL ) 			ramp_proc( reference_in, &reference_out);
-			else if(( iCommand == CMD_SPEED_UP   ) && (reference_in <  3.0  )) reference_in += 0.1;
+            else if(( iCommand == CMD_SPEED_UP1   ) && (reference_in <  3.0  )) reference_in += 0.01;
+            else if(( iCommand == CMD_SPEED_UP   ) && (reference_in <  3.0  )) reference_in += 0.1;
 			else if(( iCommand == CMD_SPEED_DOWN ) && ( reference_in > 0.01 )) reference_in -= 0.1;
 			else if(  iCommand == CMD_STOP ) { 
-									  //"01234567890123456789"	
-				// strncpy(MonitorMsg," INV GO STOP",20);
 				reference_in = 0.0; gMachineState = STATE_GO_STOP;
 			}
 			else if(  iCommand == CMD_START ) ramp_proc( reference_in, &reference_out);
@@ -75,8 +74,7 @@ int vectorCtrlLoop()
 				LoopCtrl =0;
 			}
 			else{
-                strncpy(MonitorMsg,"GO STOP ",20);
-				reference_in = 0.0;
+ 				reference_in = 0.0;
 				ramp_proc(reference_in, &reference_out);
 			}
 			break;

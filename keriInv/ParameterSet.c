@@ -16,10 +16,10 @@ void commonVariableInit()
     scopePointCh3 = (int)(floor(codeScopePointCh3+0.5));
     scopePointCh4 = (int)(floor(codeScopePointCh4+0.5));
 
-    invCodeScopeScaleCh1 = 1.0 / codeScopeScaleCh1;
-    invCodeScopeScaleCh2 = 1.0 / codeScopeScaleCh2;
-    invCodeScopeScaleCh3 = 1.0 / codeScopeScaleCh3;
-    invCodeScopeScaleCh4 = 1.0 / codeScopeScaleCh4;
+    invCodeScopeScaleCh1 = 2.0 / codeScopeScaleCh1;
+    invCodeScopeScaleCh2 = 2.0 / codeScopeScaleCh2;
+    invCodeScopeScaleCh3 = 2.0 / codeScopeScaleCh3;
+    invCodeScopeScaleCh4 = 2.0 / codeScopeScaleCh4;
 
     x1 = code_adc_Vdc_low;      y1 = code_Vdc_calc_low;
     x2 = code_adc_Vdc_high;     y2 = code_Vdc_calc_high;
