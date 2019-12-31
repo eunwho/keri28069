@@ -32,6 +32,16 @@
 #define SCOPE_DUTY_V       21
 #define SCOPE_DUTY_W       22
 
+#define SCOPE_Fs       23
+#define SCOPE_Fs_d       24
+#define SCOPE_Fs_q       25
+
+#define SCOPE_Iref_D       26
+#define SCOPE_Iref_Q       27
+
+#define SCOPE_Vref_D       28
+#define SCOPE_Vref_Q       29
+
 #define SCOPE_THETA             30
 #define SCOPE_THETA_M         31
 #define SCOPE_SIN_THETA         32
@@ -40,6 +50,9 @@
 #define SCOPE_We        34
 #define SCOPE_Wr        35
 #define SCOPE_Wr_M        36
+
+#define SCOPE_I_DS0_0     40
+#define SCOPE_I_DS0       41
 
 
 
@@ -75,6 +88,16 @@ void setScopePoint()
     scopePoint[SCOPE_DUTY_V]       = &DutyRatio[v];
     scopePoint[SCOPE_DUTY_W]       = &DutyRatio[w];
 
+    scopePoint[SCOPE_Fs]       = &Fs;
+    scopePoint[SCOPE_Fs_d]       = &Fs_dq[ds];
+    scopePoint[SCOPE_Fs_q]       = &Fs_dq[qs];
+
+    scopePoint[SCOPE_Iref_D]       = &Is_DQ_ref[DS];
+    scopePoint[SCOPE_Iref_Q]       = &Is_DQ_ref[QS];
+
+    scopePoint[SCOPE_Vref_D]       = &Vs_DQ_ref[DS];
+    scopePoint[SCOPE_Vref_Q]       = &Vs_DQ_ref[QS];
+
     scopePoint[SCOPE_THETA]       = &theta;
     scopePoint[SCOPE_THETA_M]       = &theta_m;
     scopePoint[SCOPE_SIN_THETA]       = &SinTheta;
@@ -84,7 +107,8 @@ void setScopePoint()
     scopePoint[SCOPE_Wr]       = &wr;
     scopePoint[SCOPE_Wr_M]   = &wr_m;
 
-
+    scopePoint[SCOPE_I_DS0_0]   = &I_DS0_0;
+    scopePoint[SCOPE_I_DS0]   = &I_DS0;
 }
 
 //--- end of file

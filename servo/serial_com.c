@@ -61,18 +61,18 @@ unsigned int CRC16( char* puchMsg, unsigned int usDataLen)
 
 void load_sci_tx_mail_box( char * str)
 {
-	load_scia_tx_mail_box( str);
+    load_scia_tx_mail_box( str);
+//    load_scib_tx_mail_box( str);
 }
 
 void serial_com_proc( int * sci_cmd, double * sci_ref)
 {
 
-	if (scia_rx_msg_flag == 1 ){
-		scia_cmd_proc( sci_cmd, sci_ref);
-		scia_rx_msg_flag = 0;
-		return;
-	}
-	else{
+    if (scia_rx_msg_flag == 1 ){
+        scia_cmd_proc( sci_cmd, sci_ref);
+        scia_rx_msg_flag = 0;
+        return;
+    } else{
 		* sci_cmd = CMD_NULL;
 		* sci_ref = 0.0;
 		return;

@@ -28,8 +28,8 @@ PAGE 1 :   /* Data Memory */
    RAMM1       : origin = 0x000400, length = 0x000400     /* on-chip RAM block M1 */
    RAML2       : origin = 0x008C00, length = 0x000400     /* on-chip RAM block L2 */
    RAML3       : origin = 0x009000, length = 0x001000	  /* on-chip RAM block L3 */
-   RAML4       : origin = 0x00A000, length = 0x002000     /* on-chip RAM block L4 */
-   RAML5_8     : origin = 0x00C000, length = 0x008000     /* on-chip RAM block L5 */
+   RAML4       : origin = 0x00A000, length = 0x004000     /* on-chip RAM block L4 */
+   RAML5_8     : origin = 0x00E000, length = 0x006000     /* on-chip RAM block L5 */
    USB_RAM     : origin = 0x040000, length = 0x000800     /* USB RAM		  */   
 }
 
@@ -53,7 +53,7 @@ SECTIONS
 /*   .stack              : > RAMM0,      PAGE = 1  */
    .stack              : > RAML3,      PAGE = 1
    .ebss               : > RAML4,      PAGE = 1
-   .esysmem            : > RAML5_8,      PAGE = 1
+   .esysmem        : > RAML5_8,      PAGE = 1
 
    /* Initalized sections to go in Flash */
    /* For SDFlash to program these, they must be allocated to page 0 */

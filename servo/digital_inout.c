@@ -3,9 +3,14 @@
 
 void fault_reset()
 {
-	Nop();
-	asm (" .ref _c_int00"); // ;Branch to start of boot.asm in RTS library
-	asm (" LB _c_int00"); // ;Branch to start of boot.asm in RTS library
+    DINT;
+    EALLOW;
+    EmuKey = 0x55aa;
+    EmuBMode = 0x000B;
+    SysCtrlRegs.SCSR = 0x00;
+    SysCtrlRegs.WDCR = 0x20;
+    EDIS;
+    while(1);
 }
 
 void driver_enable_proc(){	Nop();}
@@ -37,26 +42,6 @@ void digital_input_proc(int * cmd, double * ref )
 //=====================
 // Digital Out Proc
 //======================
-
-int digital_port_check( int out_function )
-{
-	int i;
-
-	i = 0;
-	if	   ( ( relay_flag.bit.DRIVE_READY )	&&( out_function == 1 )) i =1;
-	else if( ( relay_flag.bit.FAULT_OUT_A ) &&( out_function == 2 )) i =1;
-	else if( ( relay_flag.bit.FAULT_OUT_B ) &&( out_function == 3 )) i =1;
-	else if( ( relay_flag.bit.MOTOR_BRAKE ) &&( out_function == 4 )) i =1;
-	else if( ( relay_flag.bit.RUN_STOP) 	&&( out_function == 5 )) i =1;
-	else if( ( relay_flag.bit.WARNING) 		&&( out_function == 6 )) i =1;
-	else if( ( relay_flag.bit.DIRECTION) 	&&( out_function == 7 )) i =1;
-	else if( ( relay_flag.bit.JOG_INPUT) 	&&( out_function == 8 )) i =1;
-	else if( ( relay_flag.bit.VC_LIMIT) 	&&( out_function == 9 )) i =1;
-	else if( ( relay_flag.bit.FREE) 		&&( out_function == 10)) i =1;
-	else															 i = 0;
-	
-	return i;
-}  	
 
 void digital_out_proc()		// debug
 {

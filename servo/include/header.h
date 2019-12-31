@@ -5,19 +5,20 @@
 #include "F2806x_Examples.h"   // DSP2833x Examples Include File
 
 #include "aaa_driver.h"		    // 2011.10.12
-#include "code_proc.h"		    // 2009.08.15
-#include "singlePhaseSci.h"		// 2017.08.11   // f28069 inverter for single phase ACIM
-//#include "button_proc.h"	    // 2009.09.14
-//#include "IQmathLib.h"
-#include "const.h"					
-
+#include "code_proc.h"          // 2009.08.15
+#include "const.h"
+#include "digital_inout.h"
 #include "fault.h"
+
+#include "sci28069.h"		// 2019.12.12   
+//#include "IQmathLib.h"
+
 #include "module.h"
 
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "digital_inout.h"
+
 
 #endif

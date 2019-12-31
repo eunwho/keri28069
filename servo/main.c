@@ -6,7 +6,7 @@
 #include	"extern.h"
 #include	"global.h"
 
-
+#define ROM_ENABLE  1
 #if ROM_ENABLE
 #pragma CODE_SECTION(MainPWM, "ramfuncs");
 #pragma CODE_SECTION(adcIsr, "ramfuncs");
@@ -80,7 +80,6 @@ void main( void )
   	EDIS;    // This is needed to disable write to EALLOW protected registers
 
   	InitAdc();
-//    AdcOffsetSelfCal();
 
   	EALLOW;
      SysCtrlRegs.PCLKCR0.bit.TBCLKSYNC = 1;
@@ -107,6 +106,12 @@ void main( void )
     ADC_SOC_CNF();
     strncpy(MonitorMsg,"POWER_ON",20);
     gPWMTripCode = 0;		//
+
+    for ( ; ; ) {
+        strncpy(gStr1,"hello \r\n",20);
+        load_sci_tx_mail_box(gStr1);
+        delay_msecs(1000);
+    }
 
     if( load_code2ram() != 0 ) tripProc();
 
@@ -165,12 +170,15 @@ void main( void )
         if(cmd == CMD_START)    // if( cmd == CMD_START )
         {
             trip_code = 0;
-
             switch( (int)(floor(codeMotorCtrlMode+0.5)) ) // Control Method
             {
             case 0: trip_code = vf_loop_control(ref_in0)        ; break;
             case 1: trip_code = vf_loop_control(ref_in0)        ; break;        //
-            case 7: trip_code = servoSpeedLoop( )               ; break;
+            case 3: trip_code = vectorCtrlLoop()                  ; break;    // speed control
+            case 4: trip_code = vectorCtrlLoop()                  ; break;    // TORQUE Ctrl
+            case 5: trip_code = parameter_estimation()          ; break;    // mode 5
+//           case 8 : pwm_pulse_test( ); break;
+//           case 9 : vf_conv_test(ref_in0); break;
             }
             if( trip_code !=0 ) tripProc();
         }

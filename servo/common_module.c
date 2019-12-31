@@ -88,7 +88,6 @@ int iGetAinCmd(int * piCommand, double * pfReference)
 	return iTemp;
 }
 
-
 #define analog_cmd_in_span1     1.0
 #define analog_cmd_in_zero1     0.0
 
@@ -101,11 +100,11 @@ void analog_cmd_proc(double * ana_ref)
 
 void get_command( int * command, double * ref )
 {
-	int digital_cmd,sci_cmd;
-	double digital_ref,sci_ref;
+	int sci_cmd, digital_cmd;
+	double sci_ref, digital_ref;
 
 	serial_com_proc( & sci_cmd, & sci_ref );
-	//  analog_cmd_proc( & analog_ref);
+//	analog_cmd_proc( & analog_ref);
 	digital_input_proc(&digital_cmd, &digital_ref);
 
 	* command = digital_cmd;
@@ -118,6 +117,7 @@ void get_command( int * command, double * ref )
 	    * command = CMD_STOP;
 	    * ref = 0.0;
 	}
+
 	Nop();
 }
 

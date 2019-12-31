@@ -1,16 +1,8 @@
 #ifndef		__FUNCTION_MODULE_DEFINITION_
 #define		__FUNCTION_MODULE_DEFINITION_
 
-// eQep.c
-void Init_EQep(void);
-interrupt void eqep1_isr(void);
 
-// pmsmCtrl.c
-extern void servoCtrlInit(void);
-extern int servoParaVerification(void);
-extern void pos_ref_gen(void);                  // Speed Reference generation
-extern void servoSpeedCtrl();
-extern int servoSpeedLoop( void );
+extern interrupt void xint1_isr(void );
 
 // analog.c
 extern void ADC_SOC_CNF( );
@@ -41,7 +33,12 @@ extern void backup_data_load();
 extern int init_eprom_data();
 extern double CheckSum();
 extern void readAllCodes();
+extern int loadDefaultCode();
+extern int load_code2ram();
+extern int code_init();
+
 // common_module.c
+extern void getSinCosTheta(double thetaIn, double * sinTheta , double * cosTheta   );
 extern void LPF1(double Ts,double pole,double in,double *out);
 extern double linear_eq(double x1, double x2, double y1, double y2, double x );
 extern int periodic_check(unsigned long  msec);
@@ -54,6 +51,12 @@ extern void digital_input_proc( int * cmd, double * ref);
 extern void input_ext_fault_a_proc();
 extern void serial_com_proc( int * sci_cmd, double * sci_reference );
 extern void load_sci_tx_mail_box(char *st);
+
+//--- eQep.c
+extern void Init_EQep(void);
+extern interrupt void eqep1_isr(void);
+extern void EQEP_capture_control();
+
 // EwInv.C
 extern void Nop();
 extern void SetSensorOffset();
@@ -72,13 +75,15 @@ extern int hyd_unit_loop_proc();
 extern void hyd_unit_proc(int state, double * ref_out);
 
 // I2C_eeprom.c
-extern int check_code_data(int address, UNION32 u32data );
 extern void I2CA_Init(void);
+
+/*
+extern int check_code_data(int address, UNION32 u32data );
 extern void write_code_2_eeprom(int address,UNION32 data);
 extern void read_eprom_data(int address, UNION32 * u32data);
-extern Uint16 I2CA_ReadData(int iSlaveAddr, int iMemAddr, int * data);
-extern Uint16 I2CA_WriteData(int iSlaveAddr,int iMemAddr,int iData);
 extern int load_code2ram();
+*/
+
 // low_pass_filter.c
 extern void lpf2nd(double * x,double * y, double * K);
 extern void lpf2ndCoeffInit( double cutoff_freq, double T_sample, double *x, double *y, double *k);
@@ -104,6 +109,14 @@ extern void sciaMonitor();
 extern interrupt void sciaRxFifoIsr(void);
 extern interrupt void sciaTxFifoIsr(void);
 
+// scib.c
+extern void load_scib_tx_mail_box(char *st);
+extern void scib_cmd_proc(int * scic_cmd, double * scic_ref);
+extern void scib_fifo_init(void);
+extern void scibMonitor();
+extern interrupt void scibRxFifoIsr(void);
+extern interrupt void scibTxFifoIsr(void);
+
 //set_Par.c
 extern int HardwareParameterVerification();
 extern int VF_Cntl_Parameter();
@@ -116,9 +129,33 @@ extern int SL_SPEED_CNTL_Parameter();
 extern void setScopePoint();
 
 //SL_Vect.c
-void SL_SpeedCntl_SFRF();
-void SL_TorqueCntl_SFRF();
-void SL_VectCntl_SFRF();
+extern void SL_SpeedCntl_SFRF();
+extern void SL_TorqueCntl_SFRF();
+extern void SL_VectCntl_SFRF();
+
+// S_Vect.c
+extern int COMMON_S_VECT_CNTL_ParameterVerification();
+extern int S_TORQUE_CNTL_Parameter();
+extern int S_SPEED_CNTL_Parameter();
+extern void S_SpeedCntl_RFO();
+extern void S_TorqueCntl_RFO();
+extern void S_VectCntl_RFO();
+
+//SPI_eeprom.c
+extern void InitSpi_A_Gpio();
+extern void spi_A_init();
+extern void spi_xmit(Uint16 a);
+extern void EEPROM_WRITE_byte(Uint32 address,Uint16 data);
+extern void EEPROM_WRITE_2_byte(Uint32 address,Uint16 data);
+extern void EEPROM_WRITE_4_byte(Uint32 address,Uint32 data);
+extern Uint16 EEPROM_READ_byte(Uint32 address);
+extern Uint32 EEPROM_READ_2_byte(Uint32 address);
+extern Uint32 EEPROM_READ_4_byte(Uint32 address);
+extern void EEPROM_WRITE_PAGE(Uint16 page,Uint16 *data);
+extern void EEPROM_READ_PAGE(Uint16 page,Uint16 *data);
+
+extern void read_eprom_data(int addr, UNION32 * u32data);
+extern void write_code_2_eeprom(int addr, UNION32 u32data);
 
 // svm.c
 extern  void SpaceVectorModulation( double *Vs_dqIn );
@@ -128,6 +165,7 @@ extern void singlePhaseModulation( double m, double theta, double dutyRatio[3]);
 extern void MotorControlProc( );
 extern interrupt void MainPWM(void);
 //TripProc.c
+extern int tripCheckPWM();
 extern void trip_recording(int trip_code,double trip_data,char * st);
 extern void GetTripInfo(int Point, TRIP_INFO * TripData );
 extern void WriteTripString(int StartAddr, char * str);
@@ -155,9 +193,4 @@ extern int SaveDataProc(int addr, double data);
 interrupt void cpu_timer0_isr(void);
 interrupt void MainPWM(void);
 interrupt void wakeint_isr(void);
-
-// windPower.c
-void windPowerCtrl();
-int windPowerLoop(double cmd_ref);
-
 #endif

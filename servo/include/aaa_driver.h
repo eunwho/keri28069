@@ -1,12 +1,6 @@
 #ifndef		__UDD_OPTION_H_
 #define		__UDD_OPTION_H_
 
-
-
-
-
-#define ROM_ENABLE          1
-
 #define   RPM2WRM            (2.*PI/60.) 
 #define   WRM2RPM            (60./(2.*PI)) 
 #define SWITCHING_FREQ      8000
@@ -16,6 +10,7 @@
 //*******************************************
 // Program Control 
 //*******************************************
+
 #define GATE_ACTIVE_LOW         1       // IRS2336D
 #define TEST_ADC_CENTER			1
 #define SCOPE_MAX_NUMBER        400
@@ -26,8 +21,8 @@
 #define TYPE_FLOAT				1
 
 #define EEPROM_RW_DELAY			10	
-#define DEAD_TIME_COUNT         137         //  3usec 90Mhz
-// #define DEAD_TIME_COUNT         183         // 90Mhz
+//#define DEAD_TIME_COUNT         137         //  3usec 90Mhz
+#define DEAD_TIME_COUNT         183         // 90Mhz
 
 #define TRIP_BACKUP_ADDR		3000		
 #define EPROM_ADDR_TRIP_POINT	4010
@@ -86,6 +81,7 @@ typedef union
     } byte;
 } UNION16;
 
+//#define INV_RPM_SCALE   0.005     // 1.0 / 200.0 ;
 #define INV_RPM_SCALE   0.001     // 1.0 / 1000.0 ;
 #define INV_I_SCALE     0.02         //  = 1.0 / 100;
 #define INV_P_SCALE     0.001      // 1/1000
@@ -94,6 +90,9 @@ typedef union
 
 #define SCIA_RX_BUF_MAX     30
 #define SCIA_TX_BUF_MAX     2000
+
+#define SCIB_RX_BUF_MAX     30
+#define SCIB_TX_BUF_MAX     2000
 
 //--- button_proc.c
 #define BUTTON_ROOT				0

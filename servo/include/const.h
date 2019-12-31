@@ -1,6 +1,8 @@
+// project name : inverter for Electric Vehicle by soonkil jung 2019.12.20
 #ifndef		__COMMON_CONSTANTS_
 #define		__COMMON_CONSTANTS_
 
+// #define MIN_REF       0.05    // minimum run reference
 //'math
 #define PI_2_INV	 0.15915494309		//' 1/(2*pi)
 #define	PI_120		 376.991118430		//' 2*pi*60
@@ -72,17 +74,18 @@
 #define F_OSC					20000000
 
 //
-#define Is_Max_Coeff            2.0
-#define UNDER_VOLT_LEVEL        80.0
-#define OVER_V_LEVEL            380.0
-
+#define over_volt_set           380.0         // check
+//#define UNDER_VOLT_LEVEL        200.0         // check
+// #define OVER_V_LEVEL        420.0
+#define UNDER_VOLT_LEVEL        400.0         // check
+#define OVER_V_LEVEL        720.0
 
 
 // Control Constant
 #define AT_SUCCESS	10
 
-
-
+//--- define inner parameter
+#define AT_Ls_DMB_OpenTime      0.5
 
 #endif
 

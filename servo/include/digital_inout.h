@@ -14,8 +14,8 @@
 #define DIGIT1_CLEAR        (GpioDataRegs.GPBCLEAR.bit.GPIO40= 1)
 #define DIGIT1_SET          (GpioDataRegs.GPBSET.bit.GPIO40= 1)
 
-#define DIGIT2_CLEAR        (GpioDataRegs.GPBCLEAR.bit.GPIO41= 1)
-#define DIGIT2_SET          (GpioDataRegs.GPBSET.bit.GPIO41= 1)
+#define PERIOD_PWM_IRQ_CLEAR (GpioDataRegs.GPBCLEAR.bit.GPIO41= 1)
+#define PERIOD_PWM_IRQ_SET   (GpioDataRegs.GPBSET.bit.GPIO41= 1)
 
 #define SIGNAL2_SET			(GpioDataRegs.GPASET.bit.GPIO8 = 1)
 #define SIGNAL2_CLEAR		(GpioDataRegs.GPACLEAR.bit.GPIO8 = 1)
@@ -45,7 +45,7 @@
 #define BACKUP_DISABLE      (GpioDataRegs.GPASET.bit.GPIO17   = 1)
 
 // 2017.09.01--2011.06.25
-#define EX_INPUT1           GpioDataRegs.GPADAT.bit.GPIO14    // exInput1
+#define EX_DIO_INPUT2       GpioDataRegs.GPADAT.bit.GPIO14    // exInput1
 #define START_INPUT         GpioDataRegs.GPADAT.bit.GPIO12    // exInput1
 #define RUN_INPUT           (START_INPUT)                     // run input
 

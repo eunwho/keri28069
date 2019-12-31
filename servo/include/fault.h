@@ -81,9 +81,13 @@
 #define	ERR_EXT_TRIP						966
 #define	TRIP_EXT_A							967
 
+
 #define	ERR_PWM_CNT							971		// ����Ī �ֱ��� ī���� �� ���� 
 
 #define	ERR_INV_DISABLE						972		// ������ �ι��� �𽺿��̺� 
+
+//=====================
+#define ERR_Ki_Fr_Under                     980
 
 struct TRIP_INFO_DEFINE {
 	int		CODE;				// 1

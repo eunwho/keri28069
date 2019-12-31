@@ -3,16 +3,9 @@
 
 #define max_I_ratio     1.5
 
-
 void commonVariableInit()
 {
     double x1,x2,y1,y2;
-
-    codeMotorPole = 2.0;
-    // codeRateHz = codeMotorPole * codeRateRpm/120.0;
-    codeRateHz = 50.0;
-    codeRateEffiency = 0.91;
-    codeRateCurrent = 1.3;
 
     setScopePoint();
 
@@ -23,18 +16,16 @@ void commonVariableInit()
     scopePointCh3 = (int)(floor(codeScopePointCh3+0.5));
     scopePointCh4 = (int)(floor(codeScopePointCh4+0.5));
 
-    invCodeScopeScaleCh1 = 1.0 / codeScopeScaleCh1;
-    invCodeScopeScaleCh2 = 1.0 / codeScopeScaleCh2;
-    invCodeScopeScaleCh3 = 1.0 / codeScopeScaleCh3;
-    invCodeScopeScaleCh4 = 1.0 / codeScopeScaleCh4;
-
-//    code_adc_vdc_low    = 100;
-//    code_Vdc_calc_low   = 10;
-//    code_adc_vdc_high   = 2500;
-//    code_Vdc_calc_high  = 300;
+    invCodeScopeScaleCh1 = 2.0 / codeScopeScaleCh1;
+    invCodeScopeScaleCh2 = 2.0 / codeScopeScaleCh2;
+    invCodeScopeScaleCh3 = 2.0 / codeScopeScaleCh3;
+    invCodeScopeScaleCh4 = 2.0 / codeScopeScaleCh4;
 
     x1 = code_adc_Vdc_low;      y1 = code_Vdc_calc_low;
     x2 = code_adc_Vdc_high;     y2 = code_Vdc_calc_high;
+
+    Vdc_factor = ( y2-y1) / ( x2 - x1 );
+    Vdc_calc_offset = (( y1 * x2 - y2 * x1 )/ (x2- x1));
 
     Vdc_factor = ( y2-y1) / ( x2 - x1 );
     Vdc_calc_offset = (( y1 * x2 - y2 * x1 )/ (x2- x1));
@@ -47,6 +38,7 @@ void commonVariableInit()
     reference_in=0.0;
     reference_out=0.0;  // new
     Freq_ref=0.0;
+
 
     // time, count, flag
     DutyRatio[u] = DutyRatio[v] = DutyRatio[w] = 0.5; //2018.0627
@@ -84,12 +76,12 @@ void commonVariableInit()
     wr_Cycle=0.0;
     wr_CycleIndex=0;
     wr_m0=0.0;
-    wr_m=0.0;               // ½ÇÁ¦ ¼ÓµµÀÇ ÇÊÅÍ¸µ ÃÊ±â°ª = ½ÇÁ¦ ¼Óµµ
+    wr_m=0.0;               // 쩍횉횁짝 쩌횙쨉쨉�횉 횉횎횇횒쨍쨉 횄횎짹창째짧 = 쩍횉횁짝 쩌횙쨉쨉
     wr=0.0;
     wr_ref=0.0;
     wr_ref=0.0;
     wr_err=0.0;
-    wr_ErrInt=0.0;              // ¼ÓµµÁ¦¾î±âÀÇ ÀûºÐ·®
+    wr_ErrInt=0.0;              // 쩌횙쨉쨉횁짝쩐챤짹창�횉 �청쨘횖쨌짰
     w_sl=0.0;
     w_sl0=0.0;
 
@@ -98,9 +90,9 @@ void commonVariableInit()
     theta_m=0.0;
     rpm_ref=0.0;
     rpm_err=0.0;
-    rpm_Coeff = 60.0 * inv_P_pair/PI_2;             // 회전수/분
+    rpm_Coeff = 60.0 * inv_P_pair/PI_2;             //
 
-    // 전류
+    // �쟾瑜�
     Is_rat=sqrt(2.0)*codeRateCurrent;
     Is_max = Is_rat * max_I_ratio  / 100.0;
     inv_Is_rat=1.0/Is_rat;
@@ -115,10 +107,10 @@ void commonVariableInit()
     Is_DQ_max[DS]=Is_DQ_max[QS]=0.0;
     Is_DQ_ref[DS]=Is_DQ_ref[QS]=0.0;
     prev_I_QS=0.0;
-    Is_DQ_ErrInt[DS]=Is_DQ_ErrInt[QS]=0.0;          // Àü·ùÁ¦¾î±âÀÇ ÀûºÐ·®
+    Is_DQ_ErrInt[DS]=Is_DQ_ErrInt[QS]=0.0;          // �체쨌첫횁짝쩐챤짹창�횉 �청쨘횖쨌짰
 
-    // 전압
-    Vs_rat = sqrt(2.0)/sqrt(3.0) * codeRateVolt;         // 상전압의 피크 값
+    // �쟾�븬
+    Vs_rat = sqrt(2.0)/sqrt(3.0) * codeRateVolt;         // �긽�쟾�븬�쓽 �뵾�겕 媛�
     Vs_max=0.0;
     Vs_ref = 0.0;
     Vs_abc[as]=Vs_abc[bs]=Vs_abc[cs]=0.0;
@@ -192,18 +184,18 @@ void commonVariableInit()
 
     // V/F Control Parameter
     VF_DeadTimeGain=1.0;
-    VF_ExcitationTime=2.0;                  // DC여자 시간 = 0.5초
+    VF_ExcitationTime=2.0;                  // DC�뿬�옄 �떆媛� = 0.5珥�
     VF_Fs_Coeff=1.0;
     VF_Freq_TrqBoost=1.5;
     VF_Vs_Coeff_TrqBoost=1.5*(VF_Freq_TrqBoost / codeRateHz );
     VF_Rs_ThermalCoeff=1.05;
     VF_IR_Comp_FilterPole=100.0;
     VF_Slip_Comp_FilterPole=20.0;
-    VF_Rs=0.0;                              // 디폴트 저항 값 --> 0
+    VF_Rs=0.0;                              // �뵒�뤃�듃 ���빆 媛� --> 0
 
-    // V/F 제에의 슬립 보상
+    // V/F �젣�뿉�쓽 �뒳由� 蹂댁긽
     S_rat=(we_rat-wr_rat)/we_rat;
-    S_lin=(codeMotorPole/PI)*(S_rat* codeRateHz)/Te_rat;             // ==> V/f 제어 : 슬립 보상
+    S_lin=(codeMotorPole/PI)*(S_rat* codeRateHz)/Te_rat;             // ==> V/f �젣�뼱 : �뒳由� 蹂댁긽
     Freq_slip_rat=S_rat* codeRateHz;
 }
 

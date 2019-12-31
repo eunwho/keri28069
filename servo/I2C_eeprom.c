@@ -74,11 +74,19 @@ Uint16 I2CA_ReadData(int iSlaveAddr, int iMemAddr, int * data)
  	return I2C_SUCCESS;
 }
 
+#define ADDR_EEPROM_OFFSET  0
+
 void write_code_2_eeprom(int address,UNION32 data)
 {
 	int eprom_addr;
-	eprom_addr = address * 4 ;
-	I2CA_WriteData(ADDR_24LC32, eprom_addr + 0, data.byte.byte0);
+	int temp;
+
+	temp = (int)(code_motorId+0.5);
+
+	if( address < 100 ) eprom_addr = address * 4 ;
+    else                eprom_addr = (address + 100 * temp )*4;
+
+    I2CA_WriteData(ADDR_24LC32, eprom_addr + 0, data.byte.byte0);
 	I2CA_WriteData(ADDR_24LC32, eprom_addr + 1, data.byte.byte1);
 	I2CA_WriteData(ADDR_24LC32, eprom_addr + 2, data.byte.byte2);
 	I2CA_WriteData(ADDR_24LC32, eprom_addr + 3, data.byte.byte3);
@@ -87,115 +95,18 @@ void write_code_2_eeprom(int address,UNION32 data)
 void read_eprom_data(int address, UNION32 * u32data)
 {
 	int eprom_addr, iTemp;
+    int temp;
 
-	eprom_addr = address * 4 ;
+    temp = (int)(code_motorId+0.5);
+
+    if( address < 100 ) eprom_addr = address * 4 ;
+    else                eprom_addr = (address + 100 * temp )*4;
 	
 	I2CA_ReadData(ADDR_24LC32, eprom_addr + 0, & iTemp); (u32data->byte).byte0 = iTemp;
 	I2CA_ReadData(ADDR_24LC32, eprom_addr + 1, & iTemp); (u32data->byte).byte1 = iTemp;
 	I2CA_ReadData(ADDR_24LC32, eprom_addr + 2, & iTemp); (u32data->byte).byte2 = iTemp;
 	I2CA_ReadData(ADDR_24LC32, eprom_addr + 3, & iTemp); (u32data->byte).byte3 = iTemp;
 }
-
-void data_under_proc(int address, UNION32 u32data)
-{
-	int trip_code;
-	float trip_data;
-	
-	trip_code = address;
-	trip_data = u32data.dword;
-	trip_recording( trip_code, trip_data,"Data Under");
-}
-
-void data_over_proc(int address,UNION32 u32data)
-{
-	int trip_code;
-	float trip_data;
-	
-	trip_code = address;
-	trip_data = u32data.dword;
-	trip_recording( trip_code, trip_data,"Data Over");
-}
-
-void invalid_address_proc(int address )
-{
-	int trip_code;
-	float trip_data;
-	
-	trip_code = address;
-	trip_data = 0.0;
-	trip_recording( trip_code, trip_data,"Invalid Address");
-}
-
-int check_code_data(int address, UNION32 u32data )
-{
-	int cmd,check,return_value;
-
-	cmd = CMD_READ_DATA;
-
-	check = get_code_information( address, cmd , & code_inform);
-	if( check){
-		invalid_address_proc( address );
-		return -1;
-	}
-
-    if( code_inform.code_min > u32data.dword ){
-        data_under_proc(address, u32data);
-        return_value = -1;
-    }
-    else if(code_inform.code_max < u32data.dword ){
-        data_over_proc(address, u32data);
-        return_value = -1;
-    }
-    else {
-        code_inform.code_value = u32data.dword;
-        cmd = CMD_WRITE_RAM;
-        check =  get_code_information( address,cmd, & code_inform);
-        return_value = 0;
-    }
-	return return_value;   
-}
-
-int load_code2ram()
-{
-	UNION32	data;
-	int check;
-	int addr,cmd;
-	
-	data.dword  = 0.0;
-	cmd = CMD_READ_DATA;
-    for( addr = 0 ; addr <= CODE_END ; addr++){
-        check = get_code_information( addr, cmd , & code_inform);
-        if( !check ){
-            read_eprom_data( addr, & data);
-            check = check_code_data(addr, data);	// check min and max boundary
-            if(check)   return -1;
-            else{
-                code_inform.code_value = data.dword;
-                cmd = CMD_WRITE_RAM;
-                check = get_code_information( addr,cmd, & code_inform);
-            }
-        }
-    }
-    return 0;
-}
-
-int code_init()
-{
-	UNION32 datum;
-
-	int check, cmd, addr;
- 
-	cmd = CMD_READ_DATA;
-    for( addr = 0; addr < CODE_END; addr++){
-        check = get_code_information( addr, cmd , & code_inform);
-        if( !check ){
-            datum.dword = code_inform.code_value;
-            write_code_2_eeprom(addr, datum);
-        }
-    }
-	check = load_code2ram();
-	return check;
-}		
 
 //===========================================================================
 // No more.

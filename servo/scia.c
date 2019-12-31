@@ -425,14 +425,7 @@ void scia_cmd_proc( int * sci_cmd, double * sci_ref)
              switch( check ){
              case 5 : // Reset;
                 if( ( gMachineState == STATE_READY)|| ( gMachineState == STATE_TRIP)){
-                     DINT;
-                     EALLOW;
-                     EmuKey = 0x55aa;
-                     EmuBMode = 0x000B;
-                     SysCtrlRegs.SCSR = 0x00;
-                     SysCtrlRegs.WDCR = 0x20;
-                     EDIS;
-                     while(1);
+                    fault_reset();
                 }
                  break;
              default:
@@ -533,14 +526,6 @@ void scia_cmd_proc( int * sci_cmd, double * sci_ref)
          }
          else if (addr == 909 ){
                  temp = (int) rpm;
-/*
-                 snprintf( str,20,"Rpm = %4d : ",temp); load_scia_tx_mail_box(str);
-              snprintf( str,20,"Irms = %1e : ",Is_mag_rms); load_scia_tx_mail_box(str);
-              snprintf( str,20,"P_total = %1e : ",P_total); load_scia_tx_mail_box(str);
-              snprintf( str,20,"refer_out = %1e : ",reference_out); load_scia_tx_mail_box(str);
-              load_scia_tx_mail_box(" \r\n");
-              delay_msecs(10);
-*/
               snprintf( str,20,"Rpm = %4d : ",temp); load_scia_tx_mail_box(str);
               snprintf( str,30,"Irms = %.3e : ",Is_mag_rms); load_scia_tx_mail_box(str);
               snprintf( str,30,"P_total = %.1e : ",P_total); load_scia_tx_mail_box(str);
@@ -550,8 +535,8 @@ void scia_cmd_proc( int * sci_cmd, double * sci_ref)
               return;
           }
          else if (addr == 910 ){ // read adc
-              snprintf( str,20,"Ia = %4d : ",adcCurrentA); load_scia_tx_mail_box(str);
-              snprintf( str,20,"Ib = %4d : ",adcCurrentB); load_scia_tx_mail_box(str);
+              snprintf( str,20,"Ia = %4d : ",adcIa); load_scia_tx_mail_box(str);
+              snprintf( str,20,"Ib = %4d : ",adcIb); load_scia_tx_mail_box(str);
               snprintf( str,20,"Vdc= %4d : ",adcVdc); load_scia_tx_mail_box(str);
               snprintf( str,20,"Tmp= %4d : ",adc_result[3]); load_scia_tx_mail_box(str);
               snprintf( str,20,"Sen= %4d : ",adc_result[4]); load_scia_tx_mail_box(str);

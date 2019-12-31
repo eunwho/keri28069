@@ -1,91 +1,20 @@
 #ifndef		__GLOBAL_VARIABLES_
 #define		__GLOBAL_VARIABLES_
 
-int adcCurrentA;
-int adcCurrentB;
-int adcVdc;
 
-// pmsmCtrl.c
+//--- eQep.c
+Uint32 capture_counter = 0;
+int32 POSCNT_old = 0 ;
+
 Uint16 encoderMaxCount;
-
 double inv_encoderMaxCount;
 double inv_QepTime;
-int32 POSCNT_old;
-
-double POS_REF;
-double POS_REAL;
-double POS_REAL_delay1;
-double POS_ERR;
-double POS_REF_OFFSET;
-double SPEED_REF;
-double SPEED_REAL;
-double SPEED_ERR;
-
-double MAX_SPEED;
 
 
-double uspeed_kp;
-double speed_err_ki;
-double speed_err_ki_delay1;
-double speed_anti_windup;
-double uspeed_ki;
-double uspeed_ki_delay1;
-double uspeed_IP;
-double torque_real;
-
-double ud_kp;
-double ud_ki;
-double ud_ki_delay1;
-double ud_IP;
-double Id_err;
-double Id_err_delay1;
-double Id_real;
-double Id_ref;
-double Id_err_ki;
-double Id_err_ki_delay1;
-double d_current_anti_windup;
-
-double uq_kp;
-double uq_ki;
-double uq_ki_delay1;
-double uq_IP;
-double Iq_err;
-double Iq_err_delay1;
-double Iq_ref;
-double Iq_err_ki;
-double Iq_err_ki_delay1;
-double q_current_anti_windup;
-double Vq_real;
-
-double Torque_MAX;
-double ACC_MAX;             //  = 4.2;
-
-Uint16 enc_flag=1;
-
-double POS_REF_OLD;
-double POS_REF_NEW;
-double POS_INIT;
-double prof_t1;
-double prof_t2;
-double prof_t3;
-double profile_gen_time;        //  =1000000000.0;
-int profile_FLAG;
-int SIGN_FLAG;
-int cal_FLAG ;
-double Dist_New;
-double Dist_min;
-double init_t1;
-double init_t2;
-double SPEED_M;
-
-double SPD_REF_PLC;
-
-Uint16 POS_INIT_FLAG;
-
-
-// testing
+//--- testing
 int lpfadcIa;
 int lpfadcIb;
+
 
 double exSensRef;
 
@@ -101,8 +30,6 @@ double * scopePoint[50];
 // control and flag
 CODE_INFO code_inform = {0,0,0,0,0,0,{0}};
 union PROTECT_FLAG protect_reg;
-union DIGITAL_FUNCTION func_flag;
-union DIGITAL_OUT_FUNC relay_flag;
 TRIP_INFO TripInfo = {0,0,0,0,0," No Trip Data       "};
 TRIP_INFO TripInfoNow = {0,0,0,0,0," No Trip Data       "};
 int terminal_input_state;
@@ -185,7 +112,7 @@ double  we_FW1=0.0;
 int     wr_ctrl_index   = 1;
 int     wr_CycleIndex   = 0;
 double  wr=0.0;
-double  wr_rat;
+//double  wr_rat;
 double  wr_ref=0.0;
 double  wr_ref0=0.0;
 double  wr_err=0.0;
@@ -215,7 +142,6 @@ double  DeltaLambda=0.0;
 double  DeltaTheta=0.0;
 
 // Current
-double  OverCurLimit;
 double  Is_rat;
 double  inv_Is_rat;
 double  Is_max;
@@ -347,8 +273,8 @@ double  inv_sigma_Ls;
 double  inv_Ls;
 double  Tr;
 double  inv_Tr;
-double  inv_Ls_plus_sigma_Ls;               // ��� ���Ѱ� ���
-double  sigma_Ls_div_1_plus_sigma;          // ��� ���Ѱ� ���
+double  inv_Ls_plus_sigma_Ls;               // 占쏙옙占� 占쏙옙占싼곤옙 占쏙옙占�
+double  sigma_Ls_div_1_plus_sigma;          // 占쏙옙占� 占쏙옙占싼곤옙 占쏙옙占�
 double  Lm_div_Lr;                      // Lm/Lr
 double  Lr_div_Lm;                      // Lr/Lm
 
@@ -356,6 +282,28 @@ double  Lr_div_Lm;                      // Lr/Lm
 double  wn_wr;
 double  I_QS_rat;
 double inv_I_QS_rat;
+
+//Sensored vector control
+double we_FW_Coeff;
+double we_FW1_Coeff;
+
+double Fr_B;
+double inv_Fr_B;
+
+double ROTOR_ANGLE_PER_PULSE;
+
+double  Fr_Cycle;
+int         Fr_CycleIndex;
+
+double HalfExcitationTime;
+
+double inv_GM_Fr;
+double inv_GM_Fr_square_minus_1;
+double Ki_Fr;
+double Kp_Fr;
+double Kp_Fr_Coeff;
+
+double wp_Fr_Coeff;
 
 // V/F
 double  S_rat;
@@ -393,12 +341,13 @@ double Freq_rat;
 double inv_Freq_rat;
 
 // Sci.c
-int scib_rx_msg_flag = 0;
-int scic_rx_msg_flag = 0;
-
 int scia_tx_start_addr=0;
 int scia_tx_end_addr=0;
 int scia_rx_msg_flag = 0;
+
+int scib_tx_start_addr=0;
+int scib_tx_end_addr=0;
+int scib_rx_msg_flag = 0;
 
 char gStr1[50] = {0};
 char gStr2[10] = {0};
@@ -417,7 +366,7 @@ int giSciCmdAddr;
 double gdouSciCmdData;
 
 // analog to digital converter
-int adc_result[6]={0};
+int adc_result[16]={0};
 int adcIa;
 int adcIb;
 int adcVdc;
@@ -443,62 +392,35 @@ double lpfVdcIn[3];
 double lpfVdcOut[3];
 double lpfVdcK[4];
 
+double codeKpIs;                   // 83
+double codeKiIs;                   // 84
+
+double fw2Base;
+double inv_sigma;
+double inv_we_rat;
+
 //============================================
 //   CODE variable 
 //============================================
-double   codeMotorDirection;     // 1
-double   codeAccelTime1;         // 2
-double   codeDecelTime1;         // 3
-double   codeMotorCtrlMode;      // 4
-double   code_start_ref;         // 5
-double   codeSpeed1;             // 6
-double   codeSetVdc;             // 7
-double   codeProtectOff;         // 8
-double   codePwmFreq;            // 9
+double codeSetVdc;
+double codeProtectOff;
 
-double   codeRatePower;          // 10
-double   codeRateCurrent;        // 11
-double   codeRateRpm;            // 12
-double   codeRateEffiency;       // 13
-double   codeRateHz;             // 14
-double   codeRateVolt;           // 15
-double   codeMotorPole;          // 16
-double   codePresSensRef;        // 17
-
-double   codeIaOffset;           // 20
-double   codeIbOffset;           // 21
-
-double I_sense_value;           // 22
-double u_phase_I_sense_span;    // 24
-double v_phase_I_sense_span;    // 26
-double vdc_sense_zero;          // 27
-double vdc_sense_span;          // 28
-
-double code_adc_Vdc_low;        // 36
-double code_adc_Vdc_high;       // 37
-double code_Vdc_calc_low;       // 38
-double code_Vdc_calc_high;      // 39
-
-// group6
-double VF_DeadTimeGain;         // 40
-double VF_ExcitationTime;       // 41
-double VF_Fs_Coeff;             // 42
-double VF_Freq_TrqBoost;        // 43
-double VF_Vs_Coeff_TrqBoost;    // 44
-double VF_Rs_ThermalCoeff;      // 45
-double VF_IR_Comp_FilterPole;   // 46
-double VF_Slip_Comp_FilterPole; // 47
-double VF_Rs;                   // 48
-
-double code_kpPosi;
-double code_kpSpeed;
-double code_kiSpeed;
-double code_kpIdq;
-double code_kiIdq;
-double code_encoderPulse;
-
+double codeIsMaxCoef;
+double code_motorId;
+double code_adc_Vdc_low;
+double code_adc_Vdc_high;
+double code_Vdc_calc_low;
+double code_Vdc_calc_high;
+//--- code 11
+double codeRampTest;            // 11
+double posi_duration_time;
+double zero_duration_time;
+double nega_duration_time;
+double test_accel_time;
+double test_decel_time;
+//--- da graph setting
 double codeScopeLoopCount;
-
+//---
 double codeScopePointCh1;
 double codeScopeScaleCh1;
 double codeScopeOffsetCh1;
@@ -514,8 +436,93 @@ double codeScopeOffsetCh3;
 double codeScopePointCh4;
 double codeScopeScaleCh4;
 double codeScopeOffsetCh4;
+//--- code 40
+double wr_FilterPoleCoeff;      // 40
+double wn_wr_Coeff;
+double Max_wn_wr;
+double K_Damp_wr;
+double wr_DampingRatio;
+double wr_CntlPeriodIndex;
+double FW_VoltageCoeff;
+double Base_Flux_Coeff;
+double ExcitationTime;
 
-// end of code
+double K_Damp_Is;
+double K_Damp_Fr;
+double GM_Fr;
+double PM_Fr;
+double Default_wr_FilterPole;
+double SlipCompCoeff;
+double GammaLambda;
+double GammaLambda_R_Constant;
+double Max_DeltaLambda;
+// code 60
+double GammaTheta_M;            // 60
+double GammaTheta_R;
+double Max_DeltaTheta;
+double code_KiWrCoef;
+double code_FwCoef;
+double code_Fw2Coef;
+double Fr_CntlPeriodIndex;
+//--- code 70
+double VF_DeadTimeGain;         // 70
+double VF_ExcitationTime;
+double VF_Fs_Coeff;
+double VF_Freq_TrqBoost;
+double VF_Vs_Coeff_TrqBoost;
+double VF_Rs_ThermalCoeff;
+double VF_IR_Comp_FilterPole;
+double VF_Slip_Comp_FilterPole;
+double VF_Rs;
+
+double AT_Freq_Leq_Req;
+double AT_Time_Leq_Req;
+double AT_Is_Coeff_Leq_Req;
+double AT_Is_Coeff_Rs;
+double AT_Time_Rs;
+double AT_DeadTimeGain;
+double AT_Ls_Vs_RAMP;
+double AT_Freq_Ls;
+double AT_Time_Ls;
+//===========================================
+//--- motor and related parameter setting
+//===========================================
+double codeRatePower;          // 101
+double codeRateVolt;           // 102
+double codeRateCurrent;        // 103
+double codeRateEffiency;       // 104
+double codeRateRpm;            // 105
+double codeRateHz;             // 106
+double codeMotorPole;          // 107
+double codeMotorCtrlMode;      // 108
+
+double codeIaOffset;         // 111
+double codeIbOffset;         // 112
+double codeIUSpan;           // 113
+double codeIVSpan;           // 114
+double codeISensorValue;     // 115
+double codeIOver;            // 116
+double codeKpIsTemp;         // 117
+double codeKiIsTemp;         // 118
+double codeKpIsCoeff;        // 119
+double codeKiIsCoeff;        // 120
+
+double Rs;                 // 21
+double Rr;                 // 22
+double Ls;                 // 23
+double Lr;                 // 24
+double Lm;                 // 25
+double Jm;                 // 26
+
+double codeAccelTime1;         // 31
+double codeDecelTime1;         // 32
+double codeSpeed1;             // 33
+double codeSpeed2;             // 34
+double codePwmFreq;            // 35
+double code_start_ref;         // 36
+double code_encoderPulse;      // 37
+//--- end of motor related parameter
+
 double invCodeScopeScaleCh1;
 double invCodeScopeScaleCh2;
 double invCodeScopeScaleCh3;
@@ -532,8 +539,8 @@ double e_thermal_level;			// 304
 double pre_charge_time;			// 305
 double over_I_time;				// 307
 
-double code_Vdc_scaler;			// 308  2011.0613
-double code_Vdc_offseter;		// 309
+//double code_Vdc_scaler;			// 308  2011.0613
+//double code_Vdc_offseter;		// 309
 
 double Data_Check;				// 800
 double Data_Backup;				// 801

@@ -68,6 +68,9 @@ void SpaceVectorModulation( double * Vs_dqIn )
         case 5 :    DutyRatio[u]=Dy+Dz;     DutyRatio[v]=Dz;        DutyRatio[w]=Dxy+Dz;    break;
         case 6 :    DutyRatio[u]=Dxy+Dz;    DutyRatio[v]=Dz;        DutyRatio[w]=Dx+Dz;     break;
     }
+    // DutyCount[u]= (Uint16)( MAX_PWM_CNT * ( 1 - DutyRatio[u] ));
+    // DutyCount[v] =(Uint16)( MAX_PWM_CNT * ( 1 - DutyRatio[v] ));
+    // DutyCount[w] =(Uint16)( MAX_PWM_CNT * ( 1 - DutyRatio[w] ));
 
     temp = (Uint16)(MAX_PWM_CNT * DutyRatio[u] );
     DutyCount[u] = ( temp < DEAD_TIME_COUNT) ? 0 : temp ;
@@ -99,7 +102,7 @@ void VoltageEstimation()
 //--- V phase
     sgn_Is[bs]=Is_abc[bs]*inv_Min_Isw;
     sgn_Is[bs] = ( sgn_Is[bs] > 1.0) ? 1.0 : -1.0;
-    Vs_abc_ref[bs] = ( DutyRatio[v] - 0.5)*Vdc;
+    Vs_abc_ref[bs] = ( DutyRatio[v] - 0.5) * Vdc;
     Vs_abc[bs]=Vs_abc_ref[bs] - sgn_Is[bs]*Dd*Vdc;
 //--- W phase
     sgn_Is[cs]=Is_abc[cs]*inv_Min_Isw;

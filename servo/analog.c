@@ -1,22 +1,12 @@
 //
 // analog.c
-// 2012.04.12
-// Eunwho Power Electronics
-// by Cheoung Soon Gil
-// revision :
-#include	<header.h>
-#include	<extern.h>
-
-
-// included in F2806x_Adc.c
-// InitAdc();
-// AdcOffsetSelfCal();
+// 2019.12.30 by soonkil jung
+#include    <header.h>
+#include    <extern.h>
 
 void ADC_SOC_CNF( )
 {
-
     extern void DSP28x_usDelay(Uint32 Count);
-
     EALLOW;
     AdcRegs.ADCCTL2.bit.ADCNONOVERLAP = 1; // Enable non-overlap mode
     AdcRegs.ADCCTL1.bit.INTPULSEPOS = 1;
@@ -45,20 +35,15 @@ void ADC_SOC_CNF( )
     AdcRegs.ADCSOC3CTL.bit.ACQPS = 6;
     AdcRegs.ADCSOC4CTL.bit.ACQPS = 6;
     AdcRegs.ADCSOC5CTL.bit.ACQPS = 6;
-//    AdcRegs.ADCSAMPLEMODE.all = 0;      // Simultaneous sample mode
     EDIS;
 }
-
-// 3.3Volt --> 4096 1 Volt --> 1/3.3 * 4096 = 1241.2
-// #define I_RATIO   0.004          //
 #define I_RATIO   0.001487      //
 interrupt void adcIsr(void)
 {
     DIGIT1_SET;
     double fTemp;
-
-    adc_result[0] = adcIa   =adcCurrentA = AdcResult.ADCRESULT0;
-    adc_result[1] = adcIb   = adcCurrentB = AdcResult.ADCRESULT1;
+    adc_result[0] = adcIa   = AdcResult.ADCRESULT0;
+    adc_result[1] = adcIb   = AdcResult.ADCRESULT1;
     adc_result[2] = adcVdc  = adcVdc = AdcResult.ADCRESULT2;
     adc_result[3] = adcIgbtTemperature = AdcResult.ADCRESULT3;
     adc_result[4] = adcExSensor = AdcResult.ADCRESULT4;        //adcExSensor
@@ -77,15 +62,15 @@ interrupt void adcIsr(void)
 
     Vdc = (codeSetVdc > 0.5 ) ? 300.0 : lpfVdcOut[0];
 
-    lpfIaIn[0] = I_sense_value * ( (double)(adc_result[0]) - codeIaOffset) * I_RATIO * 0.4;
-    lpf2nd( lpfIaIn, lpfIaOut, lpfIrmsK);
-    Is_abc[as] = lpfIaOut[0];
-    // Is_abc[as] = lpfIaIn[0];
+    lpfIaIn[0] = codeISensorValue * ( (double)(adc_result[0]) - codeIaOffset) * I_RATIO * 0.4;
+//    lpf2nd( lpfIaIn, lpfIaOut, lpfIrmsK);
+ //   Is_abc[as] = lpfIaOut[0];
+    Is_abc[as] = lpfIaIn[0];
 
-    lpfIbIn[0] = I_sense_value * ( (double)(adc_result[1]) - codeIbOffset) * I_RATIO * 0.4;
-    lpf2nd( lpfIbIn, lpfIbOut, lpfIrmsK);
-    Is_abc[bs] = lpfIbOut[0];
-    // Is_abc[bs] = lpfIbIn[0];
+    lpfIbIn[0] = codeISensorValue * ( (double)(adc_result[1]) - codeIbOffset) * I_RATIO * 0.4;
+    //lpf2nd( lpfIbIn, lpfIbOut, lpfIrmsK);
+    //Is_abc[bs] = lpfIbOut[0];
+    Is_abc[bs] = lpfIbIn[0];
 
     Is_abc[cs]= -(Is_abc[as]+Is_abc[bs]);
 
@@ -96,8 +81,6 @@ interrupt void adcIsr(void)
     Is_mag_rms = Is_mag;
 
     LPF1(Ts,1.0,fabs(Is_abc[as]),&LPF_Ia);                          // debug
-
-    // P_total = ROOT3 * Vdc * Is_abc[as];
 
     fTemp = adc_result[4] * 0.000244 ;
     LPF1(Ts,0.01, fTemp, &exSensRef);            // external sensor
@@ -115,15 +98,15 @@ void analog_out_proc( )
 
 int check_sensor_trip()
 {
-	int TripCode;
+    int TripCode;
 
-	Nop();
+    Nop();
 
-	if( ( TripCode = CheckOverCurrent()) != 0 ) return TripCode ;	// debug
-	if( ( TripCode = CheckOverVolt()   ) != 0 ) return TripCode ;
-	if( ( TripCode = CheckUndeVolt()   ) != 0 ) return TripCode ;	// ���������� ������ �Ѵ�. 
-	return 0;
+    if( ( TripCode = CheckOverCurrent()) != 0 ) return TripCode ;   // debug
+    if( ( TripCode = CheckOverVolt()   ) != 0 ) return TripCode ;
+    if( ( TripCode = CheckUndeVolt()   ) != 0 ) return TripCode ;   // ���������� ������ �Ѵ�.
+    return 0;
 }
-	
+
 // end of file
 
