@@ -111,15 +111,18 @@ interrupt void MainPWM(void)
             MotorControlProc( );
             SpaceVectorModulation(Vs_dq_ref);
 
-            EPwm1Regs.CMPA.half.CMPA = DutyCount[u];
+            //EPwm1Regs.CMPA.half.CMPA = DutyCount[u];
+            //EPwm2Regs.CMPA.half.CMPA = DutyCount[v];
+            //EPwm3Regs.CMPA.half.CMPA = DutyCount[w];
+            // inverter for PowerPack pwm3a,3b connected current sensor U phase
+            EPwm3Regs.CMPA.half.CMPA = DutyCount[u];
             EPwm2Regs.CMPA.half.CMPA = DutyCount[v];
-            EPwm3Regs.CMPA.half.CMPA = DutyCount[w];
+            EPwm1Regs.CMPA.half.CMPA = DutyCount[w];
         }
         break;
     default:
         EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT;
         EPwm2Regs.CMPA.half.CMPA = MAX_PWM_CNT;
-        EPwm3Regs.CMPA.half.CMPA = MAX_PWM_CNT;
         break;
     }
 

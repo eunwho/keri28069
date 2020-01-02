@@ -107,12 +107,6 @@ void main( void )
     strncpy(MonitorMsg,"POWER_ON",20);
     gPWMTripCode = 0;		//
 
-    for ( ; ; ) {
-        strncpy(gStr1,"hello \r\n",20);
-        load_sci_tx_mail_box(gStr1);
-        delay_msecs(1000);
-    }
-
     if( load_code2ram() != 0 ) tripProc();
 
     commonVariableInit();

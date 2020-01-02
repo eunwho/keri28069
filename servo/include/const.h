@@ -77,8 +77,9 @@
 #define over_volt_set           380.0         // check
 //#define UNDER_VOLT_LEVEL        200.0         // check
 // #define OVER_V_LEVEL        420.0
-#define UNDER_VOLT_LEVEL        400.0         // check
-#define OVER_V_LEVEL        720.0
+#define UNDER_VOLT_LEVEL        200.0         // check
+// #define OVER_V_LEVEL        720.0
+#define OVER_V_LEVEL        380.0
 
 
 // Control Constant
