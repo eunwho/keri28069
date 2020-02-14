@@ -1,20 +1,20 @@
+//--- name : elecric vehicle scia.c by S.K. Jung
 #include	<header.h>
 #include	<extern.h>
 // include <scia,h>
-
+#define VDC_OFFSET  300         // 2020.0206
 #define CPU_FREQ    90E6
 #define LSPCLK_FREQ CPU_FREQ/4
-#define SCI_FREQ    115200
-//#define SCI_FREQ    38400
-// #define SCI_FREQ    230400
-#define SCI_PRD     (LSPCLK_FREQ/(SCI_FREQ*8))-1
+#define SCIA_FREQ    115200
+//#define SCIA_FREQ    38400
+// #define SCIA_FREQ    230400
+#define SCIA_PRD     (LSPCLK_FREQ/(SCIA_FREQ*8))-1
 
-#define UARTA_BAUD_RATE          SCI_PRD     // 115200
+#define UARTA_BAUD_RATE          SCIA_PRD     // 115200
 
 int scia_rx_start_addr=0;
 int scia_rx_end_addr=0;
 int sciRxPoint=0;
-
 
 char msg_box[20]={0};
 char sciaRxIrqBox[SCIA_RX_BUF_MAX] = {0};
@@ -59,13 +59,13 @@ void scia_fifo_init()
 
 void sciaMonitor()     // need_edit
 {
-    UNION16 unionRpm,unionIrms,unionPower, unionRePower,unionImPower;
+    UNION16 unionRpm,unionIrms,unionPower, unionRef,unionVdc;
+    UNION16 unionGraph1,unionGraph2,unionGraph3,unionGraph4,unionGraph5,unionGraph6;
     int i, temp;
     double fTemp;
-    char str[50] ={0};
+    char str[60] ={0};
 
     switch(gMachineState){
-        for ( i = 0 ; i < 10 ;i++ ) MonitorMsg[i]=0;
         case STATE_POWER_ON:    strncpy(MonitorMsg,"[POWON]",7); break;
         case STATE_READY:       strncpy(MonitorMsg,"[READY]",7); break;
         case STATE_RUN:         strncpy(MonitorMsg,"[RUN  ]",7); break;
@@ -108,22 +108,52 @@ void sciaMonitor()     // need_edit
 
     fTemp = ( rpm < -6000.0 ) ? -6000.0 : rpm;
     fTemp = ( fTemp > 6000.0 ) ? 6000.0 : fTemp;
-    unionRpm.INTEGER    = (int)( fTemp * INV_RPM_SCALE * 204.8) + 2048;
+    unionRpm.INTEGER    = (int)( fTemp * INV_RPM_SCALE * 409.6) + 2048;
 
-    fTemp = ( rpm < 0.0 ) ? 0.0 : Is_mag_rms;
-    fTemp = ( fTemp > 500.0 ) ? 500.0 : fTemp;
-    unionIrms.INTEGER    = (int)( fTemp * INV_I_SCALE * 204.8) + 2048;
+    temp    = (int)( Is_mag_rms * inveIrmsScale * 2048) + 2048;
+    temp    = ( temp > 4000 ) ? 4000 : temp;
+    temp    = ( temp < 100   ) ? 100   : temp;
+    unionIrms.INTEGER    = temp;
 
-    //unionPower.INTEGER  = (int)( P_total * INV_P_SCALE * 204.8) + 2048;
-    unionPower.INTEGER  = (int)( 0.0 * INV_P_SCALE * 204.8) + 2048;
+    unionPower.INTEGER  = (int)( P_total * invePowerScale * 409.6) + 2048;
 
     fTemp = ( reference_out < -3.0 ) ? -3.0 : reference_out;
     fTemp = ( fTemp > 3.0 ) ? 3.0 : fTemp;
-    unionRePower.INTEGER  = (int)( fTemp * INV_REF_SCALE * 204.8) + 2048;
+    unionRef.INTEGER  = (int)( fTemp * INV_REF_SCALE * 204.8) + 2048;
 
     fTemp = ( Vdc < 0.0 ) ? 0.0 : Vdc;
     fTemp = ( fTemp > 800.0 ) ? 800.0 : fTemp;
-    unionImPower.INTEGER  = (int)( fTemp * INV_V_SCALE * 204.8) + 2048;
+    unionVdc.INTEGER  = (int)( fTemp * INV_V_SCALE * 204.8) + 2048;
+
+    temp = (int)( ( * scopePoint[graphPointCh1]-codeGraphOffsetCh1) * invGraphScaleCh1 * 2048 + 2048);
+    temp    = ( temp > 4000 ) ? 4000 : temp;
+    temp    = ( temp < 100   ) ? 100   : temp;
+    unionGraph1.INTEGER    = temp;
+
+    temp = (int)( ( * scopePoint[graphPointCh2]-codeGraphOffsetCh2) * invGraphScaleCh2 * 2048 + 2048);
+    temp    = ( temp > 4000 ) ? 4000 : temp;
+    temp    = ( temp < 100   ) ? 100   : temp;
+    unionGraph2.INTEGER = temp;
+
+    temp = (int)( ( * scopePoint[graphPointCh3]-codeGraphOffsetCh3) * invGraphScaleCh3 * 2048 + 2048);
+    temp    = ( temp > 4000 ) ? 4000 : temp;
+    temp    = ( temp < 100   ) ? 100   : temp;
+    unionGraph3.INTEGER = temp;
+
+    temp = (int)( ( * scopePoint[graphPointCh4]-codeGraphOffsetCh4) * invGraphScaleCh4 * 2048 + 2048);
+    temp    = ( temp > 4000 ) ? 4000 : temp;
+    temp    = ( temp < 100   ) ? 100   : temp;
+    unionGraph4.INTEGER = temp;
+
+    temp = (int)(rpm * 0.0002 * 2048 + 2048);
+    temp    = ( temp > 4000 ) ? 4000 : temp;
+    temp    = ( temp < 100   ) ? 100   : temp;
+    unionGraph5.INTEGER = temp;
+
+    temp = (int)( ( Vdc - VDC_OFFSET ) * 0.02 * 2048 + 2048);
+    temp    = ( temp > 4000 ) ? 4000 : temp;
+    temp    = ( temp < 100   ) ? 100   : temp;
+    unionGraph6.INTEGER = temp;
 
     i = 0;
     str[ i*3 + 0] = (( unionRpm.byte.MSB     ) & 0x0f) | 0x40  ;
@@ -141,14 +171,44 @@ void sciaMonitor()     // need_edit
     str[ i*3 + 2] = (( unionPower.byte.LSB     ) & 0x0f) | 0x40;
 
     i = 3;
-    str[ i*3 + 0] = (( unionRePower.byte.MSB     ) & 0x0f) | 0x40 ;
-    str[ i*3 + 1] = (( unionRePower.byte.LSB >> 4) & 0x0f) | 0x40;
-    str[ i*3 + 2] = (( unionRePower.byte.LSB     ) & 0x0f) | 0x40 ;
+    str[ i*3 + 0] = (( unionRef.byte.MSB     ) & 0x0f) | 0x40 ;
+    str[ i*3 + 1] = (( unionRef.byte.LSB >> 4) & 0x0f) | 0x40;
+    str[ i*3 + 2] = (( unionRef.byte.LSB     ) & 0x0f) | 0x40 ;
 
     i = 4;
-    str[ i*3 + 0] = (( unionImPower.byte.MSB     ) & 0x0f) | 0x40 ;
-    str[ i*3 + 1] = (( unionImPower.byte.LSB >> 4) & 0x0f) | 0x40;
-    str[ i*3 + 2] = (( unionImPower.byte.LSB     ) & 0x0f) | 0x40;
+    str[ i*3 + 0] = (( unionVdc.byte.MSB     ) & 0x0f) | 0x40 ;
+    str[ i*3 + 1] = (( unionVdc.byte.LSB >> 4) & 0x0f) | 0x40;
+    str[ i*3 + 2] = (( unionVdc.byte.LSB     ) & 0x0f) | 0x40;
+
+    i = 5;
+    str[ i*3 + 0] = (( unionGraph1.byte.MSB     ) & 0x0f) | 0x40 ;
+    str[ i*3 + 1] = (( unionGraph1.byte.LSB >> 4) & 0x0f) | 0x40;
+    str[ i*3 + 2] = (( unionGraph1.byte.LSB     ) & 0x0f) | 0x40;
+
+    i = 6;
+    str[ i*3 + 0] = (( unionGraph2.byte.MSB     ) & 0x0f) | 0x40 ;
+    str[ i*3 + 1] = (( unionGraph2.byte.LSB >> 4) & 0x0f) | 0x40;
+    str[ i*3 + 2] = (( unionGraph2.byte.LSB     ) & 0x0f) | 0x40;
+
+    i = 7;
+    str[ i*3 + 0] = (( unionGraph3.byte.MSB     ) & 0x0f) | 0x40 ;
+    str[ i*3 + 1] = (( unionGraph3.byte.LSB >> 4) & 0x0f) | 0x40;
+    str[ i*3 + 2] = (( unionGraph3.byte.LSB     ) & 0x0f) | 0x40;
+
+    i = 8;
+    str[ i*3 + 0] = (( unionGraph4.byte.MSB     ) & 0x0f) | 0x40 ;
+    str[ i*3 + 1] = (( unionGraph4.byte.LSB >> 4) & 0x0f) | 0x40;
+    str[ i*3 + 2] = (( unionGraph4.byte.LSB     ) & 0x0f) | 0x40;
+
+    i = 9;
+    str[ i*3 + 0] = (( unionGraph5.byte.MSB     ) & 0x0f) | 0x40 ;
+    str[ i*3 + 1] = (( unionGraph5.byte.LSB >> 4) & 0x0f) | 0x40;
+    str[ i*3 + 2] = (( unionGraph5.byte.LSB     ) & 0x0f) | 0x40;
+
+    i = 10;
+    str[ i*3 + 0] = (( unionGraph6.byte.MSB     ) & 0x0f) | 0x40 ;
+    str[ i*3 + 1] = (( unionGraph6.byte.LSB >> 4) & 0x0f) | 0x40;
+    str[ i*3 + 2] = (( unionGraph6.byte.LSB     ) & 0x0f) | 0x40;
 
     str[ i*3 + 3 ] = '\r';
     str[ i*3 + 4 ] = '\n';
@@ -359,35 +419,25 @@ void scia_cmd_proc( int * sci_cmd, double * sci_ref)
                  * sci_cmd = CMD_START;
                  * sci_ref = 0.1;           //code_btn_start_ref;
                  load_scia_tx_mail_box("UART CMD_START");
-             }
-             else if( check == 20 ){
+             } else if( check == 20 ){
                  * sci_cmd = CMD_STOP;  * sci_ref = 0.0;
                  load_scia_tx_mail_box("UART CMD_STOP");
-             }
-             else if( check == 30 ){
+             } else if( check == 30 ){
                  * sci_cmd = CMD_RESET;  * sci_ref = 0.0;
                  load_scia_tx_mail_box("UART CMD_RESET");
-             }
-             else if( data == 40 ){
+             } else if( data == 40 ){
                  * sci_cmd = CMD_SAVE;  * sci_ref = 0.0;
                  load_scia_tx_mail_box("UART CMD_SAVE");
-             }
-/*             else if( data == 50 ){
-                   * sci_cmd = CMD_READ_ALL;  * sci_ref = 0.0;
-                   load_scia_tx_mail_box("UART CMD_READ_ALL");
-            }
- */           else if( data == 80 ){
+             }  else if( data == 80 ){
                    * sci_cmd = CMD_NULL;  * sci_ref = 0.0;
 //                   get_adc_offset();
-            }
-            else if( data == 90 ){
+            } else if( data == 90 ){
                    * sci_cmd = CMD_NULL;  * sci_ref = 0.0;
                    load_scia_tx_mail_box("EEPROM init Start");
                    check = init_eprom_data();      // 0�씠 �븘�땲硫� address value
                    if( check != 0) load_scia_tx_mail_box("EEPROM init Fail");
                    else        load_scia_tx_mail_box("EEPROM init OK \r\n");
-            }
-            else{
+            } else{
                  load_scia_tx_mail_box("Illegal CMD data");
             }
          }
@@ -405,27 +455,30 @@ void scia_cmd_proc( int * sci_cmd, double * sci_ref)
                  sendAdcDataFlag = 1;
                  loadSciaTxBufAdc(check);
                  sendAdcDataFlag = 0;
-                 }
-             else {
+             } else {
                  sciaMonitor();
                  Nop();
              }
              return;
-         }
-         else if(addr == 901){    //  monitor state
+         } else if(addr == 901){    //  monitor state
              check = (int)data;
              if(check==0){
-                 /* sci_cmd = CMD_READ_ALL;  * sci_ref = 0.0; */
                  readAllCodes();
              }
              return;
-         }
-         else if(addr == 902){   // read inverter status
+         } else if(addr == 902){   // read inverter status
              check = (int)data;
              switch( check ){
              case 5 : // Reset;
                 if( ( gMachineState == STATE_READY)|| ( gMachineState == STATE_TRIP)){
-                    fault_reset();
+                     DINT;
+                     EALLOW;
+                     EmuKey = 0x55aa;
+                     EmuBMode = 0x000B;
+                     SysCtrlRegs.SCSR = 0x00;
+                     SysCtrlRegs.WDCR = 0x20;
+                     EDIS;
+                     while(1);
                 }
                  break;
              default:
@@ -439,14 +492,11 @@ void scia_cmd_proc( int * sci_cmd, double * sci_ref)
                  TripData = (TRIP_INFO*)malloc(sizeof(TRIP_INFO));
                  snprintf( str,20,"\nTripCODE: %03d \t",TripInfoNow.CODE);
                  load_scia_tx_mail_box(str); delay_msecs(180);
-
                  load_scia_tx_mail_box(TripInfoNow.MSG); delay_msecs(220);
-
                  dbtemp = TripInfoNow.RPM;
                  temp = (int)(floor(dbtemp +0.5));
                  snprintf( str,13,"\nFq=%3d[hz]",temp);
                  load_scia_tx_mail_box(str); delay_msecs(180);
-
                  dbtemp = TripInfoNow.VDC;
                  temp = (int)(floor(dbtemp +0.5));
                  snprintf( str,13,"\tVDC =%4d",temp);
@@ -523,9 +573,14 @@ void scia_cmd_proc( int * sci_cmd, double * sci_ref)
                  break;
              }
              return;
-         }
-         else if (addr == 909 ){
-                 temp = (int) rpm;
+         } else if (addr == 908 ){
+             // read input
+             snprintf( str,40,"INPUT=%d : pwm=%d \r\n",digitalInputState,pwmTripState); load_scia_tx_mail_box(str);
+             // load_scia_tx_mail_box("hello eunwho!")
+             delay_msecs(10);
+             return;
+         } else if (addr == 909 ){
+              temp = (int) rpm;
               snprintf( str,20,"Rpm = %4d : ",temp); load_scia_tx_mail_box(str);
               snprintf( str,30,"Irms = %.3e : ",Is_mag_rms); load_scia_tx_mail_box(str);
               snprintf( str,30,"P_total = %.1e : ",P_total); load_scia_tx_mail_box(str);
@@ -533,10 +588,9 @@ void scia_cmd_proc( int * sci_cmd, double * sci_ref)
               load_scia_tx_mail_box(" \r\n");
               delay_msecs(10);
               return;
-          }
-         else if (addr == 910 ){ // read adc
-              snprintf( str,20,"Ia = %4d : ",adcIa); load_scia_tx_mail_box(str);
-              snprintf( str,20,"Ib = %4d : ",adcIb); load_scia_tx_mail_box(str);
+          } else if (addr == 910 ){ // read adc
+              snprintf( str,20,"Ia = %4d : ",adcCurrentA); load_scia_tx_mail_box(str);
+              snprintf( str,20,"Ib = %4d : ",adcCurrentB); load_scia_tx_mail_box(str);
               snprintf( str,20,"Vdc= %4d : ",adcVdc); load_scia_tx_mail_box(str);
               snprintf( str,20,"Tmp= %4d : ",adc_result[3]); load_scia_tx_mail_box(str);
               snprintf( str,20,"Sen= %4d : ",adc_result[4]); load_scia_tx_mail_box(str);
@@ -560,8 +614,5 @@ void scia_cmd_proc( int * sci_cmd, double * sci_ref)
          return;
      }
  }
-
-//==================================
-// End of file.
-//==================================
+//-- end of scia.c by Soonkil Jung
 

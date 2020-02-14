@@ -3,15 +3,21 @@
 
 #define TYPE_INTEGER		0
 #define TYPE_float			1
-//--- define constant
-
 //======================================
 // Code address
 //======================================
+
+#define CODE_END                        155
+#define CODE_Fw1WeCoef              154
+#define CODE_Fw2On                    153
+#define CODE_KiWrCoef                  152
+#define CODE_KpWrCoef                  151
+
+#define CODE_FwCoef2                  150
+#define CODE_FwCoef1                  149
+
 #define CODE_set_vdc                    1
 #define CODE_protect_off                2
-
-#define CODE_IsMaxCoef                  4
 #define CODE_motorId                    5
 #define CODE_adc_Vdc_low                6
 #define CODE_adc_Vdc_high               7
@@ -43,60 +49,37 @@
 #define CODE_scopeScaleCh4              31
 #define CODE_scopeOffsetCh4             32
 
-//---vector control
-#define CODE_wr_FilterPoleCoeff         40
-#define CODE_wn_wr_Coeff                41
-#define CODE_Max_wn_wr                  42
-#define CODE_K_Damp_wr                  43
-#define CODE_wr_DampingRatio            44
-#define CODE_wr_CntlPeriodIndex         45
-#define CODE_FW_VoltageCoeff            46
-#define CODE_Base_Flux_Coeff            47
-#define CODE_ExcitationTime             48
+#define CODE_graphPointCh1              33
+#define CODE_graphScaleCh1              34
+#define CODE_graphOffsetCh1             35
 
-#define CODE_K_Damp_Is                  51
-#define CODE_K_Damp_Fr                  52
-#define CODE_GM_Fr                      53
-#define CODE_PM_Fr                      54
-#define CODE_Default_wr_FilterPole      55
-#define CODE_SlipCompCoeff              56
-#define CODE_GammaLambda                57
-#define CODE_GammaLambda_R_Constant     58
-#define CODE_Max_DeltaLambda            59
+#define CODE_graphPointCh2              36
+#define CODE_graphScaleCh2              37
+#define CODE_graphOffsetCh2             38
 
-#define CODE_GammaTheta_M               60
-#define CODE_GammaTheta_R               61
-#define CODE_Max_DeltaTheta             62
-#define CODE_KiWrCoef                   63
-#define CODE_FwCoef                     64
-#define CODE_Fw2Coef                    65
-#define CODE_Fr_CntlPeriodIndex         66
+#define CODE_graphPointCh3              39
+#define CODE_graphScaleCh3              40
+#define CODE_graphOffsetCh3             41
 
-#define CODE_VF_DeadTimeGain            70
-#define CODE_VF_ExcitationTime          71
-#define CODE_VF_Fs_Coeff                72
-#define CODE_VF_Freq_TrqBoost           73
-#define CODE_VF_Vs_Coeff_TrqBoost       74
-#define CODE_VF_Rs_ThermalCoeff         75
-#define CODE_VF_IR_Comp_FilterPole      76
-#define CODE_VF_Slip_Comp_FilterPole    77
-#define CODE_VF_Rs                      78
+#define CODE_graphPointCh4              42
+#define CODE_graphScaleCh4              43
+#define CODE_graphOffsetCh4             44
 
-#define CODE_AT_Freq_Leq_Req            80
-#define CODE_AT_Time_Leq_Req            81
-#define CODE_AT_Is_Coeff_Leq_Req        82
-#define CODE_AT_Is_Coeff_Rs             83
-#define CODE_AT_Time_Rs                 84
-#define CODE_AT_DeadTimeGain            85
-#define CODE_AT_Ls_Vs_RAMP              86
-#define CODE_AT_Freq_Ls                 87
-#define CODE_AT_Time_Ls                 88
-//#define CODE_AT_Ls_DMB_OpenTime         59
-//---
-#define CODE_OPERAND_END                90
+#define CODE_LpfFreq                    46
+#define CODE_LpfOff                     47
+
+#define CODE_AT_Freq_Leq_Req            50
+#define CODE_AT_Time_Leq_Req            51
+#define CODE_AT_Is_Coeff_Leq_Req        52
+#define CODE_AT_Is_Coeff_Rs             53
+#define CODE_AT_Time_Rs                 54
+#define CODE_AT_DeadTimeGain            55
+#define CODE_AT_Ls_Vs_RAMP              56
+#define CODE_AT_Freq_Ls                 57
+#define CODE_AT_Time_Ls                 58
+#define CODE_OPERAND_END                61
 
 //--- motor parameter
-
 #define CODE_rate_power                 101
 #define CODE_rate_volt                  102
 #define CODE_rate_current               103
@@ -111,11 +94,10 @@
 #define CODE_u_phase_I_sense_span       113
 #define CODE_v_phase_I_sense_span       114
 #define CODE_I_sense_value              115
-#define CODE_I_over                     116
-#define CODE_Kp_IsTemp                  117
-#define CODE_Ki_IsTemp                  118
-#define CODE_KpIs                       119
-#define CODE_KiIs                       120
+#define CODE_IsMaxCoef                  116
+#define CODE_I_over                     117
+#define CODE_UVLevel                    118
+#define CODE_OVLevel                    119
 
 #define CODE_Rs                         121
 #define CODE_Rr                         122
@@ -129,10 +111,23 @@
 #define CODE_speed1                     133
 #define CODE_speed2                     134
 #define CODE_pwm_freq                   135
-#define CODE_start_ref                  136
+#define CODE_StartRef                  136
 #define CODE_EncoderPulse               137
+#define CODE_Base_Flux_Coeff            138
+#define CODE_VoltPIOn                   139
+
+#define CODE_wn_wr_Coeff                140
+#define CODE_Kp_IsTemp                  141
+#define CODE_Ki_IsTemp                  142
+#define CODE_KpIs                       143
+#define CODE_KiIs                       144
+
+#define CODE_KpVsw                      145
+#define CODE_KiVsw                      146
+#define CODE_VswErrLimit                147
+#define CODE_VsdErrLimit                148
+
 //---
-#define CODE_END                        138
 
 #define CODE_Data_Check					800
 #define CODE_Data_Backup				801

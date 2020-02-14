@@ -24,20 +24,20 @@ void trip_recording(int trip_code,double trip_data,char * st)
 // #define OVER_I_LIMIT    300.0
 int CheckOverCurrent( )
 {
-	if( adcIa > 4000){
-        trip_recording( ERR_OVER_CURRENT_U_PHASE, (double)(adcIa),"I adc over U ph");
+	if( adcCurrentA > 4000){
+        trip_recording( ERR_OVER_CURRENT_U_PHASE, (double)(adcCurrentA),"I adc over U ph");
 		return ERR_OVER_CURRENT_U_PHASE;
 	}
-	if( adcIa < 100){
-        trip_recording( ERR_OVER_CURRENT_U_PHASE, (double)(adcIa),"I adc under U ph");
+	if( adcCurrentA < 100){
+        trip_recording( ERR_OVER_CURRENT_U_PHASE, (double)(adcCurrentA),"I adc under U ph");
 		return ERR_OVER_CURRENT_U_PHASE;
 	}
-	if( adcIb > 4000){
-        trip_recording( ERR_OVER_CURRENT_V_PHASE, (double)(adcIb),"I adc over V ph");
+	if( adcCurrentB > 4000){
+        trip_recording( ERR_OVER_CURRENT_V_PHASE, (double)(adcCurrentB),"I adc over V ph");
 		return ERR_OVER_CURRENT_V_PHASE;
 	}
-    if( adcIb < 100 ){
-        trip_recording( ERR_OVER_CURRENT_V_PHASE, (double)(adcIb),"I adc under V ph");
+    if( adcCurrentB < 100 ){
+        trip_recording( ERR_OVER_CURRENT_V_PHASE, (double)(adcCurrentB),"I adc under V ph");
         return ERR_OVER_CURRENT_V_PHASE;
     }
 
@@ -59,7 +59,7 @@ int CheckOverVolt( )
 {
 	static int OverVoltCount = 0;
 
-	if (Vdc > OVER_V_LEVEL ) OverVoltCount++;
+	if (Vdc > codeOverVoltLevel ) OverVoltCount++;
 	else if( OverVoltCount > 0) OverVoltCount --;
 	else    OverVoltCount = 0;
 
@@ -76,7 +76,7 @@ int CheckUndeVolt( )
 {
 	static int UnderVoltCount = 0;
 
-	if (Vdc < UNDER_VOLT_LEVEL) 	UnderVoltCount++;
+	if (Vdc < codeUnderVoltLevel) 	UnderVoltCount++;
 	else if( UnderVoltCount > 0) 	UnderVoltCount--;
 	else                            UnderVoltCount = 0;
 
@@ -91,15 +91,24 @@ int CheckUndeVolt( )
 
 int CheckIGBTFault( )
 {
-    if( GATE_DRIVER_FAULT == 0){
-         trip_recording( ERR_PWM, 0.0,"Trip GateDriver");
-         return ERR_PWM;
-     }
-     return 0;
+    int tripCode =0;
+
+    pwmTripState = digitalInputState = 0;
+
+    if( GATE_DRIVER_FAULT == 0){ pwmTripState += 1;
+        trip_recording( ERR_PWM_IGBT, 0.0,"Trip IGBT GATE"); tripCode = ERR_PWM_IGBT;
+    }
+
+    if( START_INPUT   == 0) digitalInputState += 1;
+    // if( EX_TRIP_INPUT == 0) digitalInputState += 2;
+    if( EX_DIO_INPUT1 == 0) digitalInputState += 4;
+    if( EX_DIO_INPUT2 == 0) digitalInputState += 8;
+
+	return tripCode;
+
 }
 
-int CheckOverHeat( )
-{
+int CheckOverHeat( ){
 	static int OverHeatCount = 0;
 
 	if( adcIgbtTemperature < 1000 )		OverHeatCount++;
@@ -123,6 +132,7 @@ int tripCheckPWM()
     if( ( TripCode = CheckOverCurrent()) != 0 ) return TripCode ;   //
     return TripCode;
 }
+
 int trip_check()
 {
     int TripCode;
@@ -168,7 +178,7 @@ void tripProc()
 	load_scia_tx_mail_box("\nTRIP\t"); delay_msecs(20);
     load_scia_tx_mail_box(TripInfoNow.MSG); delay_msecs(20);
 
-    snprintf( str,12,"\nCODE=%3d",TripInfoNow.CODE)    ;
+    snprintf( str,12,"\nCODE=%3d",TripInfoNow.CODE);
     load_scia_tx_mail_box(str);delay_msecs(20);
 
     dbtemp = TripInfoNow.RPM;
@@ -191,34 +201,21 @@ void tripProc()
     snprintf( str,13," \tDATA=%4d\n",temp);
     load_scia_tx_mail_box(str); delay_msecs(20);
 
-	while( START_INPUT == 0 ){
+    temp = 1;
+
+	while( temp ){
         get_command( & cmd, & ref_in0);
-//        monitor_proc();
-	    Nop();
-	}
-	delay_msecs(100);
-	while( START_INPUT){
-        get_command( & cmd, & ref_in0);
-//        monitor_proc();
-        if(cmd == CMD_READ_ALL ){
-            readAllCodes();
-        }
-        Nop();
-	}
-	while( START_INPUT==0){
-        get_command( & cmd, & ref_in0);
-//        monitor_proc();
-        if(cmd == CMD_READ_ALL ){
-            readAllCodes();
-        }
-	    Nop();
+	    if( START_INPUT && EX_DIO_INPUT1 ) temp = 0;
 	}
 
 	gPWMTripCode = 0;
-
-// 	InitEPwm_ACIM_Inverter();   // debug
-	gMachineState = STATE_POWER_ON; Nop();
-    asm (" .ref _c_int00");     // Branch to start of boot.asm in RTS library
-    asm (" LB _c_int00");       // Branch to start of boot.asm in RTS library
+    DINT;
+    EALLOW;
+    EmuKey = 0x55aa;
+    EmuBMode = 0x000B;
+    SysCtrlRegs.SCSR = 0x00;
+    SysCtrlRegs.WDCR = 0x20;
+    EDIS;
+    while(1);
 }
 //--- end of Trip_proc.c

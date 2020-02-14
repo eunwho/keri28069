@@ -1,6 +1,58 @@
 #ifndef		__GLOBAL_VARIABLES_
 #define		__GLOBAL_VARIABLES_
 
+double inv_QepTime;
+
+double codeFw1WeCoef;
+double codeFw2On;
+double codeKiWrCoef;
+double codeKpWrCoef;
+
+double KpVsw;
+double KiVsw;
+
+double codeFwCoef1;
+double codeFwCoef2;
+
+double IsqFw;
+double lpfVsdIn[3];
+double lpfVsdOut[3];
+double lpfVsdK[4];
+
+int digitalInputState;
+int pwmTripState;
+
+int graphPointCh1;
+int graphPointCh2;
+int graphPointCh3;
+int graphPointCh4;
+double invGraphScaleCh1;
+double invGraphScaleCh2;
+double invGraphScaleCh3;
+double invGraphScaleCh4;
+
+double inv_Lm;
+double Is_Scalar;
+double Is_Square;
+double Isd_Square;
+double Isq_Square;
+
+double Is_D_Rate;
+double IsD_Ref;
+double IsQ_Ref;
+
+double Vs_Square;
+double Vs_Scalar;
+double Vsd_Square;
+double Vsq_Square;
+
+
+double Vsw_ErrInt;
+double Vsd_ErrInt;
+double we1FieldWeak;
+
+double invePowerScale;
+double inveIrmsScale;
 
 //--- eQep.c
 Uint32 capture_counter = 0;
@@ -8,16 +60,13 @@ int32 POSCNT_old = 0 ;
 
 Uint16 encoderMaxCount;
 double inv_encoderMaxCount;
-double inv_QepTime;
-
+double Inv_QepTime;
 
 //--- testing
 int lpfadcIa;
 int lpfadcIb;
 
-
 double exSensRef;
-
 double dAdcIa;
 double dAdcIb;
 double dAdcVdc;
@@ -198,9 +247,7 @@ double  Vs_DQ_ref_PI[2]={0.0,0.0};
 double  Vs_IR_comp=0.0;
 double  del_Vs_comp=0.0;
 
-
 // power and torque
-
 double Te_rat;
 double inv_Te_rat;
 double Kt;
@@ -212,7 +259,6 @@ double  Slip=0.0;
 double  Power_core=0.0;
 double  Power_core_rat=0.0;
 double  Power_gap=0.0;
-
 double  Re_Power=0.0;
 double  Im_Power=0.0;
 double  P_total;
@@ -222,7 +268,6 @@ double	Te_ref=0.0;
 double	Te=0.0;
 double	LPF_Te=0.0;
 double	Max_Trq_Coeff=0.0;
-
 
 // Flux
 double  Fs_rat;
@@ -273,8 +318,8 @@ double  inv_sigma_Ls;
 double  inv_Ls;
 double  Tr;
 double  inv_Tr;
-double  inv_Ls_plus_sigma_Ls;               // 占쏙옙占� 占쏙옙占싼곤옙 占쏙옙占�
-double  sigma_Ls_div_1_plus_sigma;          // 占쏙옙占� 占쏙옙占싼곤옙 占쏙옙占�
+double  inv_Ls_plus_sigma_Ls;           //
+double  sigma_Ls_div_1_plus_sigma;      //
 double  Lm_div_Lr;                      // Lm/Lr
 double  Lr_div_Lm;                      // Lr/Lm
 
@@ -367,14 +412,22 @@ double gdouSciCmdData;
 
 // analog to digital converter
 int adc_result[16]={0};
-int adcIa;
-int adcIb;
+int adcCurrentA;
+int adcCurrentB;
 int adcVdc;
 int adcIgbtTemperature;
 int adcExSensor;
 int adcCmdAnalog;
 
 //filter
+double lpfIsqIn[3];
+double lpfIsqOut[3];
+double lpfIsqK[4];
+
+double lpfVsIn[3];
+double lpfVsOut[3];
+double lpfVsK[4];
+
 double lpfIa;
 double lpfIb;
 
@@ -436,44 +489,31 @@ double codeScopeOffsetCh3;
 double codeScopePointCh4;
 double codeScopeScaleCh4;
 double codeScopeOffsetCh4;
+
+double codeGraphPointCh1;
+double codeGraphScaleCh1;
+double codeGraphOffsetCh1;
+
+double codeGraphPointCh2;
+double codeGraphScaleCh2;
+double codeGraphOffsetCh2;
+
+double codeGraphPointCh3;
+double codeGraphScaleCh3;
+double codeGraphOffsetCh3;
+
+double codeGraphPointCh4;
+double codeGraphScaleCh4;
+double codeGraphOffsetCh4;
+
 //--- code 40
-double wr_FilterPoleCoeff;      // 40
-double wn_wr_Coeff;
-double Max_wn_wr;
-double K_Damp_wr;
-double wr_DampingRatio;
-double wr_CntlPeriodIndex;
 double FW_VoltageCoeff;
 double Base_Flux_Coeff;
-double ExcitationTime;
 
-double K_Damp_Is;
-double K_Damp_Fr;
-double GM_Fr;
-double PM_Fr;
-double Default_wr_FilterPole;
-double SlipCompCoeff;
-double GammaLambda;
-double GammaLambda_R_Constant;
-double Max_DeltaLambda;
-// code 60
-double GammaTheta_M;            // 60
-double GammaTheta_R;
-double Max_DeltaTheta;
+double codeLpfFreq;
+double codeLpfOff;
+
 double code_KiWrCoef;
-double code_FwCoef;
-double code_Fw2Coef;
-double Fr_CntlPeriodIndex;
-//--- code 70
-double VF_DeadTimeGain;         // 70
-double VF_ExcitationTime;
-double VF_Fs_Coeff;
-double VF_Freq_TrqBoost;
-double VF_Vs_Coeff_TrqBoost;
-double VF_Rs_ThermalCoeff;
-double VF_IR_Comp_FilterPole;
-double VF_Slip_Comp_FilterPole;
-double VF_Rs;
 
 double AT_Freq_Leq_Req;
 double AT_Time_Leq_Req;
@@ -484,6 +524,9 @@ double AT_DeadTimeGain;
 double AT_Ls_Vs_RAMP;
 double AT_Freq_Ls;
 double AT_Time_Ls;
+double codeTestCoeff1;
+double codeTestCoeff2;
+
 //===========================================
 //--- motor and related parameter setting
 //===========================================
@@ -501,7 +544,7 @@ double codeIbOffset;         // 112
 double codeIUSpan;           // 113
 double codeIVSpan;           // 114
 double codeISensorValue;     // 115
-double codeIOver;            // 116
+
 double codeKpIsTemp;         // 117
 double codeKiIsTemp;         // 118
 double codeKpIsCoeff;        // 119
@@ -519,8 +562,20 @@ double codeDecelTime1;         // 32
 double codeSpeed1;             // 33
 double codeSpeed2;             // 34
 double codePwmFreq;            // 35
-double code_start_ref;         // 36
+double codeStartRef;         // 36
 double code_encoderPulse;      // 37
+
+double codeIOver;            //
+double codeUnderVoltLevel;            //
+double codeOverVoltLevel;            //
+
+double wn_wr_Coeff;
+double codeVoltPIOn;
+double codeKpVsw;
+double codeKiVsw;
+double codeVswErrLimit;
+double codeVsdErrLimit;
+
 //--- end of motor related parameter
 
 double invCodeScopeScaleCh1;
@@ -538,9 +593,6 @@ double over_speed_level;		// 303
 double e_thermal_level;			// 304
 double pre_charge_time;			// 305
 double over_I_time;				// 307
-
-//double code_Vdc_scaler;			// 308  2011.0613
-//double code_Vdc_offseter;		// 309
 
 double Data_Check;				// 800
 double Data_Backup;				// 801

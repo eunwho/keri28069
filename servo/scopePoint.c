@@ -12,7 +12,7 @@
 #define SCOPE_I_W          6
 
 /* voltage */
-#define SCOPE_V_d          7
+#define SCOPE_Vdc          7
 #define SCOPE_V_q          8
 #define SCOPE_V_D          9
 #define SCOPE_V_Q          10
@@ -51,13 +51,31 @@
 #define SCOPE_Wr        35
 #define SCOPE_Wr_M        36
 
-#define SCOPE_I_DS0_0     40
-#define SCOPE_I_DS0       41
+//#define SCOPE_I_DS0_0    40
+// #define SCOPE_I_DS0     41
 
+#define SCOPE_IsqFw        41
+#define SCOPE_IsD_Ref      42
+#define SCOPE_IsQ_Ref      43
+#define SCOPE_Vsw_ErrInt   44
+
+#define SCOPE_Vs_Scalar     45
+#define SCOPE_Isd_Square    46
+#define SCOPE_Isq_Square    47
+#define SCOPE_Vs_max        48
 
 
 void setScopePoint()
 {
+    scopePoint[SCOPE_IsqFw]    = &IsqFw;
+    scopePoint[SCOPE_Vs_max]    = &Vs_max;
+    scopePoint[SCOPE_Isd_Square] = &Isd_Square;
+    scopePoint[SCOPE_Vs_Scalar] = &Vs_Scalar;
+
+    scopePoint[SCOPE_IsD_Ref]   = &IsD_Ref;
+    scopePoint[SCOPE_IsQ_Ref]   = &IsQ_Ref;
+    scopePoint[SCOPE_Vsw_ErrInt]= &Vsw_ErrInt;
+
     scopePoint[SCOPE_I_d] = &Is_dq[ds];
     scopePoint[SCOPE_I_q] = &Is_dq[qs];
     scopePoint[SCOPE_I_D] = &Is_DQ[DS];
@@ -68,7 +86,7 @@ void setScopePoint()
     scopePoint[SCOPE_I_W] = &Is_abc[cs];
 
 /* voltage */
-    scopePoint[SCOPE_V_d] = &Vs_dq[ds];
+    scopePoint[SCOPE_Vdc] = &Vdc;
     scopePoint[SCOPE_V_q] = &Vs_dq[qs];
     scopePoint[SCOPE_V_D] = &Vs_DQ[DS];
     scopePoint[SCOPE_V_Q] = &Vs_DQ[QS];
@@ -88,7 +106,7 @@ void setScopePoint()
     scopePoint[SCOPE_DUTY_V]       = &DutyRatio[v];
     scopePoint[SCOPE_DUTY_W]       = &DutyRatio[w];
 
-    scopePoint[SCOPE_Fs]       = &Fs;
+    scopePoint[SCOPE_Fs]           = &Fs;
     scopePoint[SCOPE_Fs_d]       = &Fs_dq[ds];
     scopePoint[SCOPE_Fs_q]       = &Fs_dq[qs];
 
@@ -107,8 +125,8 @@ void setScopePoint()
     scopePoint[SCOPE_Wr]       = &wr;
     scopePoint[SCOPE_Wr_M]   = &wr_m;
 
-    scopePoint[SCOPE_I_DS0_0]   = &I_DS0_0;
-    scopePoint[SCOPE_I_DS0]   = &I_DS0;
+//    scopePoint[SCOPE_I_DS0_0]   = &I_DS0_0;
+//    scopePoint[SCOPE_I_DS0]   = &I_DS0;
 }
 
 //--- end of file

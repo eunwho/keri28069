@@ -110,22 +110,20 @@ void estim_Ls_pwm()
 	Vs_dq[ds]=Us_dq[ds];  Vs_dq[qs]=Us_dq[qs];
 	
     Vs_max=Vs_rat;        // 2019.12.23
-	// Vs_max=Vs_rat * 0.2;
-	if (gfRunTime < 0.2) {
+
+	if (gfRunTime < 0.25) {
 		Freq_ref = Freq_set = Freq_out=0.0;
 		we = 0.0; theta=0.0; SinTheta=0.0;
 		CosTheta=1.0;
-        Vs_ref=Rs*Is_rat;
-        // Vs_ref=Rs*Is_rat*0.2;
-        // Vs_ref=Rs*Is_rat*0.1;
+        Vs_ref=Rs*Is_rat * 0.5; // 2020.0208 debug
 	} else {
 		IncFreq=(Ts/AT_Ls_Vs_RAMP)*AT_Freq_Ls;
 		if ( gfRunTime < (ExcitationTime+AT_Ls_Vs_RAMP+AT_Time_Ls))
 				Freq_ref=AT_Freq_Ls;
 		else	Freq_ref=0.0;
 			
-		if (Freq_set>(Freq_ref+IncFreq)) Freq_set-=IncFreq;
-		else if (Freq_set<(Freq_ref-IncFreq)) Freq_set+=IncFreq;
+		if (Freq_set > (Freq_ref+IncFreq) )             Freq_set -= IncFreq;
+		else if (Freq_set < ( Freq_ref - IncFreq ) )    Freq_set += IncFreq;
 	
 		if (Freq_set>=0.0) 	sgn_freq = 1.0;
 		else				sgn_freq =-1.0;
@@ -139,9 +137,10 @@ void estim_Ls_pwm()
 		if (Det_slip<0.0)
 			LPF1(Ts,VF_Slip_Comp_FilterPole,-0.5*sqrt(fabs(S_lin*Power_gap)),&Freq_slip);
 		else	LPF1(Ts,VF_Slip_Comp_FilterPole,0.5*(sqrt(Det_slip)-fabs(Freq_ref)),&Freq_slip);
-		Freq_out=Freq_set + sgn_freq*Freq_slip;
+
+		Freq_out= Freq_set + sgn_freq * Freq_slip;
 	
-		Freq_out=Freq_set;
+		Freq_out = Freq_set;
 		
 		we=fabs(PI_2*Freq_out);				// 占쏙옙占쏙옙占쏙옙 占쏙옙占쏙옙占� 占쏙옙占식쇽옙
 		theta+=we*Ts;
@@ -171,11 +170,8 @@ void estim_Ls_pwm()
 				del_Vs_comp=-0.1*Vs_rat;
 		}	
 		else	del_Vs_comp=0.0;
-	
-		// 占쏙옙占쏙옙 占쏙옙占쏙옙 占쏙옙占�
 		Vs_ref = Es_m + Vs_IR_comp - del_Vs_comp;		// IR占쏙옙占�, 占쏙옙占쏙옙크占쏙옙 占쏙옙占쏙옙
-		if (Vs_ref>Vs_max)
-			Vs_ref=Vs_max;
+		if (Vs_ref>Vs_max) Vs_ref=Vs_max;
 	}	
 
 	Vs_dq_ref[ds]=Vs_ref*CosTheta + AT_DeadTimeGain*(Vs_dq_ref[ds]-Vs_dq[ds]);
@@ -202,8 +198,6 @@ void estim_Ls_pwm()
 		}
 	}
 }
-
-
 //---------------------------------------------------
 // auto tunning loop control
 //---------------------------------------------------
@@ -622,8 +616,7 @@ int estim_Ls_loop()
 
 int parameter_estimation( )
 {
-	int cmd, iTripCode, LoopCtrl;
-	double ref0;
+	int iTripCode;
 	char str[51] ={0};
 
 	UNION32 u32data;
@@ -666,12 +659,11 @@ int parameter_estimation( )
 
     load_sci_tx_mail_box("\n========================= r\n");delay_msecs(10);
     load_sci_tx_mail_box("AT Result Save \r\n");delay_msecs(10);
-    snprintf(str,25,"\n Rs=%10.3e",Rs);load_sci_tx_mail_box(str);delay_msecs(10);
-    snprintf(str,25,"\n Rr=%10.3e",Rr);load_sci_tx_mail_box(str);delay_msecs(10);
-    snprintf(str,25,"\n Ls=%10.3e",Ls);load_sci_tx_mail_box(str);delay_msecs(10);
-    snprintf(str,25,"\n Lr=%10.3e",Lr);load_sci_tx_mail_box(str);delay_msecs(10);
-    snprintf(str,25,"\n Lm=%10.3e",Lm);load_sci_tx_mail_box(str);delay_msecs(10);
-    snprintf(str,25,"\n Jm=%10.3e",Jm);load_sci_tx_mail_box(str);delay_msecs(10);
+    snprintf(str,25,"\n Rs=\t %10.3e",Rs);load_sci_tx_mail_box(str);delay_msecs(10);
+    snprintf(str,25,"\n Rr=\t %10.3e",Rr);load_sci_tx_mail_box(str);delay_msecs(10);
+    snprintf(str,25,"\n Ls=\t %10.3e",Ls);load_sci_tx_mail_box(str);delay_msecs(10);
+    snprintf(str,25,"\n Lr=\t %10.3e",Lr);load_sci_tx_mail_box(str);delay_msecs(10);
+    snprintf(str,25,"\n Lm=\t %10.3e",Lm);load_sci_tx_mail_box(str);delay_msecs(10);
     load_sci_tx_mail_box("\n======================== \r\n");
 
 	return 0;	// debug 2008.07.26

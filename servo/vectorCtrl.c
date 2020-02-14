@@ -41,8 +41,8 @@ int vectorCtrlLoop()
 		get_command(&iCommand,&fReference);
 		monitor_proc();
 
-		if( iCommand == CMD_START)      reference_in = fReference;
-		else if( iCommand == CMD_STOP)  reference_in = 0.0;
+		// if( iCommand == CMD_START)      reference_in = fReference;
+		if( iCommand == CMD_STOP)  reference_in = 0.0;
 
 		switch( gMachineState )
 		{

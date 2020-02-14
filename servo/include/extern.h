@@ -1,13 +1,67 @@
 #ifndef     __VARIABLES_
 #define     __VARIABLES_
 
+extern double inv_QepTime;
+
+extern double codeFw1WeCoef;
+extern double codeFw2On;
+
+extern double codeKiWrCoef;
+extern double codeKpWrCoef;
+
+extern double KpVsw;
+extern double KiVsw;
+
+extern double codeFwCoef1;
+extern double codeFwCoef2;
+extern double codeTestCoef1;
+extern double codeTestCoef2;
+extern double IsqFw;
+extern double lpfVsdIn[3];
+extern double lpfVsdOut[3];
+extern double lpfVsdK[4];
+
+extern int digitalInputState;
+extern int pwmTripState;
+
+extern int graphPointCh1;
+extern int graphPointCh2;
+extern int graphPointCh3;
+extern int graphPointCh4;
+extern double invGraphScaleCh1;
+extern double invGraphScaleCh2;
+extern double invGraphScaleCh3;
+extern double invGraphScaleCh4;
+
+extern double inv_Lm;
+extern double Is_Scalar;
+extern double Is_Square;
+extern double Isd_Square;
+extern double Isq_Square;
+
+extern double Is_D_Rate;
+extern double IsD_Ref;
+extern double IsQ_Ref;
+
+extern double Vs_Square;
+extern double Vs_Scalar;
+extern double Vsd_Square;
+extern double Vsq_Square;
+
+extern double Vsw_ErrInt;
+extern double Vsd_ErrInt;
+extern double we1FieldWeak;
+
+extern double invePowerScale;
+extern double inveIrmsScale;
+
 //--- eQep.c
 extern Uint32 capture_counter ;
 extern Uint16 encoderMaxCount;
 extern int32     POSCNT_old;
 
 extern double inv_encoderMaxCount;
-extern double inv_QepTime;
+extern double Inv_QepTime;
 
 //---  testing
 extern int lpfadcIa;
@@ -143,7 +197,6 @@ extern double  inv_Is_rat;
 extern double  Is_max;
 extern double  Is_mag;
 extern double  Is_mag_rms;
-extern double  LPF_Ia;
 extern double  sgn_Is[3];
 extern double  sgn_I_QS;
 
@@ -360,14 +413,22 @@ extern double gdouSciCmdData;
 
 // analog to digital converter
 extern int adc_result[16];
-extern int adcIa;
-extern int adcIb;
+extern int adcCurrentA;
+extern int adcCurrentB;
 extern int adcVdc;
 extern int adcIgbtTemperature;
 extern int adcExSensor;
 extern int adcCmdAnalog;
 
 //filter
+extern double lpfIsqIn[3];
+extern double lpfIsqOut[3];
+extern double lpfIsqK[4];
+
+extern double lpfVsIn[3];
+extern double lpfVsOut[3];
+extern double lpfVsK[4];
+
 extern double lpfIa;
 extern double lpfIb;
 
@@ -433,45 +494,31 @@ extern double codeScopeOffsetCh3;
 extern double codeScopePointCh4;
 extern double codeScopeScaleCh4;
 extern double codeScopeOffsetCh4;
-//--- code 40
-extern double wr_FilterPoleCoeff;      // 40
-extern double wn_wr_Coeff;
-extern double Max_wn_wr;
-extern double K_Damp_wr;
-extern double wr_DampingRatio;
-extern double wr_CntlPeriodIndex;
+
+extern double codeGraphPointCh1;
+extern double codeGraphScaleCh1;
+extern double codeGraphOffsetCh1;
+
+extern double codeGraphPointCh2;
+extern double codeGraphScaleCh2;
+extern double codeGraphOffsetCh2;
+
+extern double codeGraphPointCh3;
+extern double codeGraphScaleCh3;
+extern double codeGraphOffsetCh3;
+
+extern double codeGraphPointCh4;
+extern double codeGraphScaleCh4;
+extern double codeGraphOffsetCh4;
+
 extern double FW_VoltageCoeff;
 extern double Base_Flux_Coeff;
-extern double ExcitationTime;
+extern double codeLpfFreq;
+extern double codeLpfOff;
 
-extern double K_Damp_Is;
-extern double K_Damp_Fr;
-extern double GM_Fr;
-extern double PM_Fr;
-extern double Default_wr_FilterPole;
-extern double SlipCompCoeff;
-extern double GammaLambda;
-extern double GammaLambda_R_Constant;
-extern double Max_DeltaLambda;
-// code 60
-extern double GammaTheta_M;            // 60
-extern double GammaTheta_R;
-extern double Max_DeltaTheta;
 extern double code_KiWrCoef;
-extern double code_FwCoef;
-extern double code_Fw2Coef;
-extern double Fr_CntlPeriodIndex;
-//--- code 70
-extern double VF_DeadTimeGain;         // 70
-extern double VF_ExcitationTime;
-extern double VF_Fs_Coeff;
-extern double VF_Freq_TrqBoost;
-extern double VF_Vs_Coeff_TrqBoost;
-extern double VF_Rs_ThermalCoeff;
-extern double VF_IR_Comp_FilterPole;
-extern double VF_Slip_Comp_FilterPole;
-extern double VF_Rs;
 
+//--- code 70
 extern double AT_Freq_Leq_Req;
 extern double AT_Time_Leq_Req;
 extern double AT_Is_Coeff_Leq_Req;
@@ -481,6 +528,9 @@ extern double AT_DeadTimeGain;
 extern double AT_Ls_Vs_RAMP;
 extern double AT_Freq_Ls;
 extern double AT_Time_Ls;
+extern double codeTestCoeff1;
+extern double codeTestCoeff2;
+
 //===========================================
 //--- motor and related parameter setting
 //===========================================
@@ -516,8 +566,20 @@ extern double codeDecelTime1;         // 32
 extern double codeSpeed1;             // 33
 extern double codeSpeed2;             // 34
 extern double codePwmFreq;            // 35
-extern double code_start_ref;         // 36
+extern double codeStartRef;         // 36
 extern double code_encoderPulse;      // 37
+
+extern double codeIOver;            //
+extern double codeUnderVoltLevel;            //
+extern double codeOverVoltLevel;            //
+
+extern double wn_wr_Coeff;
+extern double codeVoltPIOn;
+extern double codeKpVsw;
+extern double codeKiVsw;
+extern double codeVswErrLimit;
+extern double codeVsdErrLimit;
+
 //--- end of motor related parameter
 
 extern int scopeLoopCount;
@@ -534,10 +596,6 @@ extern double over_I_time;             // 307
 
 extern double code_Vdc_scaler;         // 308  2011.0613
 extern double code_Vdc_offseter;       // 309
-//extern double code_adc_vdc_low;        // 310
-//extern double code_adc_vdc_high;       // 311
-//extern double code_Vdc_calc_low;       // 312
-//extern double code_Vdc_calc_high;      // 313
 
 extern double Data_Check;              // 800
 extern double Data_Backup;             // 801

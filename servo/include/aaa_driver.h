@@ -83,8 +83,6 @@ typedef union
 
 //#define INV_RPM_SCALE   0.005     // 1.0 / 200.0 ;
 #define INV_RPM_SCALE   0.001     // 1.0 / 1000.0 ;
-#define INV_I_SCALE     0.02         //  = 1.0 / 100;
-#define INV_P_SCALE     0.001      // 1/1000
 #define INV_REF_SCALE   2      //
 #define INV_V_SCALE     0.01      // 1/100
 

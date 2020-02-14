@@ -35,7 +35,7 @@ int HardwareParameterVerification()
 	Te_rat= codeRatePower/wm_rat;
 
 	inv_Te_rat=1.0/Te_rat;
-	Fs_rat=Vs_rat/we_rat;
+	Fs_rat = Vs_rat/we_rat * Base_Flux_Coeff;
 
 	Kt=(3.0/2.0)*(codeMotorPole/2.0);
 	inv_Kt=1.0/Kt;
@@ -51,6 +51,7 @@ int HardwareParameterVerification()
 	Ts = 1.0 / codePwmFreq;	// debug
 
 	Is_max = Is_rat * codeIsMaxCoef ;
+	Is_D_Rate=  Fs_rat / Ls  ;
 	return	0;	
 }	
 
@@ -82,7 +83,8 @@ int COMMON_VECT_CNTL_ParameterVerification()
 	
 	inv_Tr=1.0/Tr;
 	inv_Ls=1.0/Ls;
-//	inv_Lm=1.0/Lm;
+	inv_Lm=1.0/Lm;
+
 	SlipCoeff=Ls/Tr;
 	inv_sigma = 1.0 / sigma ;
 	sigma_Tr=sigma*Tr;
@@ -94,11 +96,6 @@ int COMMON_VECT_CNTL_ParameterVerification()
 	Lm_div_Lr=Lm/Lr;
 	Lr_div_Lm=Lr/Lm;
 
-	codeKpIs = codeKpIsCoeff * codeKpIsTemp;
-    codeKiIs = codeKiIsCoeff * codeKiIsTemp;  // debug
-
-    fw2Base = ( 1.0 / Is_max / Ls) * sqrt((1+ sigma * sigma ) / (2 * sigma * sigma));
-
 	return	0;	
 }	
 
@@ -109,12 +106,12 @@ int COMMON_SL_VECT_CNTL_ParameterVerification()
 	ErrCode=COMMON_VECT_CNTL_ParameterVerification();	
 	if (ErrCode!=0)				return	ErrCode;		
 		
-	Fs_B=Base_Flux_Coeff*Fs_rat;
+	Fs_B= Fs_rat * Base_Flux_Coeff;
 	inv_Fs_B=1.0/Fs_B;	
 	Fs_ref=Fs_B;	
 
 	I_QS_rat=(2.0/3.0)*inv_P_pair*Te_rat/Fs_B;
-//	inv_I_QS_rat=1.0/I_QS_rat;
+    // inv_I_QS_rat=1.0/I_QS_rat;
 	inv_Te_rat=1.0/Te_rat;
 	
 	wr_FilterPole=Default_wr_FilterPole;				//
@@ -143,7 +140,6 @@ int SL_SPEED_CNTL_Parameter()
 	ErrCode=COMMON_SL_VECT_CNTL_ParameterVerification();
 	if (ErrCode!=0) 	return	ErrCode;
 
-	I_QS_rat=(2.0/3.0)*inv_P_pair*Te_rat/Fs_rat;
 	inv_Te_rat=1.0/Te_rat;
 	
 	wn_wr=wn_wr_Coeff*( (P_pair*Te_rat/wr_rat)/Jm );
@@ -151,8 +147,8 @@ int SL_SPEED_CNTL_Parameter()
 
 	wr_FilterPole=wr_FilterPoleCoeff*wn_wr;
 
-	Kp_wr=(Jm*2.0*wr_DampingRatio*wn_wr)*(inv_Kt/Fs_B);
-	Ki_wr=(Jm*wn_wr*wn_wr)*(inv_Kt/Fs_B) * code_KiWrCoef;
+	Kp_wr=(Jm*2.0*wr_DampingRatio*wn_wr)*(inv_Kt/Fs_B) * codeKpWrCoef;
+	Ki_wr=(Jm*wn_wr*wn_wr)*(inv_Kt/Fs_B) * codeKiWrCoef;
 
 	return	0;
 }

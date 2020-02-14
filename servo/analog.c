@@ -42,15 +42,15 @@ interrupt void adcIsr(void)
 {
     DIGIT1_SET;
     double fTemp;
-    adc_result[0] = adcIa   = AdcResult.ADCRESULT0;
-    adc_result[1] = adcIb   = AdcResult.ADCRESULT1;
+    adc_result[0] = adcCurrentA   = AdcResult.ADCRESULT0;
+    adc_result[1] = adcCurrentB   = AdcResult.ADCRESULT1;
     adc_result[2] = adcVdc  = adcVdc = AdcResult.ADCRESULT2;
     adc_result[3] = adcIgbtTemperature = AdcResult.ADCRESULT3;
     adc_result[4] = adcExSensor = AdcResult.ADCRESULT4;        //adcExSensor
     adc_result[5] = adcCmdAnalog = AdcResult.ADCRESULT5;
 
-    dAdcIa      = (double)(adcIa);
-    dAdcIb      = (double)(adcIb);
+    dAdcIa      = (double)(adcCurrentA);
+    dAdcIb      = (double)(adcCurrentB);
     dAdcVdc     = (double)(adcVdc);
     dAdcTemp    = (double)(adcIgbtTemperature);
     dAdcSens    = (double)(adcExSensor);
@@ -64,13 +64,11 @@ interrupt void adcIsr(void)
 
     lpfIaIn[0] = codeISensorValue * ( (double)(adc_result[0]) - codeIaOffset) * I_RATIO * 0.4;
     lpf2nd( lpfIaIn, lpfIaOut, lpfIrmsK);
-    Is_abc[as] = lpfIaOut[0];
-    // Is_abc[as] = lpfIaIn[0];
+    Is_abc[as] = ( codeLpfOff > 0.5 ) ? lpfIaIn[0] : lpfIaOut[0];
 
     lpfIbIn[0] = codeISensorValue * ( (double)(adc_result[1]) - codeIbOffset) * I_RATIO * 0.4;
     lpf2nd( lpfIbIn, lpfIbOut, lpfIrmsK);
-    Is_abc[bs] = lpfIbOut[0];
-    // Is_abc[bs] = lpfIbIn[0];
+    Is_abc[bs] = ( codeLpfOff > 0.5 ) ? lpfIbIn[0] : lpfIbOut[0];
 
     Is_abc[cs]= -(Is_abc[as]+Is_abc[bs]);
 
@@ -79,8 +77,6 @@ interrupt void adcIsr(void)
     Is_mag = sqrt( Is_abc[as] *Is_abc[as] + Is_abc[bs] *Is_abc[bs]);           // 전류크기
 
     Is_mag_rms = Is_mag;
-
-    LPF1(Ts,1.0,fabs(Is_abc[as]),&LPF_Ia);                          // debug
 
     fTemp = adc_result[4] * 0.000244 ;
     LPF1(Ts,0.01, fTemp, &exSensRef);            // external sensor

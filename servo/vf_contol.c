@@ -41,6 +41,20 @@ int vf_loop_control(double cmd_ref)
 
 		switch( gMachineState )
 		{
+/*
+		case STATE_INIT_RUN:
+			if( command == CMD_STOP){
+                strncpy(MonitorMsg,"READY",20); gMachineState = STATE_READY; LoopCtrl= 0;
+		    } else if( gfRunTime < 0.2 ){
+				Freq_ref=0.0;	rpm_ref=0.0; reference_out = 0.0;
+			} else{
+				strncpy(MonitorMsg,"RUN",20);
+				    gMachineState = STATE_RUN;
+				    reference_out = code_start_ref;
+				    reference_in = code_start_ref;
+			}
+			break;
+*/
 		case STATE_RUN:
             strncpy(MonitorMsg," RUN ",20);
 			if( command == CMD_NULL ){
@@ -62,7 +76,7 @@ int vf_loop_control(double cmd_ref)
 			if( command == CMD_START ) {
 				strncpy(MonitorMsg," RUN ",20); gMachineState = STATE_RUN;
 				// reference_in = reference_out; 
-			} else if ((fabs(reference_out) <= code_start_ref )){
+			} else if ((fabs(reference_out) <= 0.05 )){
                 strncpy(MonitorMsg,"READY",20);
                 gMachineState = STATE_READY;
                 reference_out = Freq_out = 0.0;

@@ -73,20 +73,42 @@
 
 #define F_OSC					20000000
 
-//
-#define over_volt_set           380.0         // check
-//#define UNDER_VOLT_LEVEL        200.0         // check
-// #define OVER_V_LEVEL        420.0
-#define UNDER_VOLT_LEVEL        200.0         // check
-// #define OVER_V_LEVEL        720.0
-#define OVER_V_LEVEL        380.0
-
-
 // Control Constant
 #define AT_SUCCESS	10
 
 //--- define inner parameter
-#define AT_Ls_DMB_OpenTime      0.5
+
+#define ExcitationTime              0.25
+
+#define wr_FilterPoleCoeff          15.0
+// #define wn_wr_Coeff                 1.0
+#define Max_wn_wr                   24.0
+#define K_Damp_wr                   0.45
+#define wr_DampingRatio             0.8
+
+#define K_Damp_Is                   0.45
+#define K_Damp_Fr                   0.45
+#define Gm_Fr                       7.0
+#define Pm_Fr                       0.785
+#define Default_wr_FilterPole       200.0
+#define SlipCompCoeff               0.2
+#define GammaLambda                 1.0
+#define GammaLambda_R_Constant      20.0
+#define Max_DeltaLambda             0.05
+#define GammaTheta_M                0.2
+#define GammaTheta_R                1.0
+#define Max_DeltaTheta              0.015
+
+#define VF_DeadTimeGain             1.0
+#define VF_ExcitationTime           1.0
+#define VF_Fs_Coeff                 1.0
+#define VF_Freq_TrqBoost            1.5
+#define VF_Vs_Coeff_TrqBoost        0.1
+#define VF_Rs_ThermalCoeff          1.05
+#define VF_IR_Comp_FilterPole       100.0
+#define VF_Slip_Comp_FilterPole     20.0
+#define VF_Rs                       0.0
+#define VF_DeadTimeGain             1.0
 
 #endif
 

@@ -45,7 +45,9 @@
 #define BACKUP_DISABLE      (GpioDataRegs.GPASET.bit.GPIO17   = 1)
 
 // 2017.09.01--2011.06.25
-#define EX_DIO_INPUT2       GpioDataRegs.GPADAT.bit.GPIO14    // exInput1
+#define EX_DIO_INPUT1       GpioDataRegs.GPADAT.bit.GPIO15    // dsp pcb CON4-3 trip input
+// #define EX_TRIP_INPUT       GpioDataRegs.GPADAT.bit.GPIO15    // dsp pcb CON4-3
+#define EX_DIO_INPUT2       GpioDataRegs.GPADAT.bit.GPIO14    // dsp pcb CON4-4
 #define START_INPUT         GpioDataRegs.GPADAT.bit.GPIO12    // exInput1
 #define RUN_INPUT           (START_INPUT)                     // run input
 

@@ -103,12 +103,13 @@ void get_command( int * command, double * ref )
 	int sci_cmd, digital_cmd;
 	double sci_ref, digital_ref;
 
+	readPwmTripInputState();    // read pwmTripInput and Digital Input
 	serial_com_proc( & sci_cmd, & sci_ref );
 //	analog_cmd_proc( & analog_ref);
 	digital_input_proc(&digital_cmd, &digital_ref);
 
 	* command = digital_cmd;
-	* ref = code_start_ref;
+	* ref = codeStartRef;
 
 	if( digital_cmd == CMD_START){
 	    * command = sci_cmd;

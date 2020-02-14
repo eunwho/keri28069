@@ -1,16 +1,29 @@
 #include	<header.h>
 #include	<extern.h>
 
+void readPwmTripInputState( ){
+    pwmTripState = digitalInputState = 0;
+    if( GATE_DRIVER_FAULT == 0) pwmTripState += 1;
+/*
+    if( TRIP_UH == 0) pwmTripState += 1;
+    if( TRIP_UL == 0) pwmTripState += 2;
+    if( TRIP_VH == 0) pwmTripState += 4;
+    if( TRIP_VL == 0) pwmTripState += 8;
+    if( TRIP_WH == 0) pwmTripState += 16;
+    if( TRIP_WL == 0) pwmTripState += 32;
+    if( TRIP_DB == 0) pwmTripState += 64;
+*/
+    if( START_INPUT   == 0) digitalInputState += 1;
+    // if( EX_TRIP_INPUT == 0) digitalInputState += 2;
+    if( EX_DIO_INPUT1 == 0) digitalInputState += 4;
+    if( EX_DIO_INPUT2 == 0) digitalInputState += 8;
+}
+
 void fault_reset()
 {
-    DINT;
-    EALLOW;
-    EmuKey = 0x55aa;
-    EmuBMode = 0x000B;
-    SysCtrlRegs.SCSR = 0x00;
-    SysCtrlRegs.WDCR = 0x20;
-    EDIS;
-    while(1);
+	Nop();
+	asm (" .ref _c_int00"); // ;Branch to start of boot.asm in RTS library
+	asm (" LB _c_int00"); // ;Branch to start of boot.asm in RTS library
 }
 
 void driver_enable_proc(){	Nop();}
@@ -32,9 +45,9 @@ void input_ext_fault_a_proc()
 
 void digital_input_proc(int * cmd, double * ref )
 {
-	if( RUN_INPUT == 0 ){
+	if( START_INPUT == 0 ){
 	 	* cmd = CMD_START; //FWD LOW
-		* ref = 1.0;
+		* ref = codeStartRef;
 	}
 	else { * cmd = CMD_STOP; * ref = 0.0;}
 }
@@ -45,16 +58,17 @@ void digital_input_proc(int * cmd, double * ref )
 
 void digital_out_proc()		// debug
 {
+ /*
     switch(gMachineState)
     {
     case STATE_TRIP:
-		MAIN_CHARGE_OFF;		// ���� ���� on 
+		MAIN_CHARGE_OFF;		//
 		RUN_OUT_OFF;
 		TRIP_OUT_ON;
 		break;
 
     case STATE_POWER_ON:
-        MAIN_CHARGE_OFF;        // ���� ���� on
+        MAIN_CHARGE_OFF;        //
         RUN_OUT_OFF;
         TRIP_OUT_OFF;
         break;
@@ -79,6 +93,7 @@ void digital_out_proc()		// debug
         TRIP_OUT_OFF;
         break;
     }
+*/
 }
 //---------------------------------
 // end of file

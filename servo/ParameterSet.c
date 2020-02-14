@@ -1,13 +1,26 @@
+// project : inverter for Electrical Vechile by Soongil Jung 2020.0208
 #include	<header.h>
 #include	<extern.h>
-
-#define max_I_ratio     1.5
 
 void commonVariableInit()
 {
     double x1,x2,y1,y2;
-
     setScopePoint();
+
+    we1FieldWeak = we_rat * codeFw1WeCoef  ;
+    codeKpIs = codeKpIsCoeff * codeKpIsTemp;
+    codeKiIs = codeKiIsCoeff * codeKiIsTemp;
+
+
+    KpVsw = codeKpVsw * 0.001;
+    KiVsw = codeKpVsw * 0.001/Ts;
+
+    inveIrmsScale = 1.0 / codeISensorValue;
+
+    if      ( codeRatePower <  10000.0) invePowerScale =  1/10000.0;
+    else if ( codeRatePower <  50000.0) invePowerScale =  1/50000.0;
+    else if ( codeRatePower < 100000.0) invePowerScale = 1/100000.0;
+    else                                invePowerScale = 1/500000.0;
 
     scopeLoopCount = (int)(codeScopeLoopCount);
 
@@ -20,6 +33,16 @@ void commonVariableInit()
     invCodeScopeScaleCh2 = 2.0 / codeScopeScaleCh2;
     invCodeScopeScaleCh3 = 2.0 / codeScopeScaleCh3;
     invCodeScopeScaleCh4 = 2.0 / codeScopeScaleCh4;
+
+    graphPointCh1 = (int)(floor(codeGraphPointCh1+0.5));
+    graphPointCh2 = (int)(floor(codeGraphPointCh2+0.5));
+    graphPointCh3 = (int)(floor(codeGraphPointCh3+0.5));
+    graphPointCh4 = (int)(floor(codeGraphPointCh4+0.5));
+
+    invGraphScaleCh1 = 1.0 / ( codeGraphScaleCh1 * 5 );
+    invGraphScaleCh2 = 1.0 / ( codeGraphScaleCh2 * 5 );
+    invGraphScaleCh3 = 1.0 / ( codeGraphScaleCh3 * 5 );
+    invGraphScaleCh4 = 1.0 / ( codeGraphScaleCh4 * 5 );
 
     x1 = code_adc_Vdc_low;      y1 = code_Vdc_calc_low;
     x2 = code_adc_Vdc_high;     y2 = code_Vdc_calc_high;
@@ -38,7 +61,6 @@ void commonVariableInit()
     reference_in=0.0;
     reference_out=0.0;  // new
     Freq_ref=0.0;
-
 
     // time, count, flag
     DutyRatio[u] = DutyRatio[v] = DutyRatio[w] = 0.5; //2018.0627
@@ -94,10 +116,8 @@ void commonVariableInit()
 
     // �쟾瑜�
     Is_rat=sqrt(2.0)*codeRateCurrent;
-    Is_max = Is_rat * max_I_ratio  / 100.0;
     inv_Is_rat=1.0/Is_rat;
 
-    LPF_Ia = 0;
     Is_dq[ds]=Is_dq[qs]=0.0;
     Is_mag=0.0;
     Is_mag_rms=0.0;
@@ -182,21 +202,17 @@ void commonVariableInit()
     Im_Power=0.0;
     ref_time = 0.0; //new
 
-    // V/F Control Parameter
-    VF_DeadTimeGain=1.0;
-    VF_ExcitationTime=2.0;                  // DC�뿬�옄 �떆媛� = 0.5珥�
-    VF_Fs_Coeff=1.0;
-    VF_Freq_TrqBoost=1.5;
-    VF_Vs_Coeff_TrqBoost=1.5*(VF_Freq_TrqBoost / codeRateHz );
-    VF_Rs_ThermalCoeff=1.05;
-    VF_IR_Comp_FilterPole=100.0;
-    VF_Slip_Comp_FilterPole=20.0;
-    VF_Rs=0.0;                              // �뵒�뤃�듃 ���빆 媛� --> 0
-
-    // V/F �젣�뿉�쓽 �뒳由� 蹂댁긽
     S_rat=(we_rat-wr_rat)/we_rat;
     S_lin=(codeMotorPole/PI)*(S_rat* codeRateHz)/Te_rat;             // ==> V/f �젣�뼱 : �뒳由� 蹂댁긽
     Freq_slip_rat=S_rat* codeRateHz;
+    IsD_Ref = 0.0;
+    IsQ_Ref = 0.0;
+
+    Vsw_ErrInt = 0.0;
+    Vsd_ErrInt = 0.0;
+
+    wr_ErrInt = 0.0;
+    I_DS0_0 = 0.0;
 }
 
 //-----------------------------------
