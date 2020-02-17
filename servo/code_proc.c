@@ -342,13 +342,13 @@ int getCodeMotorRef(int address,int cmd , CODE_INFO *  codes)
     case CODE_rate_rpm:
         strncpy(codes->disp, "Rate RPM",20);
         if( cmd == CMD_WRITE_RAM ) codeRateRpm = codes->code_value;
-        set_code_default(500,8000.0,1690.0,codeRateRpm,0,codes);
+        set_code_default(500,80000.0,1690.0,codeRateRpm,0,codes);
         break;
 
     case CODE_rate_hz:
         strncpy(codes->disp, "Rate hz",20);
         if( cmd == CMD_WRITE_RAM ) codeRateHz = codes->code_value;
-        set_code_default(30.0,120.0,60.0,codeRateHz,0,codes);
+        set_code_default(30.0,300.0,60.0,codeRateHz,0,codes);
         break;
 
     case CODE_motor_pole:

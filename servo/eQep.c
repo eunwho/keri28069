@@ -97,11 +97,12 @@ interrupt void eqep1_isr(void)     //5ms ���ͷ�Ʈ
         }
     }
 
-    theta_m = PI_2 * POSCNT_new * inv_encoderMaxCount ;
+    POSCNT_old = POSCNT_new;
+    theta_m = PI_2 * ( POSCNT_new - posCountOrigin )  * inv_encoderMaxCount ;
      wr_m = PI_2 * POSCNT_value * inv_encoderMaxCount * inv_QepTime;
 
-    EQep1Regs.QCLR.bit.UTO = 1;//Clear UTO(unit time out) interrupt flag
-    EQep1Regs.QCLR.bit.INT = 1;//Clear INT(unit time out) interrupt flag
+    EQep1Regs.QCLR.bit.UTO = 1;     //Clear UTO(unit time out) interrupt flag
+    EQep1Regs.QCLR.bit.INT = 1;     //Clear INT(unit time out) interrupt flag
 
     // Acknowledge this interrupt to receive more interrupts from group 5
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP5;

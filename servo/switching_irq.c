@@ -12,12 +12,14 @@ void MotorControlProc( )
 {
     int temp;
 
+    if( searchPosFlag )
     temp = (int)(floor(codeMotorCtrlMode+0.5));
     switch( temp )
     {
-    case 0: vf_simple_control(); break;
-    case 1: slip_comp_scalar_ctrl();break;
-    case 3: fieldWeakenVoltageLoopCtrl( );   break;
+    case 0: vf_simple_control();            break;
+    case 1: slip_comp_scalar_ctrl();        break;
+    case 2: pmsmSpeedCtrl();                     break;
+    case 3: fieldWeakenVoltageLoopCtrl( );  break;
     case 5:
         switch(AutoTuningFlag)
         {
@@ -29,6 +31,7 @@ void MotorControlProc( )
         }
         break;
     }
+    if( searchPosFlag ) pmsmCtrl();
 }
 
 interrupt void MainPWM(void)
@@ -43,8 +46,9 @@ interrupt void MainPWM(void)
         if(gPWMTripCode == 0 ) gPWMTripCode = CheckIGBTFault();
         if(gPWMTripCode == 0 ) gPWMTripCode = CheckOverCurrent();
 
-        if((gPWMTripCode == 0 ) && EX_DIO_INPUT1 ){
-            gPWMTripCode = ERR_EXT_TRIP; trip_recording( ERR_EXT_TRIP, 0.0,"ERR EXT TRIP");
+        if( (gPWMTripCode == 0 ) &&  EX_DIO_INPUT1 ){
+            gPWMTripCode = ERR_EXT_TRIP;
+            trip_recording( ERR_EXT_TRIP, 0.0,"ERR EXT TRIP");
         }
         if(gPWMTripCode){
             EPwm1Regs.CMPA.half.CMPA = MAX_PWM_CNT;

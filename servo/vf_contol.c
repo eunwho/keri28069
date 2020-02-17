@@ -4,94 +4,93 @@
 int vf_loop_control(double cmd_ref)
 {
 	int LoopCtrl;
-	int trip_code=0;
-	int command;
-	double ref_in0;
+	int iTripCode=0;
+	int iCommand;
+	double fReference;
 
 //	simple_scalar_control_variable_init();
 
 	commonVariableInit();
-	trip_code = HardwareParameterVerification();
+	iTripCode = HardwareParameterVerification();
 
 	reference_out =0.0; Is_mag_rms =0.0, rpm =0.0;
 	reference_in = cmd_ref;
 
-	if( trip_code !=0 ) return trip_code;
+	if( iTripCode !=0 ) return iTripCode;
 
 	IER &= ~M_INT3;      // debug for PWM
 	InitEPwm_ACIM_Inverter(); 	// debug
 	EPwm1Regs.ETSEL.bit.INTEN = 1;    		            // Enable INT
 	IER |= M_INT3;      // debug for PWM
 
-	gRunFlag =1;
-    strncpy(MonitorMsg," RUN ",20);
-	gfRunTime = 0.0; 
-	LoopCtrl = 1;		
-	gMachineState = STATE_INIT_RUN;
+	initPmsmCtrl();
+	searchPosFlag = 1;
+    Is_DQ_ref[DS] = -0.5* Is_rat;
+    Is_DQ_ref[QS] = 0.0;
 
-	while(LoopCtrl == 1)
-	{
-		Nop();
-		trip_code = trip_check();
-		if( trip_code !=0 ){
-		    LoopCtrl = 0;
-		}
-		get_command( & command, & ref_in0);	            //
-		// if( command == CMD_START ) reference_in = ref_in0;
+    gfRunTime = 0.0;
+    gMachineState = STATE_INIT_RUN;
+    while (gfRunTime < 3.0 ){
+        iTripCode = trip_check();
+        if( iTripCode !=0 ) break;
+    }
 
-		switch( gMachineState )
-		{
-/*
-		case STATE_INIT_RUN:
-			if( command == CMD_STOP){
-                strncpy(MonitorMsg,"READY",20); gMachineState = STATE_READY; LoopCtrl= 0;
-		    } else if( gfRunTime < 0.2 ){
-				Freq_ref=0.0;	rpm_ref=0.0; reference_out = 0.0;
-			} else{
-				strncpy(MonitorMsg,"RUN",20);
-				    gMachineState = STATE_RUN;
-				    reference_out = code_start_ref;
-				    reference_in = code_start_ref;
-			}
-			break;
-*/
-		case STATE_RUN:
+    gMachineState = STATE_READY;
+    posCountOrigin = EQep1Regs.QPOSCNT;
+
+    searchPosFlag = 0; gRunFlag =1; gfRunTime = 0.0;
+    while (gfRunTime < 0.2 ){
+        iTripCode = trip_check();
+        if( iTripCode !=0 ) break;
+    }
+
+    gfRunTime = 0.0; LoopCtrl = 1; gMachineState = STATE_INIT_RUN;
+    while(LoopCtrl == 1)
+    {
+        if(gPWMTripCode != 0){
+            iTripCode = gPWMTripCode; LoopCtrl = 0;
+            break;
+        }
+        get_command(&iCommand,&fReference);
+        monitor_proc();
+
+        // if( iCommand == CMD_START)      reference_in = fReference;
+        if( iCommand == CMD_STOP)  reference_in = 0.0;
+
+        switch( gMachineState )
+        {
+        case STATE_RUN:
             strncpy(MonitorMsg," RUN ",20);
-			if( command == CMD_NULL ){
-			    ramp_proc(reference_in, & reference_out);
-			} else if( command == CMD_STOP ) {
-				// strncpy(MonitorMsg,"GO_STOP",20);
-				gMachineState = STATE_GO_STOP; reference_in = 0.0;
-			} else if( command == CMD_SPEED_UP ){
-				reference_in += 0.1;
-				if( reference_in > 3.0 ) reference_in = 3.0;
-			} else if( command == CMD_SPEED_DOWN ){
-				reference_in -= 0.1;
-				if( reference_in < -3.0 ) reference_in = -3.0;
-			} else if( command == CMD_START ){
-				ramp_proc(reference_in, & reference_out);
-			}
-			break;
-		case STATE_GO_STOP:
-			if( command == CMD_START ) {
-				strncpy(MonitorMsg," RUN ",20); gMachineState = STATE_RUN;
-				// reference_in = reference_out; 
-			} else if ((fabs(reference_out) <= 0.05 )){
-                strncpy(MonitorMsg,"READY",20);
+            if       (  iCommand == CMD_NULL )          ramp_proc( reference_in, &reference_out);
+            else if(( iCommand == CMD_SPEED_UP1   ) && (reference_in <  3.0  )) reference_in += 0.01;
+            else if(( iCommand == CMD_SPEED_UP   ) && (reference_in <  3.0  )) reference_in += 0.1;
+            else if(( iCommand == CMD_SPEED_DOWN ) && ( reference_in > 0.01 )) reference_in -= 0.1;
+            else if(  iCommand == CMD_STOP ) {
+                reference_in = 0.0; gMachineState = STATE_GO_STOP;
+            }
+            else if(  iCommand == CMD_START ) ramp_proc( reference_in, &reference_out);
+            else{
+                reference_in = 0.0; gMachineState = STATE_GO_STOP;
+            }
+            break;
+
+        case STATE_GO_STOP:
+            if( iCommand == CMD_START ) { strncpy(MonitorMsg,"RUN ",20);
+                gMachineState = STATE_RUN; reference_in = fReference;
+            } else if( fabs( reference_out ) < 0.01 ){
+                strncpy(MonitorMsg,"READY ",20);
                 gMachineState = STATE_READY;
-                reference_out = Freq_out = 0.0;
-                ePwmPortOff( );
-                commonVariableInit( );
-                LoopCtrl = 0;
-			} else {
-				reference_in = 0.0;
-				ramp_proc(reference_in, &reference_out);
-			}
-			break;
-		}
-	}
-	return trip_code;
-}		
+                commonVariableInit();
+                LoopCtrl =0;
+            } else {
+                reference_in = 0.0;
+                ramp_proc(reference_in, &reference_out);
+            }
+            break;
+        }
+    }
+    return iTripCode;
+}
 
 void vf_simple_control()
 {

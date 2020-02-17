@@ -165,6 +165,8 @@ void main( void )
 
 	GATE_DRIVER_ENABLE;
 
+	// pmsmCtrlInitLoop();
+
 	for( ; ; )
     {
         if( gPWMTripCode !=0 )  tripProc();
@@ -183,6 +185,7 @@ void main( void )
             {
             case 0: trip_code = vf_loop_control(ref_in0)        ; break;
             case 1: trip_code = vf_loop_control(ref_in0)        ; break;        //
+            case 2: trip_code = pmsmCtrlLoop(ref_in0)           ; break;        //
             case 3: trip_code = vectorCtrlLoop()                ; break;    // speed control
             case 4: trip_code = vectorCtrlLoop()                ; break;    // TORQUE Ctrl
             case 5: trip_code = parameter_estimation()          ; break;    // mode 5

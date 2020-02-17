@@ -1,6 +1,21 @@
 #ifndef		__GLOBAL_VARIABLES_
 #define		__GLOBAL_VARIABLES_
 
+double Id_err_ki_delay1;
+double ud_ki_delay1;
+double d_current_anti_windup;
+
+double q_current_anti_windup;
+double Iq_err_ki_delay1;
+double uq_ki_delay1;
+
+double speed_anti_windup;
+double speed_err_ki_delay1;
+double speed_ki_delay1;
+
+int searchPosFlag;
+
+int32 posCountOrigin;
 double inv_QepTime;
 
 double codeFw1WeCoef;

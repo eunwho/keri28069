@@ -1,6 +1,20 @@
 #ifndef     __VARIABLES_
 #define     __VARIABLES_
 
+extern double Id_err_ki_delay1;
+extern double ud_ki_delay1;
+extern double d_current_anti_windup;
+
+extern double q_current_anti_windup;
+extern double Iq_err_ki_delay1;
+extern double uq_ki_delay1;
+
+extern double speed_anti_windup;
+extern double speed_err_ki_delay1;
+extern double speed_ki_delay1;
+
+extern int searchPosFlag;
+extern int32 posCountOrigin;
 extern double inv_QepTime;
 
 extern double codeFw1WeCoef;

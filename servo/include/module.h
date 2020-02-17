@@ -1,6 +1,12 @@
 #ifndef		__FUNCTION_MODULE_DEFINITION_
 #define		__FUNCTION_MODULE_DEFINITION_
 
+extern void initPmsmCtrl();
+extern void pmsmCtrl();
+extern void pmsmSpeedCtrl();
+extern int pmsmCtrlLoop(double cmd_ref);
+extern void pmsmCtrl();
+
 extern void readPwmTripInputState();
 extern void fieldWeakenVoltageLoopCtrl();
 extern interrupt void xint1_isr(void );

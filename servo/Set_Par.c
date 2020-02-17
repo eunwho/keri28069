@@ -35,6 +35,7 @@ int HardwareParameterVerification()
 	Te_rat= codeRatePower/wm_rat;
 
 	inv_Te_rat=1.0/Te_rat;
+
 	Fs_rat = Vs_rat/we_rat * Base_Flux_Coeff;
 
 	Kt=(3.0/2.0)*(codeMotorPole/2.0);
@@ -145,9 +146,9 @@ int SL_SPEED_CNTL_Parameter()
 	wn_wr=wn_wr_Coeff*( (P_pair*Te_rat/wr_rat)/Jm );
 	if (wn_wr>Max_wn_wr)	wn_wr=Max_wn_wr;
 
-	wr_FilterPole=wr_FilterPoleCoeff*wn_wr;
+	wr_FilterPole = wr_FilterPoleCoeff * wn_wr;
 
-	Kp_wr=(Jm*2.0*wr_DampingRatio*wn_wr)*(inv_Kt/Fs_B) * codeKpWrCoef;
+	Kp_wr = ( Jm*2.0*wr_DampingRatio*wn_wr)*(inv_Kt/Fs_B) * codeKpWrCoef;
 	Ki_wr=(Jm*wn_wr*wn_wr)*(inv_Kt/Fs_B) * codeKiWrCoef;
 
 	return	0;
