@@ -1,42 +1,35 @@
-// EwInv File $Revision: /main/2 $
-// Checkin $Date: May 13, 2008   21:50:** $
+// keri2021
 //###########################################################################
 //
-// FILE:	io_define.h
+// FILE:	digital_inout.h
 //
-// Project:	EwInv F28335  _080413
-// TITLE:	s.
+// Project:	keri015Inv F28069  2021-0129 by Soonkil cheoung
 
 #ifndef		__DIGITAL_INOUT_H_
 #define		__DIGITAL_INOUT_H_
-     // Set Output High
 
-#define DIGIT1_CLEAR        (GpioDataRegs.GPBCLEAR.bit.GPIO40= 1)
-#define DIGIT1_SET          (GpioDataRegs.GPBSET.bit.GPIO40= 1)
+// Set Output High
+#define LED1_CLEAR        (GpioDataRegs.GPBCLEAR.bit.GPIO54 = 1)
+#define LED1_SET          (GpioDataRegs.GPBSET.bit.GPIO54   = 1)
 
-#define PERIOD_PWM_IRQ_CLEAR (GpioDataRegs.GPBCLEAR.bit.GPIO41= 1)
-#define PERIOD_PWM_IRQ_SET   (GpioDataRegs.GPBSET.bit.GPIO41= 1)
+#define LED2_CLEAR        (GpioDataRegs.GPBCLEAR.bit.GPIO55 = 1)
+#define LED2_SET          (GpioDataRegs.GPBSET.bit.GPIO55   = 1)
 
-#define SIGNAL2_SET			(GpioDataRegs.GPASET.bit.GPIO8 = 1)
-#define SIGNAL2_CLEAR		(GpioDataRegs.GPACLEAR.bit.GPIO8 = 1)
+#define RUN_OUT_ON          (GpioDataRegs.GPASET.bit.GPIO8 = 1)
+#define RUN_OUT_OFF         (GpioDataRegs.GPACLEAR.bit.GPIO8 = 1)
 
-#define J8_2_SET			(GpioDataRegs.GPASET.bit.GPIO8 = 1)
-#define J8_2_CLEAR			(GpioDataRegs.GPACLEAR.bit.GPIO8 = 1)
+#define MAIN_CHARGE_OFF     (GpioDataRegs.GPACLEAR.bit.GPIO10 = 1)
+#define MAIN_CHARGE_ON      (GpioDataRegs.GPASET.bit.GPIO10   = 1)
+
+// G-init charge
+#define SIGNAL2_SET         (GpioDataRegs.GPASET.bit.GPIO11 = 1)
+#define SIGNAL2_CLEAR       (GpioDataRegs.GPACLEAR.bit.GPIO11 = 1)
+
+#define TRIP_OUT_ON         (GpioDataRegs.GPASET.bit.GPIO12 = 1)    // relayTripOut
+#define TRIP_OUT_OFF        (GpioDataRegs.GPACLEAR.bit.GPIO12 = 1)  // relayTripOut
 
 #define digital_out0_on()	(GpioDataRegs.GPASET.bit.GPIO13 = 1)	// relayOutAux1
 #define digital_out0_off()	(GpioDataRegs.GPACLEAR.bit.GPIO13 = 1)	// relayOutAux1
-
-#define digital_out1_on()	(GpioDataRegs.GPASET.bit.GPIO11 = 1)	// relayTripOut
-#define digital_out1_off()	(GpioDataRegs.GPACLEAR.bit.GPIO11 = 1)	// relayTripOut
-
-#define TRIP_OUT_ON		(digital_out1_on())
-#define TRIP_OUT_OFF	(digital_out1_off())
-
-#define RUN_OUT_ON		(digital_out0_on())
-#define RUN_OUT_OFF		(digital_out0_off())
-
-#define MAIN_CHARGE_OFF		(GpioDataRegs.GPACLEAR.bit.GPIO10 = 1)
-#define MAIN_CHARGE_ON		(GpioDataRegs.GPASET.bit.GPIO10   = 1)
 
 #define GATE_DRIVER_ENABLE  (GpioDataRegs.GPASET.bit.GPIO7 = 1)
 #define GATE_DRIVER_CLEAR   (GpioDataRegs.GPACLEAR.bit.GPIO7= 1)
@@ -45,14 +38,11 @@
 #define BACKUP_DISABLE      (GpioDataRegs.GPASET.bit.GPIO17   = 1)
 
 // 2017.09.01--2011.06.25
-#define EX_DIO_INPUT1       GpioDataRegs.GPADAT.bit.GPIO15    // dsp pcb CON4-3 trip input
+#define EX_DIO_INPUT1       GpioDataRegs.GPADAT.bit.GPIO14    // dsp pcb CON4-3 trip input
 // #define EX_TRIP_INPUT       GpioDataRegs.GPADAT.bit.GPIO15    // dsp pcb CON4-3
-#define EX_DIO_INPUT2       GpioDataRegs.GPADAT.bit.GPIO14    // dsp pcb CON4-4
+#define EX_DIO_INPUT2       GpioDataRegs.GPADAT.bit.GPIO15    // dsp pcb CON4-4
 #define START_INPUT         GpioDataRegs.GPADAT.bit.GPIO12    // exInput1
 #define RUN_INPUT           (START_INPUT)                     // run input
-
-#define INIT_CHARGE_CLEAR   Nop()               // (GpioDataRegs.GPACLEAR.bit.GPIO13 = 1)
-#define INIT_CHARGE_SET     Nop()               // (GpioDataRegs.GPASET.bit.GPIO13   = 1)
 
 #define GATE_DRIVER_FAULT   (GpioDataRegs.GPADAT.bit.GPIO16)    // gateDriverFault
 // #define DB_FAULT     (GpioDataRegs.GPADAT.bit.GPIO17)

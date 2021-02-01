@@ -115,6 +115,18 @@ void main( void )
     gPWMTripCode = 0;		//
     // when use 316J
     // GATE_EN_LOW;   delay_msecs(10);     GATE_EN_HIGH;
+
+    while(1){
+        LED1_CLEAR;
+        delay_msecs(250);
+        LED2_CLEAR;
+        delay_msecs(250);
+        LED1_SET;
+        delay_msecs(250);
+        LED2_SET;
+        delay_msecs(250);
+    }
+
     if( load_code2ram() != 0 ) tripProc();
 
     commonVariableInit();
