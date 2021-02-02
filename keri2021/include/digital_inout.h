@@ -5,9 +5,17 @@
 //
 // Project:	keri015Inv F28069  2021-0129 by Soonkil cheoung
 
+
 #ifndef		__DIGITAL_INOUT_H_
 #define		__DIGITAL_INOUT_H_
 
+/*
+MC1_ON --> MAIN_OUT -- inverter run
+MC2_ON --> RUN_OUT  --- direct run
+MC4_ON --> TRIP_OUT --- on state
+
+
+*/
 // Set Output High
 #define LED1_CLEAR        (GpioDataRegs.GPBCLEAR.bit.GPIO54 = 1)
 #define LED1_SET          (GpioDataRegs.GPBSET.bit.GPIO54   = 1)
@@ -22,11 +30,32 @@
 #define MAIN_CHARGE_ON      (GpioDataRegs.GPASET.bit.GPIO10   = 1)
 
 // G-init charge
-#define SIGNAL2_SET         (GpioDataRegs.GPASET.bit.GPIO11 = 1)
-#define SIGNAL2_CLEAR       (GpioDataRegs.GPACLEAR.bit.GPIO11 = 1)
+#define G_INIT_SET        (GpioDataRegs.GPASET.bit.GPIO11 = 1)
+#define G_INIT_CLEAR       (GpioDataRegs.GPACLEAR.bit.GPIO11 = 1)
 
 #define TRIP_OUT_ON         (GpioDataRegs.GPASET.bit.GPIO12 = 1)    // relayTripOut
 #define TRIP_OUT_OFF        (GpioDataRegs.GPACLEAR.bit.GPIO12 = 1)  // relayTripOut
+
+//--- y-delta MC control
+#define MC1_ON              MAIN_CHARGE_ON
+#define MC1_OFF             MAIN_CHARGE_OFF
+#define MC2_ON              TRIP_OUT_ON
+#define MC2_OFF             TRIP_OUT_OFF
+#define MC4_ON              RUN_OUT_ON
+#define MC4_OFF             RUN_OUT_OFF
+
+#define MAIN_CHARGE_OFF     (GpioDataRegs.GPACLEAR.bit.GPIO10 = 1)
+#define MAIN_CHARGE_ON      (GpioDataRegs.GPASET.bit.GPIO10   = 1)
+
+// G-init charge
+#define G_INIT_SET        (GpioDataRegs.GPASET.bit.GPIO11 = 1)
+#define G_INIT_CLEAR       (GpioDataRegs.GPACLEAR.bit.GPIO11 = 1)
+
+#define TRIP_OUT_ON         (GpioDataRegs.GPASET.bit.GPIO12 = 1)    // relayTripOut
+#define TRIP_OUT_OFF        (GpioDataRegs.GPACLEAR.bit.GPIO12 = 1)  // relayTripOut
+
+
+
 
 #define digital_out0_on()	(GpioDataRegs.GPASET.bit.GPIO13 = 1)	// relayOutAux1
 #define digital_out0_off()	(GpioDataRegs.GPACLEAR.bit.GPIO13 = 1)	// relayOutAux1

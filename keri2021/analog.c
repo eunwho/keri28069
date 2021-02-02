@@ -40,7 +40,7 @@ void ADC_SOC_CNF( )
 #define I_RATIO   0.001487      //
 interrupt void adcIsr(void)
 {
-    DIGIT1_SET;
+//    DIGIT1_SET;
     double fTemp;
     adc_result[0] = adcCurrentA   = AdcResult.ADCRESULT0;
     adc_result[1] = adcCurrentB   = AdcResult.ADCRESULT1;
@@ -74,7 +74,7 @@ interrupt void adcIsr(void)
 
     Is_dq[ds] = Is_abc[as];
     Is_dq[qs] = 0.577350 * Is_abc[as] + 1.15470 * Is_abc[bs];
-    Is_mag = sqrt( Is_abc[as] *Is_abc[as] + Is_abc[bs] *Is_abc[bs]);           // 전류크기
+    Is_mag = sqrt( Is_abc[as] *Is_abc[as] + Is_abc[bs] *Is_abc[bs]);           // �쟾瑜섑겕湲�
 
     Is_mag_rms = Is_mag;
 
@@ -84,7 +84,7 @@ interrupt void adcIsr(void)
     AdcRegs.ADCINTFLGCLR.bit.ADCINT1 = 1;       //Clear ADCINT1 flag reinitialize for next SOC
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;   // Acknowledge interrupt to PIE
 
-    DIGIT1_CLEAR;
+//    DIGIT1_CLEAR;
     return;
 }
 
@@ -100,7 +100,7 @@ int check_sensor_trip()
 
     if( ( TripCode = CheckOverCurrent()) != 0 ) return TripCode ;   // debug
     if( ( TripCode = CheckOverVolt()   ) != 0 ) return TripCode ;
-    if( ( TripCode = CheckUndeVolt()   ) != 0 ) return TripCode ;   // ���������� ������ �Ѵ�.
+    if( ( TripCode = CheckUndeVolt()   ) != 0 ) return TripCode ;   // 占쏙옙占쏙옙占쏙옙占쏙옙占쏙옙 占쏙옙占쏙옙占쏙옙 占싼댐옙.
     return 0;
 }
 

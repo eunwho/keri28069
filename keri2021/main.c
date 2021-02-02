@@ -66,7 +66,7 @@ void main( void )
 
 	InitCpuTimers();   // For this example, only initialize the Cpu Timers
 
-	ConfigCpuTimer(&CpuTimer0, 90, 1000);	// debug 2011.10.01
+	ConfigCpuTimer(&CpuTimer0, 90, 250);	// debug 2021.02.01 for SCR trigger
 	StartCpuTimer0();
 
 	PieCtrlRegs.PIEIER1.bit.INTx1 = 1; // Enable INT 1.1 in the PIE
@@ -115,7 +115,7 @@ void main( void )
     gPWMTripCode = 0;		//
     // when use 316J
     // GATE_EN_LOW;   delay_msecs(10);     GATE_EN_HIGH;
-
+/*
     while(1){
         LED1_CLEAR;
         delay_msecs(250);
@@ -126,7 +126,7 @@ void main( void )
         LED2_SET;
         delay_msecs(250);
     }
-
+*/
     if( load_code2ram() != 0 ) tripProc();
 
     commonVariableInit();
@@ -166,7 +166,7 @@ void main( void )
 
    init_charge_flag=0;
 	gMachineState = STATE_READY; 
-	INIT_CHARGE_CLEAR;
+//	INIT_CHARGE_CLEAR;
 
 	if( gPWMTripCode !=0 )	tripProc();
 	strncpy(MonitorMsg,"READY",20);delay_msecs(20);
