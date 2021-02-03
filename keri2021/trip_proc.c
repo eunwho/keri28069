@@ -98,14 +98,7 @@ int CheckIGBTFault( )
     if( GATE_DRIVER_FAULT == 0){ pwmTripState += 1;
         trip_recording( ERR_PWM_IGBT, 0.0,"Trip IGBT GATE"); tripCode = ERR_PWM_IGBT;
     }
-
-    if( START_INPUT   == 0) digitalInputState += 1;
-    // if( EX_TRIP_INPUT == 0) digitalInputState += 2;
-    if( EX_DIO_INPUT1 == 0) digitalInputState += 4;
-    if( EX_DIO_INPUT2 == 0) digitalInputState += 8;
-
 	return tripCode;
-
 }
 
 int CheckOverHeat( ){

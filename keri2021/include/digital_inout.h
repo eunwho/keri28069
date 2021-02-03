@@ -9,11 +9,7 @@
 #define		__DIGITAL_INOUT_H_
 
 // Set Output High
-#define LED1_CLEAR        (GpioDataRegs.GPBCLEAR.bit.GPIO54 = 1)
-#define LED1_SET          (GpioDataRegs.GPBSET.bit.GPIO54   = 1)
-
-#define LED2_CLEAR        (GpioDataRegs.GPBCLEAR.bit.GPIO55 = 1)
-#define LED2_SET          (GpioDataRegs.GPBSET.bit.GPIO55   = 1)
+// 1, 2, 4, 8, 16, 32 -- > relay testing,
 
 #define RUN_OUT_ON          (GpioDataRegs.GPASET.bit.GPIO8 = 1)
 #define RUN_OUT_OFF         (GpioDataRegs.GPACLEAR.bit.GPIO8 = 1)
@@ -21,31 +17,59 @@
 #define MAIN_CHARGE_OFF     (GpioDataRegs.GPACLEAR.bit.GPIO10 = 1)
 #define MAIN_CHARGE_ON      (GpioDataRegs.GPASET.bit.GPIO10   = 1)
 
-// G-init charge
-#define SIGNAL2_SET         (GpioDataRegs.GPASET.bit.GPIO11 = 1)
-#define SIGNAL2_CLEAR       (GpioDataRegs.GPACLEAR.bit.GPIO11 = 1)
-
 #define TRIP_OUT_ON         (GpioDataRegs.GPASET.bit.GPIO12 = 1)    // relayTripOut
 #define TRIP_OUT_OFF        (GpioDataRegs.GPACLEAR.bit.GPIO12 = 1)  // relayTripOut
 
-#define digital_out0_on()	(GpioDataRegs.GPASET.bit.GPIO13 = 1)	// relayOutAux1
-#define digital_out0_off()	(GpioDataRegs.GPACLEAR.bit.GPIO13 = 1)	// relayOutAux1
+#define RELAY_AUX1_ON      (GpioDataRegs.GPASET.bit.GPIO13 = 1)	// relayOutAux1
+#define RELAY_AUX1_OFF     (GpioDataRegs.GPACLEAR.bit.GPIO13 = 1)	// relayOutAux1
 
+#define ADD_RELAY1_ON      (GpioDataRegs.GPASET.bit.GPIO30 = 1)
+#define ADD_RELAY1_OFF     (GpioDataRegs.GPACLEAR.bit.GPIO30 = 1)
+
+#define ADD_RELAY2_ON      (GpioDataRegs.GPASET.bit.GPIO31 = 1)
+#define ADD_RELAY2_OFF     (GpioDataRegs.GPACLEAR.bit.GPIO31 = 1)
+
+//--- signal output
 #define GATE_DRIVER_ENABLE  (GpioDataRegs.GPASET.bit.GPIO7 = 1)
 #define GATE_DRIVER_CLEAR   (GpioDataRegs.GPACLEAR.bit.GPIO7= 1)
+
+#define G_INIT_CHARGE_ON    (GpioDataRegs.GPASET.bit.GPIO11 = 1)
+#define G_INIT_CHARGE_OFF   (GpioDataRegs.GPACLEAR.bit.GPIO11 = 1)
+
+#define SIGNAL2_SET         G_INIT_CHARGE_ON
+#define SIGNAL2_CLEAR       G_INIT_CHARGE_OFF
 
 #define BACKUP_ENABLE       (GpioDataRegs.GPACLEAR.bit.GPIO17 = 1)
 #define BACKUP_DISABLE      (GpioDataRegs.GPASET.bit.GPIO17   = 1)
 
-// 2017.09.01--2011.06.25
-#define EX_DIO_INPUT1       GpioDataRegs.GPADAT.bit.GPIO14    // dsp pcb CON4-3 trip input
-// #define EX_TRIP_INPUT       GpioDataRegs.GPADAT.bit.GPIO15    // dsp pcb CON4-3
-#define EX_DIO_INPUT2       GpioDataRegs.GPADAT.bit.GPIO15    // dsp pcb CON4-4
-#define START_INPUT         GpioDataRegs.GPADAT.bit.GPIO12    // exInput1
-#define RUN_INPUT           (START_INPUT)                     // run input
+#define LED1_CLEAR        (GpioDataRegs.GPBCLEAR.bit.GPIO54 = 1)
+#define LED1_SET          (GpioDataRegs.GPBSET.bit.GPIO54   = 1)
 
-#define GATE_DRIVER_FAULT   (GpioDataRegs.GPADAT.bit.GPIO16)    // gateDriverFault
-// #define DB_FAULT     (GpioDataRegs.GPADAT.bit.GPIO17)
+#define LED2_CLEAR        (GpioDataRegs.GPBCLEAR.bit.GPIO55 = 1)
+#define LED2_SET          (GpioDataRegs.GPBSET.bit.GPIO55   = 1)
+
+
+
+//--- input
+// 2021.02.03
+//#define START_INPUT         GpioDataRegs.GPADAT.bit.GPIO12    // exInput1
+//#define RUN_INPUT           (START_INPUT)                     // run input
+//#define EX_DIO_INPUT1       GpioDataRegs.GPADAT.bit.GPIO14    // dsp pcb CON4-3 trip input
+//#define EX_DIO_INPUT2       GpioDataRegs.GPADAT.bit.GPIO15    // dsp pcb CON4-4
+#define G_DIN1              (GpioDataRegs.GPBDAT.bit.GPIO34)    //
+#define INPUT_AUX1          (GpioDataRegs.GPADAT.bit.GPIO14)    // dsp pcb CON4-3 trip input
+#define INPUT_AUX2          (GpioDataRegs.GPADAT.bit.GPIO15)    // dsp pcb CON4-4
+#define INPUT_AUX3          (GpioDataRegs.GPBDAT.bit.GPIO39)    //
+
+#define ADD_DIN1            (GpioDataRegs.GPADAT.bit.GPIO18)    //
+#define ADD_DIN2            (GpioDataRegs.GPADAT.bit.GPIO19)    //
+#define ADD_DIN3            (GpioDataRegs.GPADAT.bit.GPIO26)    //
+#define ADD_DIN4            (GpioDataRegs.GPADAT.bit.GPIO27)    //
+
+#define GATE_DRIVER_FAULT   (GpioDataRegs.GPADAT.bit.GPIO16)
+
+#define EX_DIO_INPUT1       INPUT_AUX1 // ex trip input
+#define START_INPUT         G_DIN1
 
 struct DIGIT_FUNCTION_BITS {      
 	Uint16 DRIVE_ENABLE:1;      // 

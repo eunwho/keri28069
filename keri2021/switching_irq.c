@@ -40,7 +40,7 @@ interrupt void MainPWM(void)
     static int pwmOn = 0;
     static int startCount = 0;
 
-    PERIOD_PWM_IRQ_SET;     // channel 1
+ //   PERIOD_PWM_IRQ_SET;     // channel 1
 
     if( codeProtectOff < 0.5 ) {
         if(gPWMTripCode == 0 ) gPWMTripCode = CheckIGBTFault();
@@ -145,7 +145,7 @@ _PWM_TRIP:
 
     EPwm1Regs.ETCLR.bit.INT = 1;
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP3;
-    PERIOD_PWM_IRQ_CLEAR;     // channel 1
+//    PERIOD_PWM_IRQ_CLEAR;     // channel 1
 }
 
 void InitEPwm_ACIM_Inverter()

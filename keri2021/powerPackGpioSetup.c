@@ -219,7 +219,7 @@ void InitGpio(void)
     GpioCtrlRegs.GPBPUD.bit.GPIO39 = 0;  // pullup
     GpioDataRegs.GPBCLEAR.bit.GPIO39= 1; // output clear
     GpioCtrlRegs.GPBMUX1.bit.GPIO39 = 0; // GPIO34 = GPIO34
-    GpioCtrlRegs.GPBDIR.bit.GPIO39 = 1;  // input-aux-3
+    GpioCtrlRegs.GPBDIR.bit.GPIO39 = 0;  // input-aux-3
 
 //--- gpio40 addon-txd
     GpioCtrlRegs.GPBPUD.bit.GPIO40 = 0;  // Enable pullup on GPIO34
