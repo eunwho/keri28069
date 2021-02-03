@@ -431,12 +431,33 @@ void scia_cmd_proc( int * sci_cmd, double * sci_ref)
              }  else if( data == 80 ){
                    * sci_cmd = CMD_NULL;  * sci_ref = 0.0;
 //                   get_adc_offset();
-            } else if( data == 90 ){
+             } else if( data == 90 ){
                    * sci_cmd = CMD_NULL;  * sci_ref = 0.0;
                    load_scia_tx_mail_box("EEPROM init Start");
                    check = init_eprom_data();      // 0�씠 �븘�땲硫� address value
                    if( check != 0) load_scia_tx_mail_box("EEPROM init Fail");
                    else        load_scia_tx_mail_box("EEPROM init OK \r\n");
+             } else if( ( data > 69 ) && (data < 80 ) ) {
+                 // relay test
+                 check = (int)data;
+                 switch(check){
+                     case 71 : RUN_OUT_ON;      break;
+                     case 72 : MAIN_CHARGE_ON; break;
+                     case 73 : TRIP_OUT_ON;     break;
+                     case 74 : RELAY_AUX1_ON;   break;
+                     case 75 : ADD_RELAY1_ON;   break;
+                     case 76 : ADD_RELAY2_ON;   break;
+                 }
+                 delay_msecs(500);
+                 switch(check){
+                     case 71 : RUN_OUT_OFF;     break;
+                     case 72 : MAIN_CHARGE_OFF; break;
+                     case 73 : TRIP_OUT_OFF;    break;
+                     case 74 : RELAY_AUX1_OFF;  break;
+                     case 75 : ADD_RELAY1_OFF;  break;
+                     case 76 : ADD_RELAY2_OFF;  break;
+                 }
+                 delay_msecs(250);
             } else{
                  load_scia_tx_mail_box("Illegal CMD data");
             }
@@ -575,8 +596,8 @@ void scia_cmd_proc( int * sci_cmd, double * sci_ref)
              return;
          } else if (addr == 908 ){
              // read input
+             readPwmTripInputState();
              snprintf( str,40,"INPUT=%d : pwm=%d \r\n",digitalInputState,pwmTripState); load_scia_tx_mail_box(str);
-             // load_scia_tx_mail_box("hello eunwho!")
              delay_msecs(10);
              return;
          } else if (addr == 909 ){

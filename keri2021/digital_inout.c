@@ -3,20 +3,18 @@
 
 void readPwmTripInputState( ){
     pwmTripState = digitalInputState = 0;
+
     if( GATE_DRIVER_FAULT == 0) pwmTripState += 1;
-/*
-    if( TRIP_UH == 0) pwmTripState += 1;
-    if( TRIP_UL == 0) pwmTripState += 2;
-    if( TRIP_VH == 0) pwmTripState += 4;
-    if( TRIP_VL == 0) pwmTripState += 8;
-    if( TRIP_WH == 0) pwmTripState += 16;
-    if( TRIP_WL == 0) pwmTripState += 32;
-    if( TRIP_DB == 0) pwmTripState += 64;
-*/
-    if( START_INPUT   == 0) digitalInputState += 1;
-    // if( EX_TRIP_INPUT == 0) digitalInputState += 2;
-    if( EX_DIO_INPUT1 == 0) digitalInputState += 4;
-    if( EX_DIO_INPUT2 == 0) digitalInputState += 8;
+
+    if( G_DIN1   == 0)   digitalInputState += 1;
+    if( INPUT_AUX1 == 0) digitalInputState += 2;
+    if( INPUT_AUX2 == 0) digitalInputState += 4;
+    if( INPUT_AUX3 == 0) digitalInputState += 8;
+
+    if( ADD_DIN1 == 0)   digitalInputState += 16;
+    if( ADD_DIN2 == 0)   digitalInputState += 32;
+    if( ADD_DIN3 == 0)   digitalInputState += 64;
+    if( ADD_DIN4 == 0)   digitalInputState += 128;
 }
 
 void fault_reset()
