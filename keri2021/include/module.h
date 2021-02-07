@@ -1,14 +1,7 @@
 #ifndef		__FUNCTION_MODULE_DEFINITION_
 #define		__FUNCTION_MODULE_DEFINITION_
 
-extern void initPmsmCtrl();
-extern void pmsmCtrl();
-extern void pmsmSpeedCtrl();
-extern int pmsmCtrlLoop(double cmd_ref);
-extern void pmsmCtrl();
-
 extern void readPwmTripInputState();
-extern void fieldWeakenVoltageLoopCtrl();
 extern interrupt void xint1_isr(void );
 
 // analog.c
@@ -192,7 +185,7 @@ int vectorCtrlLoop();
 
 
 // vf_control.c
-extern void vf_simple_control();
+extern int vf_simple_control();
 extern void slip_comp_scalar_ctrl();
 
 extern int vf_loop_control(double);

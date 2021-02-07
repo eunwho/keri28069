@@ -195,12 +195,8 @@ void main( void )
             trip_code = 0;
             switch( (int)(floor(codeMotorCtrlMode+0.5)) ) // Control Method
             {
-            case 0: trip_code = vf_loop_control(ref_in0)        ; break;
-            case 1: trip_code = vf_loop_control(ref_in0)        ; break;        //
-            case 2: trip_code = pmsmCtrlLoop(ref_in0)           ; break;        //
-            case 3: trip_code = vectorCtrlLoop()                ; break;    // speed control
-            case 4: trip_code = vectorCtrlLoop()                ; break;    // TORQUE Ctrl
-            case 5: trip_code = parameter_estimation()          ; break;    // mode 5
+            case 0: trip_code = vf_simple_control(ref_in0)        ; break;
+            // case 1: trip_code = vf_loop_control(ref_in0)        ; break;        //
 //           case 8 : pwm_pulse_test( ); break;
 //           case 9 : vf_conv_test(ref_in0); break;
             }

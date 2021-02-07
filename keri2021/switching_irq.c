@@ -18,20 +18,7 @@ void MotorControlProc( )
     {
     case 0: vf_simple_control();            break;
     case 1: slip_comp_scalar_ctrl();        break;
-    case 2: pmsmSpeedCtrl();                     break;
-    case 3: fieldWeakenVoltageLoopCtrl( );  break;
-    case 5:
-        switch(AutoTuningFlag)
-        {
-        case 0: Vs_dq_ref[ds] = 0.0; Vs_dq_ref[qs] = 0.0; break;
-        case ID_AT_LEQ_REQ: estim_ReqLeq_pwm ( );   break;
-        case ID_AT_RS:  estim_Rs_pwm( );            break;
-        case ID_AT_LS:  estim_Ls_pwm( );            break;
-        default:    Vs_dq_ref[ds] = 0.0; Vs_dq_ref[qs] = 0.0; break;
-        }
-        break;
     }
-    if( searchPosFlag ) pmsmCtrl();
 }
 
 interrupt void MainPWM(void)
