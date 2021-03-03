@@ -616,6 +616,7 @@ void scia_cmd_proc( int * sci_cmd, double * sci_ref)
               snprintf( str,20,"Tmp= %4d : ",adc_result[3]); load_scia_tx_mail_box(str);
               snprintf( str,20,"Sen= %4d : ",adc_result[4]); load_scia_tx_mail_box(str);
               snprintf( str,20,"Cmd= %4d : ",adc_result[5]); load_scia_tx_mail_box(str);
+              snprintf( str,20,"Aux= %4d : ",adc_result[6]); load_scia_tx_mail_box(str);
               load_scia_tx_mail_box(" \r\n");
               delay_msecs(10);
               return;

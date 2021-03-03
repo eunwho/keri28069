@@ -48,6 +48,7 @@ MC4_ON --> TRIP_OUT --- on state
 #define GATE_DRIVER_ENABLE  (GpioDataRegs.GPASET.bit.GPIO7 = 1)
 #define GATE_DRIVER_CLEAR   (GpioDataRegs.GPACLEAR.bit.GPIO7= 1)
 
+//---1.5kW LED, 7.5kW -- SCR triger
 #define G_INIT_SET          (GpioDataRegs.GPASET.bit.GPIO11 = 1)
 #define G_INIT_CLEAR        (GpioDataRegs.GPACLEAR.bit.GPIO11 = 1)
 

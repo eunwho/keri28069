@@ -21,12 +21,6 @@
 #define SCOPE_V_V          12
 #define SCOPE_V_W          13
 
-#define SCOPE_ADC_IU       14
-#define SCOPE_ADC_IV       15
-#define SCOPE_ADC_VDC      16
-#define SCOPE_ADC_TEMP     17
-#define SCOPE_ADC_SENSOR   18
-#define SCOPE_ADC_CMD      19
 
 #define SCOPE_DUTY_U       20
 #define SCOPE_DUTY_V       21
@@ -64,6 +58,13 @@
 #define SCOPE_Isq_Square    47
 #define SCOPE_Vs_max        48
 
+#define SCOPE_ADC_IU       51
+#define SCOPE_ADC_IV       52
+#define SCOPE_ADC_VDC      53
+#define SCOPE_ADC_TEMP     54
+#define SCOPE_ADC_SENSOR   55
+#define SCOPE_ADC_CMD      56
+#define SCOPE_ADC_AUX1     57
 
 void setScopePoint()
 {
@@ -95,12 +96,6 @@ void setScopePoint()
     scopePoint[SCOPE_V_V] = &Vs_abc[bs];
     scopePoint[SCOPE_V_W] = &Vs_abc[cs];
 
-    scopePoint[SCOPE_ADC_IU]        = &dAdcIa;
-    scopePoint[SCOPE_ADC_IV]        = &dAdcIb;
-    scopePoint[SCOPE_ADC_VDC]       = &dAdcVdc;
-    scopePoint[SCOPE_ADC_TEMP]      = &dAdcTemp;
-    scopePoint[SCOPE_ADC_SENSOR]    = &dAdcSens;
-    scopePoint[SCOPE_ADC_CMD]       = &dAdcCmd;
 
     scopePoint[SCOPE_DUTY_U]       = &DutyRatio[u];
     scopePoint[SCOPE_DUTY_V]       = &DutyRatio[v];
@@ -127,6 +122,14 @@ void setScopePoint()
 
 //    scopePoint[SCOPE_I_DS0_0]   = &I_DS0_0;
 //    scopePoint[SCOPE_I_DS0]   = &I_DS0;
+
+    scopePoint[SCOPE_ADC_IU]        = &dAdcIa;
+    scopePoint[SCOPE_ADC_IV]        = &dAdcIb;
+    scopePoint[SCOPE_ADC_VDC]       = &dAdcVdc;
+    scopePoint[SCOPE_ADC_TEMP]      = &dAdcTemp;
+    scopePoint[SCOPE_ADC_SENSOR]    = &dAdcSens;
+    scopePoint[SCOPE_ADC_CMD]       = &dAdcCmd;
+    scopePoint[SCOPE_ADC_AUX1]      = &dAdcAux1;
 }
 
 //--- end of file

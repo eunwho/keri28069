@@ -11,7 +11,10 @@
 // Program Control 
 //*******************************************
 
-#define GATE_ACTIVE_LOW         1       // IRS2336D
+#define GATE_ACTIVE_LOW         0       // IRS2336D-->low
+#define SCR_INIT_CHARGE         1       // scr gate triger
+
+#define GATE_DRIVE_RESET        1       // hpcl316J reset
 #define TEST_ADC_CENTER			1
 #define SCOPE_MAX_NUMBER        400
 

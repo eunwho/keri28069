@@ -88,8 +88,9 @@ double dAdcVdc;
 double dAdcTemp;
 double dAdcSens;
 double dAdcCmd;
+double dAdcAux1;
 
-double * scopePoint[50];
+double * scopePoint[60];
 
 // control and flag
 CODE_INFO code_inform = {0,0,0,0,0,0,{0}};
@@ -433,6 +434,7 @@ int adcVdc;
 int adcIgbtTemperature;
 int adcExSensor;
 int adcCmdAnalog;
+int anaAux1;
 
 //filter
 double lpfIsqIn[3];

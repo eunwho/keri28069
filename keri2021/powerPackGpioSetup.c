@@ -83,12 +83,15 @@ void InitGpio(void)
     GpioCtrlRegs.GPAMUX1.bit.GPIO5 = 1;  // GPIO5 = PWM3B
 
     GpioCtrlRegs.GPAPUD.bit.GPIO6 = 0;   // DB-pulse
-    GpioCtrlRegs.GPAMUX1.bit.GPIO6 = 1;  //--- GPIO6 = PWM4A
+//    GpioCtrlRegs.GPAMUX1.bit.GPIO6 = 1;  //--- GPIO6 = PWM4A
+
+    GpioCtrlRegs.GPAMUX1.bit.GPIO6 = 0;  //--- GPIO6 = PWM4A
+    GpioCtrlRegs.GPADIR.bit.GPIO6 = 1;   //--- GPIO7 = output
+    GpioDataRegs.GPACLEAR.bit.GPIO6 = 1;   // Load output latch
 
     GpioCtrlRegs.GPAPUD.bit.GPIO7 = 0;   // Enable pullup
-    GpioDataRegs.GPACLEAR.bit.GPIO7 = 1;   // Load output latch
     GpioCtrlRegs.GPAMUX1.bit.GPIO7 = 0;  // gateEnable
-    GpioCtrlRegs.GPADIR.bit.GPIO7 = 1;   //--- GPIO7 = output
+    GpioDataRegs.GPACLEAR.bit.GPIO7 = 1;   // Load output latch
 
     GpioCtrlRegs.GPAPUD.bit.GPIO8 = 0;   // Enable pullup on GPIO8
     GpioDataRegs.GPASET.bit.GPIO8 = 1;   // Load output latch

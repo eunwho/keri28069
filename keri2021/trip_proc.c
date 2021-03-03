@@ -195,7 +195,8 @@ void tripProc()
     load_scia_tx_mail_box(str); delay_msecs(20);
 
     temp = 1;
-   while(temp){ // input_aux1
+
+    while(temp){ // input_aux1
        get_command( & cmd, & ref_in0);
        if(EX_DIO_INPUT1 == 0 ) temp=0;
        Nop();

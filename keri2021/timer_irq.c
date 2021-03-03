@@ -12,23 +12,32 @@
 interrupt void cpu_timer0_isr(void)
 {
     static int scrGatePulse =0;
+    static int msCount = 0;
 
-    ServiceDog();
-
-    if ( scrGatePulse < 2 ) {
-        scrGatePulse ++;
-        G_INIT_CLEAR;
-        PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
-        return;
+    msCount++;
+    if(msCount > 2 ) {
+        CpuTimer0.InterruptCount++;
+        if( ref_time < 1.0e+30) ref_time += 0.001;
+        if( gfRunTime < 1.0e+30 ) gfRunTime += 0.001;
+        ServiceDog();
+        msCount =0;
     }
 
-    scrGatePulse = 0;
+    if ( scrGatePulse < 3 ) {
+        scrGatePulse ++;
+#if SCR_INIT_CHARGE
+        G_INIT_CLEAR;
+#endif
+    } else {
 
-    if( gMachineState == STATE_POWER_ON ) G_INIT_SET;
+        scrGatePulse = 0;
+#if SCR_INIT_CHARGE
+        if( gMachineState == STATE_POWER_ON ) G_INIT_SET;
+        //if( gMachineState == STATE_READY ) G_INIT_SET;
+#else
+        G_INIT_CLEAR;
+#endif
+    }
 
-    CpuTimer0.InterruptCount++;
-    if( ref_time < 1.0e+30) ref_time += 0.001;
-    if( gfRunTime < 1.0e+30 ) gfRunTime += 0.001;
     PieCtrlRegs.PIEACK.all = PIEACK_GROUP1;
-
 }

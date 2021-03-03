@@ -15,12 +15,23 @@ void ADC_SOC_CNF( )
 
     AdcRegs.INTSEL1N2.bit.INT1SEL = 1;      // IntChSel causes ADCInterrupt 1
 
+/*
     AdcRegs.ADCSOC0CTL.bit.CHSEL= 0;        // I_u
     AdcRegs.ADCSOC1CTL.bit.CHSEL= 1;        // I_v
-    AdcRegs.ADCSOC2CTL.bit.CHSEL= 8;        // Vdc
-    AdcRegs.ADCSOC3CTL.bit.CHSEL= 9;        // IGBT_Temp
-    AdcRegs.ADCSOC4CTL.bit.CHSEL= 3;        // Ex_sensor
-    AdcRegs.ADCSOC5CTL.bit.CHSEL= 5;        // Ex_sensor
+    AdcRegs.ADCSOC2CTL.bit.CHSEL= 2;        // Vdc
+    AdcRegs.ADCSOC3CTL.bit.CHSEL= 3;        // G-ANA1
+    AdcRegs.ADCSOC4CTL.bit.CHSEL= 4;        // pressSensor
+    AdcRegs.ADCSOC5CTL.bit.CHSEL= 5;        // analog-cmd
+    AdcRegs.ADCSOC6CTL.bit.CHSEL= 6;        // ana-aux1
+*/
+    AdcRegs.ADCSOC0CTL.bit.CHSEL= 7;        //
+    AdcRegs.ADCSOC1CTL.bit.CHSEL= 6;        //
+    AdcRegs.ADCSOC2CTL.bit.CHSEL= 5;        //
+    AdcRegs.ADCSOC3CTL.bit.CHSEL= 4;        //
+    AdcRegs.ADCSOC4CTL.bit.CHSEL= 3;        //
+    AdcRegs.ADCSOC5CTL.bit.CHSEL= 2;        //
+    AdcRegs.ADCSOC6CTL.bit.CHSEL= 1;        //
+    AdcRegs.ADCSOC7CTL.bit.CHSEL= 0;        //
 
     AdcRegs.ADCSOC0CTL.bit.TRIGSEL = 5;
     AdcRegs.ADCSOC1CTL.bit.TRIGSEL = 5;
@@ -28,13 +39,17 @@ void ADC_SOC_CNF( )
     AdcRegs.ADCSOC3CTL.bit.TRIGSEL = 5;
     AdcRegs.ADCSOC4CTL.bit.TRIGSEL = 5;
     AdcRegs.ADCSOC5CTL.bit.TRIGSEL = 5;
+    AdcRegs.ADCSOC6CTL.bit.TRIGSEL = 5;
+    AdcRegs.ADCSOC7CTL.bit.TRIGSEL = 5;
 
-    AdcRegs.ADCSOC0CTL.bit.ACQPS = 6;
-    AdcRegs.ADCSOC1CTL.bit.ACQPS = 6;
-    AdcRegs.ADCSOC2CTL.bit.ACQPS = 6;
-    AdcRegs.ADCSOC3CTL.bit.ACQPS = 6;
-    AdcRegs.ADCSOC4CTL.bit.ACQPS = 6;
-    AdcRegs.ADCSOC5CTL.bit.ACQPS = 6;
+    AdcRegs.ADCSOC0CTL.bit.ACQPS = 9;
+    AdcRegs.ADCSOC1CTL.bit.ACQPS = 9;
+    AdcRegs.ADCSOC2CTL.bit.ACQPS = 9;
+    AdcRegs.ADCSOC3CTL.bit.ACQPS = 9;
+    AdcRegs.ADCSOC4CTL.bit.ACQPS = 9;
+    AdcRegs.ADCSOC5CTL.bit.ACQPS = 9;
+    AdcRegs.ADCSOC6CTL.bit.ACQPS = 9;
+    AdcRegs.ADCSOC7CTL.bit.ACQPS = 9;
     EDIS;
 }
 #define I_RATIO   0.001487      //
@@ -42,12 +57,13 @@ interrupt void adcIsr(void)
 {
 //    DIGIT1_SET;
     double fTemp;
-    adc_result[0] = adcCurrentA   = AdcResult.ADCRESULT0;
-    adc_result[1] = adcCurrentB   = AdcResult.ADCRESULT1;
-    adc_result[2] = adcVdc  = adcVdc = AdcResult.ADCRESULT2;
-    adc_result[3] = adcIgbtTemperature = AdcResult.ADCRESULT3;
-    adc_result[4] = adcExSensor = AdcResult.ADCRESULT4;        //adcExSensor
-    adc_result[5] = adcCmdAnalog = AdcResult.ADCRESULT5;
+    adc_result[0] = adcCurrentA   = AdcResult.ADCRESULT7;
+    adc_result[1] = adcCurrentB   = AdcResult.ADCRESULT6;
+    adc_result[2] = adcVdc  = adcVdc = AdcResult.ADCRESULT5;
+    adc_result[3] = adcExSensor  = AdcResult.ADCRESULT4;        // G_ANA1
+    adc_result[4] = adcIgbtTemperature = AdcResult.ADCRESULT3;        //adcExSensor
+    adc_result[5] = adcCmdAnalog = AdcResult.ADCRESULT2;
+    adc_result[6] = anaAux1 = AdcResult.ADCRESULT1;
 
     dAdcIa      = (double)(adcCurrentA);
     dAdcIb      = (double)(adcCurrentB);
@@ -55,6 +71,7 @@ interrupt void adcIsr(void)
     dAdcTemp    = (double)(adcIgbtTemperature);
     dAdcSens    = (double)(adcExSensor);
     dAdcCmd     = (double)(adcCmdAnalog);
+    dAdcAux1    = (double)(anaAux1);
 
     sensVdc = Vdc_factor * adcVdc + Vdc_calc_offset;
     lpfVdcIn[0] = sensVdc;

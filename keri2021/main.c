@@ -9,7 +9,7 @@
 #pragma CODE_SECTION(MainPWM, "ramfuncs");
 #pragma CODE_SECTION(adcIsr, "ramfuncs");
 #pragma CODE_SECTION(lpf2nd, "ramfuncs");
-#pragma CODE_SECTION(fieldWeakenVoltageLoopCtrl, "ramfuncs");
+//#pragma CODE_SECTION(fieldWeakenVoltageLoopCtrl, "ramfuncs");
 #pragma CODE_SECTION(SpaceVectorModulation, "ramfuncs");
 #pragma CODE_SECTION(VoltageEstimation, "ramfuncs");
 #pragma CODE_SECTION(MotorControlProc, "ramfuncs");
@@ -45,16 +45,18 @@ void main( void )
 	InitSysCtrl();
 	InitGpio( );
 
-	GATE_DRIVER_CLEAR;
-   MAIN_CHARGE_OFF;
+	GATE_DRIVER_ENABLE;
 
-	gfRunTime = 0.0; 
-	protect_reg.all = gDeChargeFlag = 0;
+	G_INIT_CLEAR;
+
     // INIT_CHARGE_OFF; // no init charge in powerPack
-    MAIN_CHARGE_OFF; TRIP_OUT_OFF;
+    MAIN_CHARGE_OFF; TRIP_OUT_OFF; RUN_OUT_OFF;
+
 	init_charge_flag = 0;
 	DINT;
 	memcpy(&RamfuncsRunStart, &RamfuncsLoadStart, (Uint32)&RamfuncsLoadSize);
+
+
 	InitFlash(); InitPieCtrl();
 	IER = 0x0000;   IFR = 0x0000;
 	InitPieVectTable();
@@ -66,8 +68,13 @@ void main( void )
 
 	InitCpuTimers();   // For this example, only initialize the Cpu Timers
 
-	ConfigCpuTimer(&CpuTimer0, 90, 250);	// debug 2021.02.01 for SCR trigger
+    ConfigCpuTimer(&CpuTimer0, 90, 250);  // debug 2021.02.01 for SCR trigger
+    //ConfigCpuTimer(&CpuTimer0, 90, 50);  // debug 2021.02.01 for SCR trigger
 	StartCpuTimer0();
+
+    gfRunTime = 0.0;
+    protect_reg.all = gDeChargeFlag = 0;
+	gMachineState = STATE_POWER_ON;
 
 	PieCtrlRegs.PIEIER1.bit.INTx1 = 1; // Enable INT 1.1 in the PIE
 
@@ -87,6 +94,7 @@ void main( void )
   	EDIS;    // This is needed to disable write to EALLOW protected registers
 
   	InitAdc();
+    GATE_DRIVER_CLEAR;
 
   	EALLOW;
      SysCtrlRegs.PCLKCR0.bit.TBCLKSYNC = 1;
@@ -109,7 +117,6 @@ void main( void )
 	ERTM;	// Enable Global realtime interrupt DBGM
 
     InitWatchDog();
-    gMachineState = STATE_POWER_ON;
     ADC_SOC_CNF();
     strncpy(MonitorMsg,"POWER_ON",20);
     gPWMTripCode = 0;		//
@@ -127,11 +134,18 @@ void main( void )
         delay_msecs(250);
     }
 */
+    Init_EQep( );  // code_encoderPulse;
+
+#if GATE_DRIVE_RESET
+    GATE_DRIVER_ENABLE;
+    delay_msecs(5);
+    GATE_DRIVER_CLEAR;
+#endif
+
     if( load_code2ram() != 0 ) tripProc();
 
     commonVariableInit();
 	if(HardwareParameterVerification() !=0 ) tripProc();
-   Init_EQep( );  // code_encoderPulse;
 
 	lpf2ndCoeffInit( 100.0, Ts, lpfVdcIn, lpfVdcOut, lpfVdcK);
 	lpf2ndCoeffInit( codeLpfFreq, Ts, lpfIaIn, lpfIaOut, lpfIrmsK);
@@ -155,15 +169,13 @@ void main( void )
 		Nop();
 	}
 
+/*
 	gPWMTripCode = 0;
 	gfRunTime = 0.0;
 
-    init_charge_flag=0;
-	gMachineState = STATE_READY; 
-
 	MAIN_CHARGE_ON;		    //
    TRIP_OUT_OFF;
-
+*/
    init_charge_flag=0;
 	gMachineState = STATE_READY; 
 //	INIT_CHARGE_CLEAR;
@@ -174,11 +186,6 @@ void main( void )
 	load_sci_tx_mail_box(gStr1); delay_msecs(20);
 	// INIT_CHARGE_OFF;
 	MAIN_CHARGE_ON;
-
-	GATE_DRIVER_ENABLE;
-
-	// pmsmCtrlInitLoop();
-
 	for( ; ; )
     {
         if( gPWMTripCode !=0 )  tripProc();
@@ -195,7 +202,8 @@ void main( void )
             trip_code = 0;
             switch( (int)(floor(codeMotorCtrlMode+0.5)) ) // Control Method
             {
-            case 0: trip_code = vf_simple_control(ref_in0)        ; break;
+            case 0: trip_code = vf_loop_control(ref_in0)        ; break;
+            case 9: trip_code = vf_loop_control(ref_in0)        ; break;
             // case 1: trip_code = vf_loop_control(ref_in0)        ; break;        //
 //           case 8 : pwm_pulse_test( ); break;
 //           case 9 : vf_conv_test(ref_in0); break;

@@ -185,7 +185,7 @@ int vectorCtrlLoop();
 
 
 // vf_control.c
-extern int vf_simple_control();
+extern void vf_simple_control();
 extern void slip_comp_scalar_ctrl();
 
 extern int vf_loop_control(double);

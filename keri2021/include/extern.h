@@ -89,8 +89,9 @@ extern double dAdcVdc;
 extern double dAdcTemp;
 extern double dAdcSens;
 extern double dAdcCmd;
+extern double dAdcAux1;
 
-extern double * scopePoint[50];
+extern double * scopePoint[60];
 
 // control and flag
 extern CODE_INFO code_inform;
@@ -433,6 +434,7 @@ extern int adcVdc;
 extern int adcIgbtTemperature;
 extern int adcExSensor;
 extern int adcCmdAnalog;
+extern int anaAux1;
 
 //filter
 extern double lpfIsqIn[3];

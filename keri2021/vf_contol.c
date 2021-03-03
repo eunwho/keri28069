@@ -92,7 +92,7 @@ int vf_loop_control(double cmd_ref)
     return iTripCode;
 }
 
-int vf_simple_control()
+void vf_simple_control()
 {
     Freq_out = codeRateHz * reference_out;
     we = PI_2 * Freq_out;
@@ -100,7 +100,7 @@ int vf_simple_control()
 
     theta += we * Ts;       //�쉶�쟾諛⑺뼢 蹂��솚 �젙諛⑺뼢�쓣�븣 +, �뿭諛⑺뼢�쉶�쟾�씪�븣 - �빐以꾧쾬
 
-    if (theta>PI)       theta-=PI_2;
+    if (theta > PI)       theta-=PI_2;
     else if (theta<-PI) theta+=PI_2;
 
     SinTheta = sin(theta);
