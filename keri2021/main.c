@@ -46,16 +46,13 @@ void main( void )
 	InitGpio( );
 
 	GATE_DRIVER_ENABLE;
-
 	G_INIT_CLEAR;
 
-    // INIT_CHARGE_OFF; // no init charge in powerPack
     MAIN_CHARGE_OFF; TRIP_OUT_OFF; RUN_OUT_OFF;
 
 	init_charge_flag = 0;
 	DINT;
 	memcpy(&RamfuncsRunStart, &RamfuncsLoadStart, (Uint32)&RamfuncsLoadSize);
-
 
 	InitFlash(); InitPieCtrl();
 	IER = 0x0000;   IFR = 0x0000;
@@ -120,23 +117,11 @@ void main( void )
     ADC_SOC_CNF();
     strncpy(MonitorMsg,"POWER_ON",20);
     gPWMTripCode = 0;		//
-    // when use 316J
-    // GATE_EN_LOW;   delay_msecs(10);     GATE_EN_HIGH;
-/*
-    while(1){
-        LED1_CLEAR;
-        delay_msecs(250);
-        LED2_CLEAR;
-        delay_msecs(250);
-        LED1_SET;
-        delay_msecs(250);
-        LED2_SET;
-        delay_msecs(250);
-    }
-*/
     Init_EQep( );  // code_encoderPulse;
 
-#if GATE_DRIVE_RESET
+#if GATE_ACTIVE_LOW
+    GATE_DRIVER_ENABLE;             // gate pulse enable
+#else
     GATE_DRIVER_ENABLE;
     delay_msecs(5);
     GATE_DRIVER_CLEAR;
@@ -169,22 +154,13 @@ void main( void )
 		Nop();
 	}
 
-/*
-	gPWMTripCode = 0;
-	gfRunTime = 0.0;
-
-	MAIN_CHARGE_ON;		    //
-   TRIP_OUT_OFF;
-*/
    init_charge_flag=0;
 	gMachineState = STATE_READY; 
-//	INIT_CHARGE_CLEAR;
 
 	if( gPWMTripCode !=0 )	tripProc();
 	strncpy(MonitorMsg,"READY",20);delay_msecs(20);
 	strncpy(gStr1,"READY \r\n",20);
 	load_sci_tx_mail_box(gStr1); delay_msecs(20);
-	// INIT_CHARGE_OFF;
 	MAIN_CHARGE_ON;
 	for( ; ; )
     {

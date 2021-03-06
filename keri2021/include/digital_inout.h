@@ -58,10 +58,10 @@ MC4_ON --> TRIP_OUT --- on state
 #define BACKUP_ENABLE       (GpioDataRegs.GPACLEAR.bit.GPIO17 = 1)
 #define BACKUP_DISABLE      (GpioDataRegs.GPASET.bit.GPIO17   = 1)
 
-#define LED1_CLEAR        (GpioDataRegs.GPBCLEAR.bit.GPIO54 = 1)
+#define LED1_CLEAR        (GpioDataRegs.GPBCLEAR.bit.GPIO54 = 1)    // ready blink
 #define LED1_SET          (GpioDataRegs.GPBSET.bit.GPIO54   = 1)
 
-#define LED2_CLEAR        (GpioDataRegs.GPBCLEAR.bit.GPIO55 = 1)
+#define LED2_CLEAR        (GpioDataRegs.GPBCLEAR.bit.GPIO55 = 1)    // blink error
 #define LED2_SET          (GpioDataRegs.GPBSET.bit.GPIO55   = 1)
 
 //--- input

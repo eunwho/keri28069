@@ -60,8 +60,8 @@ interrupt void adcIsr(void)
     adc_result[0] = adcCurrentA   = AdcResult.ADCRESULT7;
     adc_result[1] = adcCurrentB   = AdcResult.ADCRESULT6;
     adc_result[2] = adcVdc  = adcVdc = AdcResult.ADCRESULT5;
-    adc_result[3] = adcExSensor  = AdcResult.ADCRESULT4;        // G_ANA1
-    adc_result[4] = adcIgbtTemperature = AdcResult.ADCRESULT3;        //adcExSensor
+    adc_result[3] = adcIgbtTemperature = AdcResult.ADCRESULT4;  //G_ANA1
+    adc_result[4] = adcExSensor  = AdcResult.ADCRESULT3;        // adcExSensor
     adc_result[5] = adcCmdAnalog = AdcResult.ADCRESULT2;
     adc_result[6] = anaAux1 = AdcResult.ADCRESULT1;
 
